@@ -1,2 +1,5 @@
 # Byte-compiled / optimized / DLL files
 __pychache__
+
+# Personal
+.gitToken
