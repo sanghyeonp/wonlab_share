@@ -11,7 +11,9 @@ GWAS 연구를 수행하면서 FUMA라는 web-based software를 사용해서 SNP
 (제 study note 이기도 합니다. ㅎㅎ)
 
 ### To-do
-- 결과를 다른 directory에 저장할 수 있게.
+- 결과를 다른 directory에 저장할 수 있게. (현재는 current working directory)
+- 사용된 results 설명
+- 정리된 table 설명
 
 ### Version control
 Version 1:
@@ -27,9 +29,15 @@ Version 1:
 git clone https://github.com/sanghyeonp/FUMAresult2table.git
 ```
 
-2. `<Directory 이름>/FUMAresult2table/src/main.py`를 이용하여 table 만들기.
+2. `main.py`를 이용하여 table 만들기.
 ```
-python3 <Directory 이름>/FUMAresult2table/src/main.py --result_dir <FUMA 결과 있는 directory>
+python3 main.py --result_dir <FUMA 결과 있는 directory> --run_all
 ```
 
 ## Example
+Lagou et al,에서 다운로드 받은 fasting glucose GWAS를 예제 삼아 진행해보았습니다.
+
+
+
+## Reference
+1. Lagou, V. et al. Sex-dimorphic genetic effects and novel loci for fasting glucose and insulin variability. Nat Commun 12, 24 (2021).
