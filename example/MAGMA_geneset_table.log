@@ -1,0 +1,14 @@
+Running MAGMA gene-set analysis to table...
+Column description: Beta and Beta.Std is the non-standardized and semi-standardized regression coefficient from generalized linear regression described in [1]. SE is the standard error of the non-standardized regression coefficient. P value is derived with a one-tailed Z-tests of Beta divided by SE (not adjusted for multiple testing).
+Source: Karlsson Linnér, R. et al. Multivariate analysis of 1.5 million people identifies genetic associations with traits related to self-regulation and addiction. Nat Neurosci 24, 1367–1376 (2021).
+First 4 lines in magma.gsa.out:
+	# TOTAL_GENES = 18222
+	# TEST_DIRECTION = one-sided, positive (set), two-sided (covar)
+	# CONDITIONED_INTERNAL = gene size, gene density, inverse mac, log(gene size), log(gene density), log(inverse mac)
+	VARIABLE                                TYPE  NGENES         BETA     BETA_STD           SE            P FULL_NAME
+Number of gene-sets tested: 15,483
+Bonferroni correction threshold: 3.2293483175095267e-06
+Number of curated gene-sets: 5,497
+Number of GO gene-sets: 9,986
+Number of gene-sets passing Bonferroni: 9
+
