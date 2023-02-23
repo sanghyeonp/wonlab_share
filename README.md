@@ -35,9 +35,9 @@ FUMA라는 하나의 tool로 다양한 분석이 진행되고, 따라서 여러 
 git clone https://github.com/sanghyeonp/FUMAresult2table.git
 ```
 
-2. `main.py`를 이용하여 table 만들기.
+2. `FUMAresult2table.py`를 이용하여 table 만들기.
 ```
-python3 main.py --result_dir <FUMA 결과 있는 directory> --run_all
+python3 FUMAresult2table.py --result_dir <FUMA 결과 있는 directory> --run_all
 ```
 &nbsp;
 
@@ -49,10 +49,10 @@ python3 main.py --result_dir <FUMA 결과 있는 directory> --run_all
 `--snp2gene_mapping` : SNP-to-gene 결과 정리  
 `--magma_genebased` : MAGMA gene-based analysis 결과 정리  
 `--magma_geneset` : MAGMA gene-set analysis 결과 정리  
-`--magma_geneproperty_gtex_specific` : MAGMA gene-property analysis 결과 정리  
-`--magma_geneproperty_gtex_general` : MAGMA gene-property analysis 결과 정리  
-`--magma_geneproperty_brainspan_age` : MAGMA gene-property analysis 결과 정리  
-`--magma_geneproperty_brainspan_dev` : MAGMA gene-property analysis 결과 정리  
+`--magma_geneproperty_gtex_specific` : MAGMA gene-property analysis specific-tissue GTEx v8 결과 정리  
+`--magma_geneproperty_gtex_general` : MAGMA gene-property analysis general-tissue GTEx v8 결과 정리  
+`--magma_geneproperty_brainspan_age` : MAGMA gene-property analysis 29 ages BrainSpan 결과 정리  
+`--magma_geneproperty_brainspan_dev` : MAGMA gene-property analysis 11 developmental stage 결과 정리  
 &nbsp;
 
 결과 정리가 되면, 결과 table과 log가 만들어지지만, terminal에서 real-time으로 보고싶으면, 아래 argument를 사용하면 됩니다.
