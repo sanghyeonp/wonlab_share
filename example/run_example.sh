@@ -1,3 +1,3 @@
 #!/bin/bash
 
-python3 ../main.py --result_dir ./data --run_all
+python3 ../FUMAresult2table.py --result_dir ./data --run_all
