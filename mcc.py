@@ -58,7 +58,7 @@ def main(file, skip_rows, delim, p_col, outf, outd, quoting, log, verbose):
 
     df = pd.read_csv(file, sep=delim, index_col=False, skiprows=skip_rows)
 
-    fdr_pval = fdr_pval_cal(df[pval].tolist())
+    fdr_pval = fdr_pval_cal(df[p_col].tolist())
     df['FDR P-value'] = fdr_pval
     df['FDR significant'] = df['FDR P-value'].apply(lambda x: pval_sig(x))
 
