@@ -29,7 +29,7 @@ Cohen's kappa test는 R package *fmsb*의 *Kappa.test*를 활용하였습니다.
 git clone https://github.com/sanghyeonp/cohenkappa.git
 ```
 
-2. `cohen_kappa.R`를 이용하여 Cohen's kappa test 진행하기.
+2. `cohen_kappa.R`를 이용하여 Cohen's kappa test 진행하기. (**An absolute path of the script MUST be passed.**)
 ```
 Rscript <Full directory path>/cohen_kappa.R --ref_gwas <GWAS summary statistics 1> \
                     --alt_gwas <GWAS summary statistics 2>
