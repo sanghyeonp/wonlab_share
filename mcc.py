@@ -9,7 +9,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description=":: Multiple comparisons correction ::")
     parser.add_argument('--file', required=True,
                         help='Path to the input file.')
-    parser.add_argument('--pval', required=True, 
+    parser.add_argument('--p_col', required=True, 
                         help='P-value column name in the input file.')
     parser.add_argument('--delim', required=False, type=str, default="tab",
                         help='Delimiter of the input file. Default = "tab". Choices = ["tab", "comma", "whitespace"].')
@@ -51,7 +51,7 @@ def log_action(logs, log_, verbose):
     return logs
 
 
-def main(file, skip_rows, delim, pval, outf, outd, quoting, log, verbose):
+def main(file, skip_rows, delim, p_col, outf, outd, quoting, log, verbose):
     logs = []
     log_ = "Conducting multiple comparisons correction for:\n\t{}".format(file); logs = log_action(logs, log_, verbose)
     log_ = "Reading the input file...".format(file); logs = log_action(logs, log_, verbose)
@@ -65,7 +65,7 @@ def main(file, skip_rows, delim, pval, outf, outd, quoting, log, verbose):
     log_ = "Number of comparisons: {:,}".format(len(df)); logs = log_action(logs, log_, verbose)
     log_ = "Bonferroni correction threshold (0.05/{}): {:,}".format(len(df), 0.05/len(df)); logs = log_action(logs, log_, verbose)
 
-    bonferroni_pval = bonferroni_pval_cal(df[pval].tolist())
+    bonferroni_pval = bonferroni_pval_cal(df[p_col].tolist())
     df['Bonferroni P-value'] = bonferroni_pval
     df['Bonferroni significant'] = df['Bonferroni P-value'].apply(lambda x: pval_sig(x))
 
@@ -98,7 +98,7 @@ if __name__ == "__main__":
     main(file=args.file, 
         skip_rows=args.skip_rows,
         delim=delim_map[args.delim],
-        pval=args.pval,  
+        p_col=args.p_col,  
         outf=args.outf, 
         outd=args.outd, 
         quoting=args.quoting, 
