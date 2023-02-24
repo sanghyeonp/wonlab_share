@@ -39,7 +39,7 @@ parser$add_argument("--alt_name", required=FALSE, default="NA",
 parser$add_argument("--snplist", required=FALSE, default="NA",
                     help="Path to file with SNP list.")
 parser$add_argument("--snplist_FUMA", required=FALSE, default="NA", 
-                    help="Path TO `leadSNPs.txt` from FUMA to compute Cohen's kappa coefficient on the lead SNPs identified from FUMA.")
+                    help="Path to `leadSNPs.txt` from FUMA to compute Cohen's kappa coefficient on the lead SNPs identified from FUMA.")
 
 parser$add_argument("--outf", required=FALSE, default="cohenkappa",
                     help="Name of the output log.")
