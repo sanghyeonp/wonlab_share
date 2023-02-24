@@ -1,4 +1,4 @@
-# Cohen's kappa coefficient for effect estimate direction concordance in two GWAS
+# Cohen's kappa coefficient for effect estimate direction concordance between GWAS
 
 
 안녕하세요? 박상현입니다.
