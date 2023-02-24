@@ -31,7 +31,7 @@ git clone https://github.com/sanghyeonp/cohenkappa.git
 
 2. `cohen_kappa.R`를 이용하여 Cohen's kappa test 진행하기.
 ```
-Rscript cohen_kappa.R --ref_gwas <GWAS summary statistics 1> \
+Rscript <Full directory path>/cohen_kappa.R --ref_gwas <GWAS summary statistics 1> \
                     --alt_gwas <GWAS summary statistics 2>
 ```
 &nbsp;

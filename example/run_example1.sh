@@ -1,6 +1,7 @@
 #!/bin/bash
+script=/data1/sanghyeon/wonlab_contribute/beta_direction_CohenKappa/cohen_kappa.R
 
-Rscript ../cohen_kappa.R --ref_gwas ./data/GWAS1.subset.csv \
+Rscript ${script} --ref_gwas ./data/GWAS1.subset.csv \
                     --ref_gwas_delim comma \
                     --ref_gwas_snp SNP \
                     --ref_gwas_beta est \
