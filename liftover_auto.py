@@ -22,15 +22,15 @@ def parse_args():
     parser.add_argument('--build_from', required=True, type=int,
                     help="Genome build number initial. Choices = [18, 37, 38].")
     parser.add_argument('--build_to', required=True, type=int,
-                    help="Genome build number initial. Choices = [19, 37, 38].")
+                    help="Genome build number after performing liftover. Choices = [19, 37, 38].")
     
     # Merging lifted result options.
     parser.add_argument('--keep_all_col', action='store_true',
-                help='Specify to save both previous and lifted Chr and Pos columns. Default = False')
+                help='Specify to save both previous and lifted Chr and Pos columns. Default = False.')
     parser.add_argument('--keep_intermediate', action='store_true',
-                help='Specify to keep the intermediate files generated; <>.bed, <>.liftover.lifted, and <>.liftover.unlifted. Default = False')
+                help='Specify to keep the intermediate files generated; <>.bed, <>.liftover.lifted, and <>.liftover.unlifted. Default = False.')
     parser.add_argument('--unlifted_snplist', action='store_true',
-                help='Specify to save the SNP list that have been unlifed. Default = False')
+                help='Specify to save the SNP list that has been unlifed. Default = False.')
 
     # Output options.
     parser.add_argument('--outf', required=False, default="NA",
