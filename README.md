@@ -37,7 +37,8 @@ git clone https://github.com/sanghyeonp/FUMAresult2table.git
 
 2. `FUMAresult2table.py`를 이용하여 table 만들기.
 ```
-python3 FUMAresult2table.py --result_dir <FUMA 결과 있는 directory> --run_all
+python3 FUMAresult2table.py --result_dir <FUMA 결과 있는 directory> \
+                            --run_all
 ```
 &nbsp;
 
