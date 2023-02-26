@@ -8,7 +8,7 @@ def import_or_install(package):
 
 packages_list = ['pandas', 'os', 'subprocess', 'csv', 'argparse', 'code']
 
-import_or_install('pandas')
+[import_or_install(p) for p in packages_list]    
 
 import pandas as pd
 pd.set_option('mode.chained_assignment',  None)
