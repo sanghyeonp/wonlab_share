@@ -14,21 +14,6 @@ def merge_lifted(file, delim, snp_col, chr_col, pos_col,
                             index_col=False, names=['CHR', 'BP-1', 'BP', 'SNP'])
     liftover_out.drop(columns=['BP-1'], inplace=True)
 
-    ## Add lifted SNPs in unlifted file which are having Duplicated in new tag
-    retain = []
-    with open(unlifted_file, 'r') as f:
-        reader = csv.reader(f, delimiter='\t')
-        tag = False
-        for row in reader:
-            if tag:
-                retain.append(row)
-                tag = False
-            if row[0] == '#Duplicated in new':
-                tag = True
-    unlifted_retained = pd.DataFrame(retain, columns=['CHR', 'BP-1', 'BP', 'SNP'])
-    unlifted_retained.drop(columns=['BP-1'], inplace=True)
-
-    liftover_out = pd.concat([liftover_out, unlifted_retained])
     liftover_out.columns = ['Chr_lifted', 'Pos_lifted', 'SNP_lifted']
 
     def is_chr(x):
