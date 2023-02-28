@@ -25,12 +25,14 @@ def parse_args():
                     help="Genome build number after performing liftover. Choices = [19, 37, 38].")
     
     # Merging lifted result options.
-    parser.add_argument('--keep_all_col', action='store_true',
+    parser.add_argument('--keep_initial_pos', action='store_true',
                 help='Specify to save both previous and lifted Chr and Pos columns. Default = False.')
+    parser.add_argument('--keep_unlifted', action='store_true',
+                help='Specify to retain unlifted SNPs with their base position value as -9. Default = False.')
     parser.add_argument('--keep_intermediate', action='store_true',
                 help='Specify to keep the intermediate files generated; <>.bed, <>.liftover.lifted, and <>.liftover.unlifted. Default = False.')
     parser.add_argument('--unlifted_snplist', action='store_true',
-                help='Specify to save the SNP list that has been unlifed. Default = False.')
+                help='Specify to save the SNP list that has been unlifed. <>.unlifted.snplist. Default = False.')
 
     # Output options.
     parser.add_argument('--outf', required=False, default="NA",
@@ -48,7 +50,7 @@ def parse_args():
 
 def main(file, delim, snp_col, chr_col, pos_col, 
         build_from, build_to, 
-        keep_all_col, keep_intermediate, unlifted_snplist, 
+        keep_initial_pos, keep_unlifted, keep_intermediate, unlifted_snplist, 
         outf, outd,
         verbose):
     
@@ -63,7 +65,7 @@ def main(file, delim, snp_col, chr_col, pos_col,
 
     # 3. Merge the result
     logs = merge_lifted(file, delim, snp_col, chr_col, pos_col, 
-                unlifted_snplist, keep_all_col, keep_intermediate,
+                unlifted_snplist, keep_initial_pos, keep_unlifted, keep_intermediate,
                 outf, outd, verbose); logs_ += logs
 
     # 4. Save the log
@@ -85,7 +87,8 @@ if __name__ == "__main__":
         pos_col=args.pos_col,
         build_from=args.build_from,
         build_to=args.build_to,
-        keep_all_col=args.keep_all_col, 
+        keep_initial_pos=args.keep_initial_pos, 
+        keep_unlifted=args.keep_unlifted,
         keep_intermediate=args.keep_intermediate, 
         unlifted_snplist=args.unlifted_snplist,
         outf=args.outf,

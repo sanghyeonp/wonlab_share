@@ -52,9 +52,10 @@ python3 liftover_auto.py --file <Liftover 수행할 파일> \
 `--pos_col` : Name of the base position column in the input file. Default = 'POS'.
 
 - 중간 결과 파일들 관련된 **optional argument**입니다.  
-`--keep_all_col` : (flag) Specify to save both previous and lifted Chr and Pos columns. Default = False.  
+`--keep_initial_pos` : (flag) Specify to save both previous and lifted Chr and Pos columns. Default = False.  
 `--keep_intermediate` : (flag) Specify to keep the intermediate files generated; <>.bed, <>.liftover.lifted, and <>.liftover.unlifted. Default = False.  
-`--unlifted_snplist` : (flag) Specify to save the SNP list that has been unlifed. Default = False.  
+`--unlifted_snplist` : (flag) Specify to save the SNP list that has been unlifed. <>.unlifted.snplist. Default = False.  
+`--keep_unlifted` : (flag) Specify to retain unlifted SNPs with their base position value as -9. Default = False.  
 
 - 최종 결과 파일들 관련된 **optional argument**입니다.  
 `--outf` : Specify the name of the output file. Default = 'lifted.<file>'.  
