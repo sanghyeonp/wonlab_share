@@ -48,7 +48,7 @@ def merge_lifted(file, delim, snp_col, chr_col, pos_col,
     log_ = "Number of SNPs initially: {:,}".format(len(df)); logger(logs, log_, verbose)
     log_ = "Number of SNPs lifted: {:,}".format(len(df[~df['SNP_lifted'].isna()])); logger(logs, log_, verbose)
     if keep_unlifted:
-        log_ = "Number of SNPs unlifted: {:,}".format(len((df['Pos_lifted'] == -9) | (df['SNP_lifted'].isna()))); logger(logs, log_, verbose)
+        log_ = "Number of SNPs unlifted: {:,}".format(len(df[(df['Pos_lifted'] == -9) | (df['SNP_lifted'].isna())])); logger(logs, log_, verbose)
     else:
         log_ = "Number of SNPs unlifted: {:,}".format(len(df[df['SNP_lifted'].isna()])); logger(logs, log_, verbose)
 
