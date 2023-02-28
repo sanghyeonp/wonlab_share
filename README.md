@@ -16,6 +16,7 @@ Liftover를 사용하기 전에 따로 *bed*파일을 만들고, 또 Liftover가
 ---
 
 ### **To-do**
+- Argument들 log에 저장되게.
 - Output 결과 설명
 - Intermediate 결과 설명
 
