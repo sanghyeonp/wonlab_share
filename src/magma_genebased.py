@@ -6,7 +6,7 @@ import csv
 from statsmodels.sandbox.stats.multicomp import multipletests
 
 
-def MAGMA_genebased2Table(result_dir, snp2gene_table=None, verbose=False):
+def MAGMA_genebased2Table(result_dir, outd, snp2gene_table=None, verbose=False):
     genebased_file = os.path.join(result_dir, "magma.genes.out")
     assert FileExists(genebased_file), "Place `magma.genes.out` in the result directory."
 
@@ -45,14 +45,14 @@ def MAGMA_genebased2Table(result_dir, snp2gene_table=None, verbose=False):
 
     df.sort_values(by=["Bonferroni P-value"], inplace=True)
 
-    df.to_csv("MAGMA_genebased_table.csv", sep=",", index=False,
+    df.to_csv(os.path.join(outd, "MAGMA_genebased_table.csv"), sep=",", index=False,
             quoting=csv.QUOTE_ALL)
 
-    df[df["Bonferroni significant"] == "Yes"].to_csv("MAGMA_genebased_Bonferroni_table.csv", sep=",", index=False,
+    df[df["Bonferroni significant"] == "Yes"].to_csv(os.path.join(outd, "MAGMA_genebased_Bonferroni_table.csv"), sep=",", index=False,
                                                         quoting=csv.QUOTE_ALL)
 
-    if snp2gene_table is None and os.path.exists(os.path.join(os.getcwd(), "leadSNP_to_gene_mapping_table.csv")):
-        snp2gene_table = os.path.join(os.getcwd(), "leadSNP_to_gene_mapping_table.csv")
+    if snp2gene_table is None and os.path.exists(os.path.join(outd, "leadSNP_to_gene_mapping_table.csv")):
+        snp2gene_table = os.path.join(outd, "leadSNP_to_gene_mapping_table.csv")
 
     if snp2gene_table is not None:
         df2 = pd.read_csv(snp2gene_table, sep=",", index_col=False)
@@ -66,5 +66,5 @@ def MAGMA_genebased2Table(result_dir, snp2gene_table=None, verbose=False):
     if verbose:
         [print(l) for l in logs]
     
-    with open("MAGMA_genebased_table.log", 'w') as f:
+    with open(os.path.join(outd, "MAGMA_genebased_table.log"), 'w') as f:
         f.writelines([l+"\n" for l in logs])

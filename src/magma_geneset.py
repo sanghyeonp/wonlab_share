@@ -4,8 +4,10 @@ import pandas as pd
 import os
 import csv
 from statsmodels.sandbox.stats.multicomp import multipletests
+import code
+# code.interact(local=dict(globals(), **locals()))
 
-def MAGMA_geneset2Table(result_dir, verbose=False):
+def MAGMA_geneset2Table(result_dir, outd, verbose=False):
     geneset_file = os.path.join(result_dir, "magma.gsa.out")
     assert FileExists(geneset_file), "Place `magma.gsa.out` in the result directory."
 
@@ -14,18 +16,22 @@ def MAGMA_geneset2Table(result_dir, verbose=False):
     logs.append("Column description: Beta and Beta.Std is the non-standardized and semi-standardized regression coefficient from generalized linear regression described in [1]. SE is the standard error of the non-standardized regression coefficient. P value is derived with a one-tailed Z-tests of Beta divided by SE (not adjusted for multiple testing).")
     logs.append("Source: Karlsson Linnér, R. et al. Multivariate analysis of 1.5 million people identifies genetic associations with traits related to self-regulation and addiction. Nat Neurosci 24, 1367–1376 (2021).")
 
-    logs.append("First 4 lines in magma.gsa.out:")
+    
 
     with open(geneset_file, 'r') as f:
         lines = f.readlines()
-        logs += ["\t" + l.strip() for l in lines[:4]]
-        lines = lines[4:]
+        idx2start = len([idx for idx, l in enumerate(lines) if '#' in l]) + 1
+        logs_ = ["\t" + l.strip() for l in lines[:idx2start]]
+        lines = lines[idx2start:]
         lines = [row.strip() for row in lines]
         lines = [row.split(sep=" ") for row in lines]
         lines = [[l for l in row if l] for row in lines]
     
+    logs.append("First {} lines in magma.gsa.out:".format(idx2start))
+    logs += logs_
+
     df = pd.DataFrame(lines, columns=["X1", "Type", "N genes", "Beta", "Beta STD", "SE", "P-value", "Gene set"])
-    
+
     df['P-value'] = df['P-value'].astype(float)
 
     logs.append("Number of gene-sets tested: {:,}".format(len(df)))
@@ -60,10 +66,10 @@ def MAGMA_geneset2Table(result_dir, verbose=False):
 
     df['Gene set'] = df['Gene set'].apply(lambda x: x.replace("_", " "))
 
-    df.to_csv("MAGMA_geneset_table.csv", sep=",", index=False,
+    df.to_csv(os.path.join(outd, "MAGMA_geneset_table.csv"), sep=",", index=False,
             quoting=csv.QUOTE_ALL)
 
-    df[df["Bonferroni significant"] == "Yes"].to_csv("MAGMA_geneset_Bonferroni_table.csv", sep=",", index=False,
+    df[df["Bonferroni significant"] == "Yes"].to_csv(os.path.join(outd, "MAGMA_geneset_Bonferroni_table.csv"), sep=",", index=False,
             quoting=csv.QUOTE_ALL)
     
     logs.append("")
@@ -71,5 +77,5 @@ def MAGMA_geneset2Table(result_dir, verbose=False):
     if verbose:
         [print(l) for l in logs]
 
-    with open("MAGMA_geneset_table.log", 'w') as f:
+    with open(os.path.join(outd, "MAGMA_geneset_table.log"), 'w') as f:
         f.writelines([l+"\n" for l in logs])

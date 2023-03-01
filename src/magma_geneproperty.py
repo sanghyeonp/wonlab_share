@@ -6,7 +6,7 @@ import csv
 from statsmodels.sandbox.stats.multicomp import multipletests
 
 
-def MAGMA_geneproperty_GTEx_SpecificTissue(result_dir, verbose=False):
+def MAGMA_geneproperty_GTEx_SpecificTissue(result_dir, outd, verbose=False):
     file = os.path.join(result_dir, "magma_exp_gtex_v8_ts_avg_log2TPM.gsa.out")
     assert FileExists(file), "Place `magma_exp_gtex_v8_ts_avg_log2TPM.gsa.out` in the result directory."
 
@@ -60,7 +60,7 @@ def MAGMA_geneproperty_GTEx_SpecificTissue(result_dir, verbose=False):
 
     df['Tissue'] = df['Tissue'].apply(lambda x: x.replace("_", " "))
 
-    df.to_csv("MAGMA_geneproperty_GTExV8_specifictissue_table.csv", sep=",", index=False,
+    df.to_csv(os.path.join(outd, "MAGMA_geneproperty_GTExV8_specifictissue_table.csv"), sep=",", index=False,
             quoting=csv.QUOTE_ALL)
 
     logs.append("")
@@ -68,11 +68,11 @@ def MAGMA_geneproperty_GTEx_SpecificTissue(result_dir, verbose=False):
     if verbose:
         [print(l) for l in logs]
 
-    with open("MAGMA_geneproperty_GTExV8_specifictissue_table.log", 'w') as f:
+    with open(os.path.join(outd, "MAGMA_geneproperty_GTExV8_specifictissue_table.log"), 'w') as f:
         f.writelines([l+"\n" for l in logs])
 
 
-def MAGMA_geneproperty_GTEx_GeneralTissue(result_dir, verbose=False):
+def MAGMA_geneproperty_GTEx_GeneralTissue(result_dir, outd, verbose=False):
     file = os.path.join(result_dir, "magma_exp_gtex_v8_ts_general_avg_log2TPM.gsa.out")
     assert FileExists(file), "Place `magma_exp_gtex_v8_ts_general_avg_log2TPM.gsa.out` in the result directory."
 
@@ -126,7 +126,7 @@ def MAGMA_geneproperty_GTEx_GeneralTissue(result_dir, verbose=False):
 
     df['Tissue'] = df['Tissue'].apply(lambda x: x.replace("_", " "))
 
-    df.to_csv("MAGMA_geneproperty_GTExV8_generaltissue_table.csv", sep=",", index=False,
+    df.to_csv(os.path.join(outd, "MAGMA_geneproperty_GTExV8_generaltissue_table.csv"), sep=",", index=False,
             quoting=csv.QUOTE_ALL)
 
     logs.append("")
@@ -134,11 +134,11 @@ def MAGMA_geneproperty_GTEx_GeneralTissue(result_dir, verbose=False):
     if verbose:
         [print(l) for l in logs]
 
-    with open("MAGMA_geneproperty_GTExV8_generaltissue_table.log", 'w') as f:
+    with open(os.path.join(outd, "MAGMA_geneproperty_GTExV8_generaltissue_table.log"), 'w') as f:
         f.writelines([l+"\n" for l in logs])
 
 
-def MAGMA_geneproperty_BrainSpan_Age(result_dir, verbose=False):
+def MAGMA_geneproperty_BrainSpan_Age(result_dir, outd, verbose=False):
     file = os.path.join(result_dir, "magma_exp_bs_age_avg_log2RPKM.gsa.out")
     assert FileExists(file), "Place `magma_exp_bs_age_avg_log2RPKM.gsa.out` in the result directory."
 
@@ -192,7 +192,7 @@ def MAGMA_geneproperty_BrainSpan_Age(result_dir, verbose=False):
 
     df['Brain age'] = df['Brain age'].apply(lambda x: x.replace("_", " "))
 
-    df.to_csv("MAGMA_geneproperty_BrainSpan_age_table.csv", sep=",", index=False,
+    df.to_csv(os.path.join(outd, "MAGMA_geneproperty_BrainSpan_age_table.csv"), sep=",", index=False,
             quoting=csv.QUOTE_ALL)
 
     logs.append("")
@@ -200,11 +200,11 @@ def MAGMA_geneproperty_BrainSpan_Age(result_dir, verbose=False):
     if verbose:
         [print(l) for l in logs]
 
-    with open("MAGMA_geneproperty_BrainSpan_age_table.log", 'w') as f:
+    with open(os.path.join(outd, "MAGMA_geneproperty_BrainSpan_age_table.log"), 'w') as f:
         f.writelines([l+"\n" for l in logs])
 
 
-def MAGMA_geneproperty_BrainSpan_Developmental(result_dir, verbose=False):
+def MAGMA_geneproperty_BrainSpan_Developmental(result_dir, outd, verbose=False):
     file = os.path.join(result_dir, "magma_exp_bs_dev_avg_log2RPKM.gsa.out")
     assert FileExists(file), "Place `magma_exp_bs_dev_avg_log2RPKM.gsa.out` in the result directory."
 
@@ -259,7 +259,7 @@ def MAGMA_geneproperty_BrainSpan_Developmental(result_dir, verbose=False):
     df['Brain developmental stage'] = df['Brain developmental stage'].apply(lambda x: x.replace("_", " "))
 
 
-    df.to_csv("MAGMA_geneproperty_BrainSpan_developmental_table.csv", sep=",", index=False,
+    df.to_csv(os.path.join(outd, "MAGMA_geneproperty_BrainSpan_developmental_table.csv"), sep=",", index=False,
             quoting=csv.QUOTE_ALL)
 
     logs.append("")
@@ -267,5 +267,5 @@ def MAGMA_geneproperty_BrainSpan_Developmental(result_dir, verbose=False):
     if verbose:
         [print(l) for l in logs]
 
-    with open("MAGMA_geneproperty_BrainSpan_developmental_table.log", 'w') as f:
+    with open(os.path.join(outd, "MAGMA_geneproperty_BrainSpan_developmental_table.log"), 'w') as f:
         f.writelines([l+"\n" for l in logs])

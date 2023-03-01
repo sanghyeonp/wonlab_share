@@ -6,7 +6,7 @@ import csv
 from tqdm import tqdm
 
 
-def leadSNPannotation(result_dir, verbose=False):
+def leadSNPannotation(result_dir, outd, verbose=False):
     logs = []
     logs.append("Running lead SNP annotation to table...")
 
@@ -69,9 +69,9 @@ def leadSNPannotation(result_dir, verbose=False):
     df.fillna("-")
 
     # Save the result
-    df.to_csv("leadSNP_annotation_table.csv", sep=",", index=False, quoting=csv.QUOTE_ALL)
+    df.to_csv(os.path.join(outd, "leadSNP_annotation_table.csv"), sep=",", index=False, quoting=csv.QUOTE_ALL)
 
-    logs.append("Table saved at: {}".format(os.path.join(os.getcwd(), "leadSNP_annotation_table.csv")))
+    logs.append("Table saved at: {}".format(os.path.join(outd, "leadSNP_annotation_table.csv")))
     logs.append("")
 
     if verbose:

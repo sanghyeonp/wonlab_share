@@ -15,7 +15,6 @@ FUMA라는 하나의 tool로 다양한 분석이 진행되고, 따라서 여러 
 ---
 
 ### **To-do**
-- 결과를 다른 directory에 저장할 수 있게. (현재는 current working directory)
 - 사용된 results 설명
 - 정리된 table 설명
 

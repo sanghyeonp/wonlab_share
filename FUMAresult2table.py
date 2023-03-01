@@ -17,30 +17,34 @@ def parse_args():
     
     # Run all
     parser.add_argument('--run_all', action='store_true',
-                    help='Specify to make tables for all the available results.')
+                    help='Specify to make tables for all the available results. Default = False.')
     
     # SNP annotation
     parser.add_argument('--snp_annotation', action='store_true',
-                    help='Specify to make SNP annotation result table.')
+                    help='Specify to make SNP annotation result table. Default = False.')
     # SNP2GENE
     parser.add_argument('--snp2gene_mapping', action='store_true',
-                    help='Specify to make SNP2Gene mapping result table.')
+                    help='Specify to make SNP2Gene mapping result table. Default = False.')
     # MAGMA gene-based analysis
     parser.add_argument('--magma_genebased', action='store_true',
-                    help='Specify to make MAGMA gene-based analysis result table.')
+                    help='Specify to make MAGMA gene-based analysis result table. Default = False.')
     # MAGMA gene-set analysis
     parser.add_argument('--magma_geneset', action='store_true',
-                    help='Specify to make MAGMA gene-set analysis result table.')
+                    help='Specify to make MAGMA gene-set analysis result table. Default = False.')
     # MAGMA gene-property analysis
     parser.add_argument('--magma_geneproperty_gtex_specific', action='store_true',
-                    help='Specify to make MAGMA gene-property analysis in GTEx v8 specific tissues result table.')
+                    help='Specify to make MAGMA gene-property analysis in GTEx v8 specific tissues result table. Default = False.')
     parser.add_argument('--magma_geneproperty_gtex_general', action='store_true',
-                    help='Specify to make MAGMA gene-property analysis in GTEx v8 general tissues result table.')
+                    help='Specify to make MAGMA gene-property analysis in GTEx v8 general tissues result table. Default = False.')
     parser.add_argument('--magma_geneproperty_brainspan_age', action='store_true',
-                    help='Specify to make MAGMA gene-property analysis in BrainSpan age result table.')
+                    help='Specify to make MAGMA gene-property analysis in BrainSpan age result table. Default = False.')
     parser.add_argument('--magma_geneproperty_brainspan_dev', action='store_true',
-                    help='Specify to make MAGMA gene-property analysis in BrainSpan developmental stages result table.')
+                    help='Specify to make MAGMA gene-property analysis in BrainSpan developmental stages result table. Default = False.')
     
+    # Output.
+    parser.add_argument('--outd', required=False, default="NA",
+                        help='Specify the output directory path. Default = Current working directory.')
+
     # Others
     parser.add_argument('--verbose', action='store_true',
                         help='Specify to print logs.')
@@ -52,6 +56,9 @@ def parse_args():
 
 if __name__ == "__main__":
     args = parse_args()
+
+    if args.outd == "NA":
+        args.outd = os.getcwd()
 
     if args.run_all:
         args.snp_annotation = True
@@ -65,38 +72,47 @@ if __name__ == "__main__":
 
     if args.snp_annotation:
         leadSNPannotation(result_dir=args.result_dir, 
-                        verbose=args.verbose)
+                        verbose=args.verbose,
+                        outd=args.outd
+                        )
     
     if args.snp2gene_mapping:
         leadSNP2GeneMapping(result_dir=args.result_dir, 
-                            verbose=args.verbose
+                            verbose=args.verbose,
+                            outd=args.outd
                             )
     
     if args.magma_genebased:
         MAGMA_genebased2Table(result_dir=args.result_dir, 
                             snp2gene_table=None, 
-                            verbose=args.verbose
+                            verbose=args.verbose,
+                            outd=args.outd
                             )
         
     if args.magma_geneset:
         MAGMA_geneset2Table(result_dir=args.result_dir, 
-                            verbose=args.verbose
+                            verbose=args.verbose,
+                            outd=args.outd
                             )
     
     if args.magma_geneproperty_gtex_specific:
         MAGMA_geneproperty_GTEx_SpecificTissue(result_dir=args.result_dir, 
-                                                verbose=args.verbose
+                                                verbose=args.verbose,
+                                                outd=args.outd
                                                 )
     if args.magma_geneproperty_gtex_general:
         MAGMA_geneproperty_GTEx_GeneralTissue(result_dir=args.result_dir, 
-                                                verbose=args.verbose
+                                                verbose=args.verbose,
+                                                outd=args.outd
                                                 )
     if args.magma_geneproperty_brainspan_age:
         MAGMA_geneproperty_BrainSpan_Age(result_dir=args.result_dir, 
-                                                verbose=args.verbose
+                                                verbose=args.verbose,
+                                                outd=args.outd
                                                 )
     if args.magma_geneproperty_brainspan_dev:
         MAGMA_geneproperty_BrainSpan_Developmental(result_dir=args.result_dir, 
-                                                verbose=args.verbose
+                                                verbose=args.verbose,
+                                                outd=args.outd
                                                 )
 

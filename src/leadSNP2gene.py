@@ -4,7 +4,7 @@ import pandas as pd
 import os
 import csv
 
-def leadSNP2GeneMapping(result_dir, verbose=False):
+def leadSNP2GeneMapping(result_dir, outd, verbose=False):
 	snp2gene_file = os.path.join(result_dir, "genes.txt")
 	assert FileExists(snp2gene_file), "Place `genes.txt` in the result directory."
 
@@ -48,7 +48,7 @@ def leadSNP2GeneMapping(result_dir, verbose=False):
 	df['Tissue ciMap'] = df['Tissue ciMap'].apply(lambda x: x.replace("_", " "))
 
 
-	df.to_csv("leadSNP_to_gene_mapping_table.csv", sep=",", index=False, quoting=csv.QUOTE_ALL)
+	df.to_csv(os.path.join(outd, "leadSNP_to_gene_mapping_table.csv"), sep=",", index=False, quoting=csv.QUOTE_ALL)
 	
 	logs.append("Number of genes identified in all 3 strategies: {:,}".format(len(df[(df['posMap'] == 'Yes') & (df['eqtlMap'] == 'Yes') & (df['ciMap'] == 'Yes')])))
 	logs.append("")
@@ -56,5 +56,5 @@ def leadSNP2GeneMapping(result_dir, verbose=False):
 	if verbose:
 		[print(l) for l in logs]
 	
-	with open("leadSNP_to_gene_mapping_table.log", 'w') as f:
+	with open(os.path.join(outd, "leadSNP_to_gene_mapping_table.log"), 'w') as f:
 		f.writelines([l+"\n" for l in logs])
