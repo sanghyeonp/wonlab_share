@@ -17,7 +17,7 @@ def leadSNPannotation(result_dir, outd, verbose=False):
     df_leadsnp = pd.read_csv(leadsnp_result, sep="\t", index_col=False)
 
     # 필요한 column들만 extract: rsID, uniqID
-    df = df_leadsnp[['rsID', 'uniqID']].copy()
+    df = df_leadsnp[['GenomicLocus', 'rsID', 'uniqID']].copy()
 
     # snps.txt 읽기
     snps_result = os.path.join(result_dir, "snps.txt")
@@ -60,7 +60,7 @@ def leadSNPannotation(result_dir, outd, verbose=False):
     df = pd.merge(df, df_catalog_nodup, how="left", on="rsID")
 
     # Rename columns
-    df.rename(columns={'chr':"Chr", 'pos':"Pos", 'effect_allele':"EA", 'non_effect_allele':"NEA",
+    df.rename(columns={'GenomicLocus':'Genomic locus', 'chr':"Chr", 'pos':"Pos", 'effect_allele':"EA", 'non_effect_allele':"NEA",
         'gwasP':"P-value", 'beta':"Beta", 'se':"SE", 'nearestGene':"Nearest gene", 'func':"Gene function", 
         'RDB':"RegulomeDB score", 'minChrState':"Minimum chromatin state", 'commonChrState':"Commmon chromatin state", 
         'PMID':"PUBMED ID"}, inplace=True)
