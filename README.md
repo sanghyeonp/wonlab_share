@@ -51,6 +51,7 @@ Rscript <Full directory path>/cohen_kappa.R --ref_gwas <GWAS summary statistics 
 `--alt_gwas_snp` : GWAS summary statistics 2의 SNP column 이름. Default = 'SNP'.  
 `--alt_gwas_beta` : GWAS summary statistics 2의 SNP column 이름. Default = 'Beta'.  
 `--alt_name` : GWAS summary statistics 2의 trait 이름. Default = Summary statistics 파일 이름.  
+`--alt_rev_beta` : Specify to reverse the effect direction of GWAS summary statistics 2. Default = FALSE.  
 
 - 아래 arguments들은 특정 SNP만 Cohen's kappa test에 포함시키기 위한 **optional arguments** 입니다. 만약 특정 SNP을 specify하지 않으면, GWAS summary statistics 1에 포함된 모든 SNP들을 기준으로 test가 진행됩니다.  
 `--snplist` : Path to file with SNP list. Default = 'NA'.  
@@ -61,9 +62,9 @@ Rscript <Full directory path>/cohen_kappa.R --ref_gwas <GWAS summary statistics 
 `--outd` : Path to output directory. Default=Current working directory.  
 
 - Additional **optional arguments**.  
-`--verbose` : (flag) 결과를 terminal에 print.  
-`--rds` : (flag) *Kappa.test* 결과를 RDS 파일로 저장.  
-`--table` : (flag) 결과를 table로 정리해서 csv 파일로 저장.  
+`--verbose` : (flag) 결과를 terminal에 print. Default = FALSE.  
+`--rds` : (flag) *Kappa.test* 결과를 RDS 파일로 저장. Default = FALSE.  
+`--table` : (flag) 결과를 table로 정리해서 csv 파일로 저장. Default = FALSE.  
 
 ---
 

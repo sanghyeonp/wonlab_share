@@ -1,5 +1,6 @@
 main <- function(ref_gwas, ref_gwas_delim, ref_gwas_snp, ref_gwas_beta,
                 alt_gwas, alt_gwas_delim, alt_gwas_snp, alt_gwas_beta,
+                alt_rev_beta,
                 snplist_, ref_name="NA", alt_name="NA"){
   # snplist_ : a single string with , separated list of SNPs
 
@@ -25,6 +26,11 @@ main <- function(ref_gwas, ref_gwas_delim, ref_gwas_snp, ref_gwas_beta,
   df_alt <- df_alt[df_alt$snp %in% c(snplist_), ]
   log_ <- paste0("Number of SNPs in reference: ", nrow(df_ref)); logs <- save_log(logs, log_)
   log_ <- paste0("Number of SNPs in alternative: ", nrow(df_alt)); logs <- save_log(logs, log_)
+
+  ### Reverse effect direction
+  if (alt_rev_beta){
+    df_alt$beta <- df_alt$beta * -1
+  }
 
   ### Merge two data
   df_ <- merge(df_ref, df_alt, by = "snp", all = FALSE, suffixes=c('.ref', '.alt'))

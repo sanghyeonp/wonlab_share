@@ -42,6 +42,8 @@ parser$add_argument("--alt_gwas_beta", required=FALSE, default="Beta",
                     help="Specify the Beta column name in the alternative GWAS summary statistics. Default='Beta'.")
 parser$add_argument("--alt_name", required=FALSE, default="NA",
                     help="Name of the alternative trait.")
+parser$add_argument("--alt_rev_beta", action='store_true',
+                    help="Specify to reverse the effect direction of alternative GWAS. Default = FALSE.")
 
 parser$add_argument("--snplist", required=FALSE, default="NA",
                     help="Path to file with SNP list.")
@@ -56,9 +58,9 @@ parser$add_argument("--outd", required=FALSE, default="NA",
 parser$add_argument("--verbose", action='store_true',
                     help="")
 parser$add_argument("--rds", action='store_true',
-                    help="Save RDS for the Cohen's kappa test result.")
+                    help="Save RDS for the Cohen's kappa test result. Default = FALSE.")
 parser$add_argument("--table", action='store_true',
-                    help="Save table in csv for the Cohen's kappa test result.")
+                    help="Save table in csv for the Cohen's kappa test result. Default = FALSE.")
 
 ### Get parser arguments
 args <- parser$parse_args()
@@ -74,6 +76,7 @@ alt_gwas_delim <- args$alt_gwas_delim
 alt_gwas_snp <- args$alt_gwas_snp
 alt_gwas_beta <- args$alt_gwas_beta
 alt_name <- args$alt_name
+alt_rev_beta <- args$alt_rev_beta
 
 snplist <- args$snplist
 snplist_fuma <- args$snplist_FUMA
@@ -125,7 +128,7 @@ if (snplist == "NA" & snplist_fuma == "NA"){
 snplist_ <- paste(c(snplist_), collapse=",")
 
 temp <- main(ref_gwas, ref_gwas_delim, ref_gwas_snp, ref_gwas_beta,
-                alt_gwas, alt_gwas_delim, alt_gwas_snp, alt_gwas_beta,
+                alt_gwas, alt_gwas_delim, alt_gwas_snp, alt_gwas_beta, alt_rev_beta,
                 snplist_, ref_name, alt_name)
 cohen <- temp[[1]]
 
