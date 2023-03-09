@@ -41,3 +41,9 @@ Step 5에서 하나의 파일 set에 대해 아래와 같이 진행.
     - 총 1,542개의 GWAS summary statistics를 받아야 했는데,
     - `/data2/MGI/00_download/01_generate_filelist.py`를 사용해서 기존에 받은 파일 (`/data2/MGI/00_download/exclude.list`)을 제외한 1,532개의 파일 이름들을 100개를 하나의 set로 구성해서 쪼갬.
     - screen 하나 당 파일 set 하나를 `mget`으로 다운로드 진행.
+
+---
+
+```diff
++ 혹시 다른 좋은 방법을 아시게 되면, 공유 해주시면 감사하겠습니다
+```
