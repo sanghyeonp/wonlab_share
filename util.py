@@ -13,8 +13,11 @@ def run_bash(bash_cmd):
 
 def download_(log_list, idx, password, username, hostname, remote_file_path, local_dir_path):
     cmd = 'sshpass -p "{}" scp {}@{}:{} {}'.format(password, username, hostname, remote_file_path, local_dir_path)
-    log_ = "Download index: {:,}\n\t{}\n".format(idx + 1, cmd); print(log_)
+    start = datetime.now()
+    log_ = "Download index: {:,}\n\t{}\n\tStart: {}\n".format(idx + 1, cmd, start); print(log_)
     run_bash(cmd)
+    end = datetime.now()
+    logs_ += "\tEnd: {}\n\tElapsed (hh:mm:ss.ms): {}\n".format(end, end - start)
     log_list.append(log_)
 
 
