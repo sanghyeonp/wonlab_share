@@ -1,7 +1,5 @@
 # Multiple comparisons correction
 
-안녕하세요? 박상현입니다.
-
 분석을 하다보면 multiple comparisons correction (MCC)을 하게 될 경우가 많이 생깁니다.
 
 공유드린 script를 활용하면, MCC 중 FDR과 Bonferroni correction에 대한 결과를 돌려줍니다.
