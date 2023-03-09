@@ -1,8 +1,5 @@
 # LiftoverAuto
 
-
-안녕하세요? 박상현입니다.
-
 Genomic data는 reference genome build에 따라서 genomic position이 달라지게 됩니다.
 
 ![Alt text](img/genome_build.png "Reference genome build")  
