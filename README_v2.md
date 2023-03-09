@@ -34,3 +34,10 @@ Step 5에서 하나의 파일 set에 대해 아래와 같이 진행.
 
 ### -> **단점**
 - 귀찮음. screen을 여러개 켜야함.
+
+### -> **참고**
+- screen을 여러개 켜서 한다고, 하나당 core 하나 먹고 그러지는 않는 것 같음. (File transfer여서 resource를 사용하지 않나?)
+- Wonlab에 `/data2/MGI/`를 이런식으로 받음.
+    - 총 1,542개의 GWAS summary statistics를 받아야 했는데,
+    - `/data2/MGI/00_download/01_generate_filelist.py`를 사용해서 기존에 받은 파일 (`/data2/MGI/00_download/exclude.list`)을 제외한 1,532개의 파일 이름들을 100개를 하나의 set로 구성해서 쪼갬.
+    - screen 하나 당 파일 set 하나를 `mget`으로 다운로드 진행.
