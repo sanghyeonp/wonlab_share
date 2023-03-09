@@ -1,4 +1,12 @@
-# SFTP file transfer in parallel
+# SFTP file transfer in parallel version 1
+
+```diff
+- [실패!] 아래 script로 여러 파일을 parallel하게 받을 수 없었습니다.
+```
+
+## **설명** -> [NEW README](README_v2.md)
+
+---
 
 Public 데이터를 다루다보면 여러 대용량 파일들을 외부기관에서 받거나 또는 보내는 일이 생깁니다.  
 그럴때, SFTP를 활용해서 데이터를 주고 받는 일이 많습니다.  
