@@ -102,7 +102,7 @@ $ sshpass -p "PWD" scp USER@example.com:/remote/data/share/FILE1.txt /local/exam
 
 ## - Single-line command: Single directory transfer 하기
 
-[SFTP에 접속해서 file transfer 하기 (Interactively)](#sftp에-접속해서-file-transfer-하기-interactively)에 Step 4. 까지는 동일.  
+[SFTP에 접속해서 file transfer 하기 (Interactively)](#--sftp에-접속해서-file-transfer-하기-interactively)에 Step 4. 까지는 동일.  
 Step 5에서 파일 하나가 아닌, directory 전체를 다운로드.
 
 `get -r <REMOTE DIRECTORY>`
