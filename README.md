@@ -1,8 +1,5 @@
 # Cohen's kappa coefficient for effect estimate direction concordance between GWAS
 
-
-안녕하세요? 박상현입니다.
-
 본 repository는 두 GWAS간의 effect direction concordance를 Cohen's kappa test라는 statistical test를 통해 통계적으로 concordant 한지 아닌지를 확인하는 script입니다.
 
 저희 연구실에서는 김소연 박사님 해당 방법을 활용한 논문 (Figure 2)이 publish 되어있습니다 (Kim, 2022).
