@@ -1,7 +1,5 @@
 # FUMA results to table
 
-안녕하세요? 박상현입니다.
-
 GWAS 연구를 수행하면서 FUMA (Watanabe, 2017)라는 web-based software를 사용해서 SNP annotation, SNP to gene mapping, 다양한 MAGMA 분석 등을 진행할 경우가 종종 있는데요.  
 
 FUMA라는 하나의 tool로 다양한 분석이 진행되고, 따라서 여러 결과들을 다운로드 받으면, 어디서부터 어떤 결과를 중요하게 보아야하고, 어떻게 결과를 정리하고, 해석해야 할 지 막막할 수 있다고 생각합니다. (저도 많은 시행착오 겪었고, 현재도 겪고 있습니다.)  
