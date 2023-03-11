@@ -2,6 +2,8 @@
 
 ```diff
 - [실패!] 아래 script로 여러 파일을 parallel하게 받을 수 없었습니다.
+
++ [정정!] 이 script로 가능함. 하지만 SFTP 연결을 5개 이상이 되면 자주 느려지면서 멈춤.
 ```
 
 ## **설명** -> [NEW README](README_v2.md)
