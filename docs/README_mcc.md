@@ -18,12 +18,12 @@
 ## How to use?
 1. `git clone`을 활용해 관련 script를 다운로드 하기.
 ```
-git clone https://github.com/sanghyeonp/MCC.git
+git clone https://github.com/sanghyeonp/wonlab_share.git
 ```
 
-2. `mcc.py`를 이용하여 multiple comparisons correction 진행하기.
+2. `/src/mcc/mcc.py`를 이용하여 multiple comparisons correction 진행하기.
 ```
-python3 mcc.py --file <file path> \
+python3 /src/mcc/mcc.py --file <file path> \
                 --p_col <P-value column 이름>
 ```
 &nbsp;
@@ -51,7 +51,7 @@ python3 mcc.py --file <file path> \
 
 ## Example
 
-`/example` 에 있는 예제를 참고하세요.
+`/examples/mcc/` 에 있는 예제를 참고하세요.
 
 ---
 ## Contributors
