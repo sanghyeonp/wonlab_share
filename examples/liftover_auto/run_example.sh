@@ -1,6 +1,6 @@
 #!/bin/bash
 
-python3 ../liftover_auto.py --file data/gwas_catalog_v1.0_hg38.tsv \
+python3 ../../src/liftover_auto/liftover_auto.py --file data/gwas_catalog_v1.0_hg38.tsv \
                             --delim tab \
                             --snp_col SNP \
                             --chr_col Chr \

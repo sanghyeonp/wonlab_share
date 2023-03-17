@@ -1,5 +1,5 @@
 from src.packages import *
-from src.fnc import *
+from src.liftover_auto.fnc import *
 from src.util import logger, save_log, map_delim
 
 

@@ -2,7 +2,7 @@
 
 Genomic data는 reference genome build에 따라서 genomic position이 달라지게 됩니다.
 
-![Alt text](img/genome_build.png "Reference genome build")  
+![Alt text](../img/genome_build.png "Reference genome build")  
 *https://en.wikipedia.org/wiki/Reference_genome*
 
 Build에 따라 SNP position이 달라지게 되기 때문에 분석에 사용하는 데이터의 reference genome build를 align 해주는 것은 매우 중요합니다.  
@@ -26,12 +26,12 @@ Liftover를 사용하기 전에 따로 *bed*파일을 만들고, 또 Liftover가
 ## How to use?
 1. `git clone`을 활용해 관련 script를 다운로드 하기.
 ```
-git clone https://github.com/sanghyeonp/LiftoverAuto.git
+git clone https://github.com/sanghyeonp/wonlab_share.git
 ```
 
-2. `liftover_auto.py`를 이용하여 Liftover 진행.
+2. `/src/liftover_auto/liftover_auto.py`를 이용하여 Liftover 진행.
 ```
-python3 liftover_auto.py --file <Liftover 수행할 파일> \
+python3 /src/liftover_auto/liftover_auto.py --file <Liftover 수행할 파일> \
                         --build_from <기존 genome build 번호> \
                         --build_to <Lift 할 genome build 번호>
 ```
@@ -66,14 +66,14 @@ python3 liftover_auto.py --file <Liftover 수행할 파일> \
 
 ## Example
 
-`/example` 에 있는 예제를 참고하세요.
+`/example/liftover_auto/` 에 있는 예제를 참고하세요.
 
 GWAS Catalog에 report된 SNP들은 GRCh38로 coding이 되어있는데, 이걸 GRCh37로 바꾸는 예제를 만들어보았습니다.
 
 
 ---
 ## Contributors
-- 김범수 : 처음에 Liftover 사용법 설며해주셨습니다.
+- 김범수 : 처음에 Liftover 사용법 설명해주셨습니다.
 
 ---
 
