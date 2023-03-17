@@ -1,0 +1,6 @@
+Performing liftover for:
+	data/gwas_catalog_v1.0_hg38.tsv
+	Genome build from GRCh38 to GRCh37
+Number of SNPs initially: 227,119
+Number of SNPs lifted: 223,593
+Number of SNPs unlifted: 3,526
