@@ -1,0 +1,15 @@
+Running MAGMA property analysis of BrainSpan developmental stages to table...
+Column description: Beta and Beta.Std is the non-standardized and semi-standardized regression coefficient from generalized linear regression described in [1]. SE is the standard error of the non-standardized regression coefficient. P value is derived with a one-tailed Z-tests of Beta divided by SE (not adjusted for multiple testing).
+Source: Karlsson Linnér, R. et al. Multivariate analysis of 1.5 million people identifies genetic associations with traits related to self-regulation and addiction. Nat Neurosci 24, 1367–1376 (2021).
+First 6 lines in magma_exp_bs_dev_avg_log2RPKM.gsa.out:
+	# MEAN_SAMPLE_SIZE = 151188
+	# TOTAL_GENES = 13306
+	# TEST_DIRECTION = one-sided, positive (set), one-sided, positive (covar)
+	# CONDITIONED_INTERNAL = gene size, gene density, inverse mac, log(gene size), log(gene density), log(inverse mac)
+	# CONDITIONED_HIDDEN = Average (covar)
+	VARIABLE                TYPE  NGENES         BETA     BETA_STD           SE            P
+Number of Brain developmental stage tested: 11
+Bonferroni correction threshold: 0.004545454545454546
+Number of Brain developmental stage passing Bonferroni: 0
+Number of Brain developmental stage passing FDR: 0
+

@@ -1,0 +1,15 @@
+Running MAGMA property analysis of GTEx v8 general tissue to table...
+Column description: Beta and Beta.Std is the non-standardized and semi-standardized regression coefficient from generalized linear regression described in [1]. SE is the standard error of the non-standardized regression coefficient. P value is derived with a one-tailed Z-tests of Beta divided by SE (not adjusted for multiple testing).
+Source: Karlsson Linnér, R. et al. Multivariate analysis of 1.5 million people identifies genetic associations with traits related to self-regulation and addiction. Nat Neurosci 24, 1367–1376 (2021).
+First 6 lines in magma_exp_gtex_v8_ts_general_avg_log2TPM.gsa.out:
+	# TOTAL_GENES = 16748
+	# TEST_DIRECTION = one-sided, positive (set), one-sided, positive (covar)
+	# CONDITIONED_INTERNAL = gene size, gene density, inverse mac, log(gene size), log(gene density), log(inverse mac)
+	# CONDITIONED_HIDDEN = Average (covar)
+	VARIABLE             TYPE  NGENES         BETA     BETA_STD           SE            P
+	Adipose_Tissue      COVAR   16748    0.0050007    0.0097606     0.013992      0.36039
+Number of tissues tested: 29
+Bonferroni correction threshold: 0.001724137931034483
+Number of tissue passing Bonferroni: 0
+Number of tissue passing FDR: 0
+

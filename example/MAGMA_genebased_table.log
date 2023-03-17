@@ -1,0 +1,6 @@
+Running MAGMA gene-based analysis to table...
+Number of genes tested: 18,222
+Bonferroni correction threshold: 2.7439359016573376e-06
+Number of genes passing Bonferroni: 62
+Number of genes identified from 3 stragies of SNP2GENE and MAGMA gene-based analysis: 29
+
