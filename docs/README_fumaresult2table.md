@@ -29,12 +29,12 @@ FUMA라는 하나의 tool로 다양한 분석이 진행되고, 따라서 여러 
 ## How to use?
 1. `git clone`을 활용해 관련 script를 다운로드 하기.
 ```
-git clone https://github.com/sanghyeonp/FUMAresult2table.git
+git clone https://github.com/sanghyeonp/wonlab_share.git
 ```
 
-2. `FUMAresult2table.py`를 이용하여 table 만들기.
+2. `/src/fumaresult2table/FUMAresult2table.py`를 이용하여 table 만들기.
 ```
-python3 FUMAresult2table.py --result_dir <FUMA 결과 있는 directory> \
+python3 /src/fumaresult2table/FUMAresult2table.py --result_dir <FUMA 결과 있는 directory> \
                             --run_all
 ```
 &nbsp;
@@ -59,7 +59,7 @@ python3 FUMAresult2table.py --result_dir <FUMA 결과 있는 directory> \
 
 ## Example
 
-`/example` 에 있는 예제를 참고하세요.
+`/example/fumaresult2table/` 에 있는 예제를 참고하세요.
 
 Lagou, 2021 에서 다운로드 받은 fasting glucose GWAS를 예제 삼아 진행해보았습니다.
 

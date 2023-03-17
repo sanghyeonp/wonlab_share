@@ -1,9 +1,9 @@
 from src.util import *
-from src.leadSNPannotation import leadSNPannotation
-from src.leadSNP2gene import leadSNP2GeneMapping
-from src.magma_genebased import MAGMA_genebased2Table
-from src.magma_geneset import MAGMA_geneset2Table
-from src.magma_geneproperty import MAGMA_geneproperty_GTEx_SpecificTissue, MAGMA_geneproperty_GTEx_GeneralTissue, MAGMA_geneproperty_BrainSpan_Age, MAGMA_geneproperty_BrainSpan_Developmental
+from src.fumaresult2table.leadSNPannotation import leadSNPannotation
+from src.fumaresult2table.leadSNP2gene import leadSNP2GeneMapping
+from src.fumaresult2table.magma_genebased import MAGMA_genebased2Table
+from src.fumaresult2table.magma_geneset import MAGMA_geneset2Table
+from src.fumaresult2table.magma_geneproperty import MAGMA_geneproperty_GTEx_SpecificTissue, MAGMA_geneproperty_GTEx_GeneralTissue, MAGMA_geneproperty_BrainSpan_Age, MAGMA_geneproperty_BrainSpan_Developmental
 
 import argparse
 
