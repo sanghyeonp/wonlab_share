@@ -1,5 +1,7 @@
 #!/bin/bash
-script=/data1/sanghyeon/wonlab_contribute/beta_direction_CohenKappa/cohen_kappa.R
+
+# Specify absolute path to the script
+script=/data1/sanghyeon/wonlab_contribute/combined/src/cohenkappa/cohen_kappa.R
 
 Rscript ${script} --ref_gwas ./data/GWAS1.subset.csv \
                     --ref_gwas_delim comma \
@@ -11,8 +13,8 @@ Rscript ${script} --ref_gwas ./data/GWAS1.subset.csv \
                     --alt_gwas_snp SNP \
                     --alt_gwas_beta Effect \
                     --alt_name Trait2 \
-                    --snplist_FUMA ./data/leadSNPs.txt \
-                    --outf example2 \
+                    --snplist ./data/snp.list \
+                    --outf example1 \
                     --verbose \
                     --rds \
                     --table
