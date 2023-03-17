@@ -1,0 +1,24 @@
+Computing Cohen's kappa coefficient:
+	Reference: ./data/GWAS1.subset.csv
+	Alternative: ./data/GWAS2.subset.tsv
+SNP list was provided from FUMA `leadSNPs.txt`. 1650 SNPs were specified.
+Number of SNPs in reference: 1650
+Number of SNPs in alternative: 1650
+Number of SNPs in both reference and alternative: 1650
+
+$Result
+
+	Estimate Cohen's kappa statistics and test the null hypothesis that
+	the extent of agreement is same as random (kappa=0)
+
+data:  df_$beta.ref.c and df_$beta.alt.c
+Z = 35.106, p-value < 2.2e-16
+95 percent confidence interval:
+ 0.8399685 0.8885163
+sample estimates:
+[1] 0.8642424
+
+
+$Judgement
+[1] "Almost perfect agreement"
+
