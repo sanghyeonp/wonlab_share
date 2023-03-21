@@ -20,6 +20,7 @@ __pycache__
 *.gene.loc
 *.pval
 *.out
+*.raw
 
 # MAGMA gene-set files
 *.gmt*
