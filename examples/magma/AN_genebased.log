@@ -1,0 +1,37 @@
+Welcome to MAGMA v1.10 (linux)
+Using flags:
+	--bfile ../../software/MAGMA/reference/g1000_eur
+	--pval AN.pval ncol=N
+	--gene-annot AN.genes.annot
+	--out AN
+
+Start time is 18:12:40, Tuesday 21 Mar 2023
+
+Loading PLINK-format data...
+Reading file ../../software/MAGMA/reference/g1000_eur.fam... 503 individuals read
+Reading file ../../software/MAGMA/reference/g1000_eur.bim... 22665064 SNPs read
+Preparing file ../../software/MAGMA/reference/g1000_eur.bed... 
+
+Reading SNP synonyms from file ../../software/MAGMA/reference/g1000_eur.synonyms (auto-detected)
+	read 6016767 mapped synonyms from file, mapping to 3921040 SNPs in the data
+	WARNING: detected 133 synonymous SNP pairs in the data
+	         skipped all synonym entries involved, synonymous SNPs are kept in analysis
+	         writing list of detected synonyms in data to supplementary log file
+Reading SNP p-values from file AN.pval... 
+	detected 3 variables in file
+	using variable: SNP (SNP id)
+	using variable: P (p-value)
+	using variable: N (sample size; discarding SNPs with N < 50)
+	read 8219103 lines from file, containing valid SNP p-values for 7239998 SNPs in data (88.09% of lines, 31.94% of SNPs in data)
+Loading gene annotation from file AN.genes.annot... 
+	17900 gene definitions read from file
+	found 17825 genes containing valid SNPs in genotype data
+
+
+Starting gene analysis... 
+	using model: SNPwise-mean
+	writing gene analysis results to file AN.genes.out
+	writing intermediate output to file AN.genes.raw
+
+
+End time is 18:21:20, Tuesday 21 Mar 2023 (elapsed: 00:08:40)

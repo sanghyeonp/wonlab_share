@@ -1,0 +1,41 @@
+Welcome to MAGMA v1.10 (linux)
+Using flags:
+	--gene-results AN_genebased.genes.raw
+	--set-annot ./geneset/c5.go.bp.v2023.1.Hs.entrez.gmt.modified
+	--out AN_geneset
+
+Start time is 19:43:17, Tuesday 21 Mar 2023
+
+Reading file AN_genebased.genes.raw... 
+	17825 genes read from file
+Loading gene-set annotation...
+Reading file ./geneset/c5.go.bp.v2023.1.Hs.entrez.gmt.modified... 
+	WARNING: gene set GOBP_FORMATION_OF_QUADRUPLE_SL_U4_U5_U6_SNRNP contains no genes defined in genotype data
+	WARNING: gene set GOBP_NEGATIVE_REGULATION_OF_INTERLEUKIN_21_PRODUCTION contains no genes defined in genotype data
+	WARNING: gene set GOBP_REGULATION_OF_BMP_SECRETION contains no genes defined in genotype data
+	7751 gene-set definitions read from file
+	found 7748 gene sets containing genes defined in genotype data (containing a total of 15094 unique genes)
+Preparing variables for analysis...
+	truncating Z-scores 3 points below zero or 6 standard deviations above the mean
+	WARNING: discarding gene set 'GOBP_NEGATIVE_REGULATION_OF_INTERLEUKIN_6_MEDIATED_SIGNALING_PATHWAY' from file ./geneset/c5.go.bp.v2023.1.Hs.entrez.gmt.modified, variance is too low (set contains only one gene used in analysis)
+	WARNING: discarding gene set 'GOBP_NEGATIVE_REGULATION_OF_VASCULAR_ENDOTHELIAL_GROWTH_FACTOR_PRODUCTION' from file ./geneset/c5.go.bp.v2023.1.Hs.entrez.gmt.modified, variance is too low (set contains only one gene used in analysis)
+	WARNING: discarding gene set 'GOBP_NEGATIVE_REGULATION_OF_MATRIX_METALLOPEPTIDASE_SECRETION' from file ./geneset/c5.go.bp.v2023.1.Hs.entrez.gmt.modified, variance is too low (set contains only one gene used in analysis)
+	WARNING: discarding gene set 'GOBP_NEGATIVE_REGULATION_OF_CELL_CHEMOTAXIS_TO_FIBROBLAST_GROWTH_FACTOR' from file ./geneset/c5.go.bp.v2023.1.Hs.entrez.gmt.modified, variance is too low (set contains only one gene used in analysis)
+	truncating covariate values more than 5 standard deviations from the mean
+	total variables available for analysis: 7744 gene sets
+
+Parsing model specifications...
+Inverting gene-gene correlation matrix...
+Performing regression analysis...
+	testing direction: one-sided, positive (sets), two-sided (covar)
+	conditioning on internal variables:
+		gene size, log(gene size)
+		gene density, log(gene density)
+		sample size, log(sample size)
+		inverse mac, log(inverse mac)
+	analysing individual variables
+
+	analysing single-variable models (number of models: 7744)
+	writing results to file AN_geneset.gsa.out
+
+End time is 19:43:33, Tuesday 21 Mar 2023 (elapsed: 00:00:16)
