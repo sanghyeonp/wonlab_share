@@ -1,2 +1,26 @@
-# Byte-compiled / optimized / DLL files
 __pycache__
+
+# Compressed files
+*.zip
+*.gz
+
+# PLINK files
+*.bed
+*.bim
+*.fam
+
+# Large files
+*.tsv
+
+# MAGMA
+*REPORT
+*.synonyms
+*.annot
+*.snp.loc
+*.gene.loc
+*.pval
+*.out
+
+# MAGMA gene-set files
+*.gmt*
+*.cov
