@@ -1,9 +1,11 @@
-from src.util import *
-
-import pandas as pd
+import sys
 import os
-import csv
-from tqdm import tqdm
+current = os.path.dirname(os.path.realpath(__file__))
+parent = os.path.dirname(current)
+sys.path.append(parent)
+
+from util import *
+from packages import *
 
 
 def leadSNPannotation(result_dir, outd, verbose=False):

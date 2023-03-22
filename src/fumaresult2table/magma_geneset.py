@@ -1,11 +1,11 @@
-from src.util import *
-
-import pandas as pd
+import sys
 import os
-import csv
-from statsmodels.sandbox.stats.multicomp import multipletests
-import code
-# code.interact(local=dict(globals(), **locals()))
+current = os.path.dirname(os.path.realpath(__file__))
+parent = os.path.dirname(current)
+sys.path.append(parent)
+
+from util import *
+from packages import *
 
 def MAGMA_geneset2Table(result_dir, outd, verbose=False):
     geneset_file = os.path.join(result_dir, "magma.gsa.out")

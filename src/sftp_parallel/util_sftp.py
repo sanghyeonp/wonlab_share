@@ -1,5 +1,12 @@
-from src.packages import *
-from src.util import run_bash
+import sys
+import os
+current = os.path.dirname(os.path.realpath(__file__))
+parent = os.path.dirname(current)
+sys.path.append(parent)
+
+from packages import *
+from util import *
+
 
 def download_(log_list, idx, password, username, hostname, remote_file_path, local_dir_path):
     cmd = 'sshpass -p "{}" scp {}@{}:{} {}'.format(password, username, hostname, remote_file_path, local_dir_path)

@@ -3,9 +3,9 @@ Using flags:
 	--bfile ../../software/MAGMA/reference/g1000_eur
 	--pval AN.pval ncol=N
 	--gene-annot AN.genes.annot
-	--out AN
+	--out AN_genebased
 
-Start time is 18:12:40, Tuesday 21 Mar 2023
+Start time is 10:46:19, Wednesday 22 Mar 2023
 
 Loading PLINK-format data...
 Reading file ../../software/MAGMA/reference/g1000_eur.fam... 503 individuals read
@@ -30,8 +30,8 @@ Loading gene annotation from file AN.genes.annot...
 
 Starting gene analysis... 
 	using model: SNPwise-mean
-	writing gene analysis results to file AN.genes.out
-	writing intermediate output to file AN.genes.raw
+	writing gene analysis results to file AN_genebased.genes.out
+	writing intermediate output to file AN_genebased.genes.raw
 
 
-End time is 18:21:20, Tuesday 21 Mar 2023 (elapsed: 00:08:40)
+End time is 10:54:59, Wednesday 22 Mar 2023 (elapsed: 00:08:40)

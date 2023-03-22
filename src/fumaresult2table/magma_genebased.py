@@ -1,10 +1,11 @@
-from src.util import *
-
-import pandas as pd
+import sys
 import os
-import csv
-from statsmodels.sandbox.stats.multicomp import multipletests
+current = os.path.dirname(os.path.realpath(__file__))
+parent = os.path.dirname(current)
+sys.path.append(parent)
 
+from util import *
+from packages import *
 
 def MAGMA_genebased2Table(result_dir, outd, snp2gene_table=None, verbose=False):
     genebased_file = os.path.join(result_dir, "magma.genes.out")

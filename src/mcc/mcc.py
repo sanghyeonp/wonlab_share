@@ -1,8 +1,11 @@
-import argparse
-import pandas as pd
-import csv
+import sys
 import os
-from statsmodels.sandbox.stats.multicomp import multipletests
+current = os.path.dirname(os.path.realpath(__file__))
+parent = os.path.dirname(current)
+sys.path.append(parent)
+
+from util import *
+from packages import *
 
 
 def parse_args():
@@ -69,6 +72,8 @@ def main(file, skip_rows, delim, p_col, outf, outd, quoting, log, verbose):
     df['Bonferroni P-value'] = bonferroni_pval
     df['Bonferroni significant'] = df['Bonferroni P-value'].apply(lambda x: pval_sig(x))
 
+    df.sort_values(by=['Bonferroni P-value'], inplace=True)
+
     # Summary
     log_ = "Number of FDR significant: {:,}".format(len(df[df['FDR significant'] == 'Yes'])); logs = log_action(logs, log_, verbose)
     log_ = "Number of Bonferroni significant: {:,}".format(len(df[df['Bonferroni significant'] == 'Yes'])); logs = log_action(logs, log_, verbose)
@@ -87,17 +92,14 @@ if __name__ == "__main__":
     args = parse_args()
 
     if args.outf == "NA":
-        args.outf = "mcc.tsv"
-    else:
-        args.outf = "mcc." + args.outf
+        args.outf = "mcc.{}".format(os.path.split(args.file))
+
     if args.outd == "NA":
         args.outd = os.getcwd()
     
-    delim_map = {'tab':'\t', 'comma':',', 'whitespace':' '}
-
     main(file=args.file, 
         skip_rows=args.skip_rows,
-        delim=delim_map[args.delim],
+        delim=map_delim(args.delim),
         p_col=args.p_col,  
         outf=args.outf, 
         outd=args.outd, 
