@@ -54,7 +54,7 @@ if __name__ == "__main__":
     args = parse_args()
 
     if args.outf == "NA":
-        args.outf = "id2name.{}".format(os.path.split(args.outf)[-1])
+        args.outf = "id2name.{}".format(os.path.split(args.file)[-1])
 
     if args.outd == "NA":
         args.outd = os.getcwd()
