@@ -32,3 +32,5 @@ def map_delim(delim):
                 'whitespace':' '
                 }
     return mapping[delim]
+
+

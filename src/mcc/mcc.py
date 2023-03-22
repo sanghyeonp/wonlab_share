@@ -3,6 +3,7 @@ import pandas as pd
 import csv
 import os
 from statsmodels.sandbox.stats.multicomp import multipletests
+from src.util import map_delim
 
 
 def parse_args():
@@ -93,11 +94,9 @@ if __name__ == "__main__":
     if args.outd == "NA":
         args.outd = os.getcwd()
     
-    delim_map = {'tab':'\t', 'comma':',', 'whitespace':' '}
-
     main(file=args.file, 
         skip_rows=args.skip_rows,
-        delim=delim_map[args.delim],
+        delim=map_delim(args.delim),
         p_col=args.p_col,  
         outf=args.outf, 
         outd=args.outd, 
