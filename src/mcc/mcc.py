@@ -88,9 +88,8 @@ if __name__ == "__main__":
     args = parse_args()
 
     if args.outf == "NA":
-        args.outf = "mcc.tsv"
-    else:
-        args.outf = "mcc." + args.outf
+        args.outf = "mcc.{}".format(os.path.split(args.outf)[-1])
+
     if args.outd == "NA":
         args.outd = os.getcwd()
     
