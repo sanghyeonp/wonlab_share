@@ -1,9 +1,11 @@
-import argparse
-import pandas as pd
-import csv
+import sys
 import os
-from statsmodels.sandbox.stats.multicomp import multipletests
-from src.util import map_delim
+current = os.path.dirname(os.path.realpath(__file__))
+parent = os.path.dirname(current)
+sys.path.append(parent)
+
+from util import *
+from packages import *
 
 
 def parse_args():
@@ -69,6 +71,8 @@ def main(file, skip_rows, delim, p_col, outf, outd, quoting, log, verbose):
     bonferroni_pval = bonferroni_pval_cal(df[p_col].tolist())
     df['Bonferroni P-value'] = bonferroni_pval
     df['Bonferroni significant'] = df['Bonferroni P-value'].apply(lambda x: pval_sig(x))
+
+    df.sort_values(by=['Bonferroni P-value'], inplace=True)
 
     # Summary
     log_ = "Number of FDR significant: {:,}".format(len(df[df['FDR significant'] == 'Yes'])); logs = log_action(logs, log_, verbose)

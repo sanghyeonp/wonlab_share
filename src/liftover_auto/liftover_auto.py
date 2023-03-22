@@ -1,6 +1,12 @@
-from src.packages import *
-from src.liftover_auto.fnc import *
-from src.util import logger, save_log, map_delim
+import sys
+import os
+current = os.path.dirname(os.path.realpath(__file__))
+parent = os.path.dirname(current)
+sys.path.append(parent)
+
+from packages import *
+from util import logger, save_log, map_delim
+from fnc import *
 
 
 def parse_args():

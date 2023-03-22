@@ -1,8 +1,11 @@
-from src.util import *
-
-import pandas as pd
+import sys
 import os
-import csv
+current = os.path.dirname(os.path.realpath(__file__))
+parent = os.path.dirname(current)
+sys.path.append(parent)
+
+from util import *
+from packages import *
 
 def leadSNP2GeneMapping(result_dir, outd, verbose=False):
 	snp2gene_file = os.path.join(result_dir, "genes.txt")

@@ -1,4 +1,4 @@
-from src.packages import *
+from packages import *
 
 def FileExists(file):
     return True if os.path.exists(file) else False
@@ -29,8 +29,20 @@ def save_log(log_list, out):
 def map_delim(delim):
     mapping = {'tab':'\t', 
                 'comma':',',
-                'whitespace':' '
+                'whitespace':' ',
+                'formatted':'formatted'
                 }
     return mapping[delim]
 
 
+def read_formatted_file(file):
+    with open(file, 'r') as f:
+        rows = [row.strip() for row in f.readlines()]
+        data = []
+        for row in rows:
+            row = row.split(sep=" ")
+            row = [ele for ele in row if ele]
+            data.append(row)
+    
+    df = pd.DataFrame(data[1:], columns=data[0])
+    return df
