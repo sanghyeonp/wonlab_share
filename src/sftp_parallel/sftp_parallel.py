@@ -1,5 +1,11 @@
-from src.packages import *
-from src.sftp_parallel.util_sftp import *
+import sys
+import os
+current = os.path.dirname(os.path.realpath(__file__))
+parent = os.path.dirname(current)
+sys.path.append(parent)
+
+from util_sftp import *
+from packages import *
 
 
 def parse_args():
