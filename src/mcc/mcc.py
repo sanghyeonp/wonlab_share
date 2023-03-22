@@ -1,8 +1,11 @@
-import argparse
-import pandas as pd
-import csv
+import sys
 import os
-from statsmodels.sandbox.stats.multicomp import multipletests
+current = os.path.dirname(os.path.realpath(__file__))
+parent = os.path.dirname(current)
+sys.path.append(parent)
+
+from util import *
+from packages import *
 
 
 def parse_args():

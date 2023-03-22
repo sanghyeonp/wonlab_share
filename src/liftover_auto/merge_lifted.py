@@ -1,5 +1,11 @@
-from src.packages import *
-from src.util import run_bash, logger
+import sys
+import os
+current = os.path.dirname(os.path.realpath(__file__))
+parent = os.path.dirname(current)
+sys.path.append(parent)
+
+from packages import *
+from util import run_bash, logger
 
 def is_chr(x):
     try:

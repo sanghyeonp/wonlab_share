@@ -1,4 +1,10 @@
-from src.packages import *
+import sys
+import os
+current = os.path.dirname(os.path.realpath(__file__))
+parent = os.path.dirname(current)
+sys.path.append(parent)
+
+from packages import *
 
 def make_bed(file, delim, snp_col, chr_col, pos_col, outd):
     df_ = pd.read_csv(file, sep=delim, index_col=False, na_values=["NA", "NaN", " "])
