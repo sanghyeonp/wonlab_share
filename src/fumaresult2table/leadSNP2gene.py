@@ -48,10 +48,10 @@ def leadSNP2GeneMapping(result_dir, outd, max_dis = 10, verbose=False):
 
 	def match_snps4posmap(df_snps, chr, start, end, max_dis):
 		df_snps_subset = df_snps[df_snps['chr'] == chr]
-		df_snps_subset = df_snps_subset[df_snps_subset['pos'].between(start - max_dis, end + max_dis)]
+		df_snps_subset = df_snps_subset[(df_snps_subset['pos'].between(start - max_dis, end + max_dis)) & (df_snps_subset['posMapFilt'] == 1)]
 		if df_snps_subset.empty:
 			return '-'
-		snps = df_snps_subset[df_snps_subset['posMapFilt'] == 1]['rsID'].tolist()
+		snps = df_snps_subset['rsID'].tolist()
 		return ', '.join(snps)
 
 	df['SNPs posMap'] = df.apply(lambda row: match_snps4posmap(df_snps, row['Chr'], row['Start'], row['End'], max_dis), axis=1)
