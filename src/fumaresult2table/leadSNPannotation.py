@@ -71,6 +71,8 @@ def leadSNPannotation(result_dir, outd, verbose=False):
     file_annov = os.path.join(result_dir, "annov.txt")
     df_annov = pd.read_csv(file_annov, sep="\t", index_col=False)
     df_annov_sub = df_annov[['uniqID', 'exonic_func']]
+    df_annov_sub.fillna({'exonic_func':"-"}, inplace=True)
+    df_annov_sub.drop_duplicates(subset=['exonic_func'], inplace=True)
     df_annov_sub.columns = ['uniqID', 'Functional consequence of exonic SNP on gene']
     
     df = df.merge(df_annov_sub, how="left", on="uniqID")
