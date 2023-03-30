@@ -19,8 +19,16 @@ def parse_args():
     parser.add_argument('--skip_rows', required=False, type=int, default=0,
                         help='Specify the number of first lines in the input file to skip. Default = 0.')
 
+    parser.add_argument('--bonferroni-only', dest='bonferroni_only', action='store_true',
+                    help='Specify to conduct Bonferroni correction only. Default = False.')
+    parser.add_argument('--fdr-only', dest='fdr_only', action='store_true',
+                        help='Specify to conduct FDR correction only. Default = False.')
+    
+
     parser.add_argument('--outf', required=False, type=str, default='NA',
                         help='Name of output file. Default = mcc.<Input file name>')
+    parser.add_argument('--out_delim', required=False, type=str, default="NA",
+                        help='Delimiter of the input file. Default = "NA" then identical delimiter as the input file. Choices = ["tab", "comma", "whitespace"].')
     parser.add_argument('--outd', required=False, type=str, default='NA',
                         help='Directory where the output will be saved. Default = Current working directory.')
     parser.add_argument('--quoting', action='store_true',
@@ -54,34 +62,35 @@ def log_action(logs, log_, verbose):
     return logs
 
 
-def main(file, skip_rows, delim, p_col, outf, outd, quoting, log, verbose):
+def main(file, skip_rows, delim, bonferroni, fdr, p_col, outf, out_delim, outd, quoting, log, verbose):
     logs = []
     log_ = "Conducting multiple comparisons correction for:\n\t{}".format(file); logs = log_action(logs, log_, verbose)
     log_ = "Reading the input file...".format(file); logs = log_action(logs, log_, verbose)
 
     df = pd.read_csv(file, sep=delim, index_col=False, skiprows=skip_rows)
 
-    fdr_pval = fdr_pval_cal(df[p_col].tolist())
-    df['FDR P-value'] = fdr_pval
-    df['FDR significant'] = df['FDR P-value'].apply(lambda x: pval_sig(x))
+    if fdr:
+        fdr_pval = fdr_pval_cal(df[p_col].tolist())
+        df['FDR P-value'] = fdr_pval
+        df['FDR significant'] = df['FDR P-value'].apply(lambda x: pval_sig(x))
+        log_ = "Number of FDR significant: {:,}".format(len(df[df['FDR significant'] == 'Yes'])); logs = log_action(logs, log_, verbose)
 
-    log_ = "Number of comparisons: {:,}".format(len(df)); logs = log_action(logs, log_, verbose)
-    log_ = "Bonferroni correction threshold (0.05/{}): {:,}".format(len(df), 0.05/len(df)); logs = log_action(logs, log_, verbose)
+    if bonferroni:
+        log_ = "Number of comparisons: {:,}".format(len(df)); logs = log_action(logs, log_, verbose)
+        log_ = "Bonferroni correction threshold (0.05/{}): {:,}".format(len(df), 0.05/len(df)); logs = log_action(logs, log_, verbose)
 
-    bonferroni_pval = bonferroni_pval_cal(df[p_col].tolist())
-    df['Bonferroni P-value'] = bonferroni_pval
-    df['Bonferroni significant'] = df['Bonferroni P-value'].apply(lambda x: pval_sig(x))
+        bonferroni_pval = bonferroni_pval_cal(df[p_col].tolist())
+        df['Bonferroni P-value'] = bonferroni_pval
+        df['Bonferroni significant'] = df['Bonferroni P-value'].apply(lambda x: pval_sig(x))
 
-    df.sort_values(by=['Bonferroni P-value'], inplace=True)
-
-    # Summary
-    log_ = "Number of FDR significant: {:,}".format(len(df[df['FDR significant'] == 'Yes'])); logs = log_action(logs, log_, verbose)
-    log_ = "Number of Bonferroni significant: {:,}".format(len(df[df['Bonferroni significant'] == 'Yes'])); logs = log_action(logs, log_, verbose)
+        df.sort_values(by=['Bonferroni P-value'], inplace=True)
+        
+        log_ = "Number of Bonferroni significant: {:,}".format(len(df[df['Bonferroni significant'] == 'Yes'])); logs = log_action(logs, log_, verbose)
 
     if quoting:
-        df.to_csv(os.path.join(outd, outf), sep=delim, index=False, quoting=csv.QUOTE_ALL)
+        df.to_csv(os.path.join(outd, outf), sep=out_delim, index=False, quoting=csv.QUOTE_ALL)
     else:
-        df.to_csv(os.path.join(outd, outf), sep=delim, index=False)
+        df.to_csv(os.path.join(outd, outf), sep=out_delim, index=False)
 
     if log:
         with open(os.path.join(outd, outf + ".log"), 'w') as f:
@@ -97,11 +106,17 @@ if __name__ == "__main__":
     if args.outd == "NA":
         args.outd = os.getcwd()
     
+    if args.out_delim == "NA":
+        args.out_delim = args.delim
+    
     main(file=args.file, 
         skip_rows=args.skip_rows,
         delim=map_delim(args.delim),
-        p_col=args.p_col,  
+        p_col=args.p_col, 
+        bonferroni=args.bonferroni_only, 
+        fdr=args.fdr_only,
         outf=args.outf, 
+        out_delim=map_delim(args.out_delim),
         outd=args.outd, 
         quoting=args.quoting, 
         log=args.log, 
