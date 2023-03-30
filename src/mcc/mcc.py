@@ -87,6 +87,23 @@ def main(file, skip_rows, delim, bonferroni, fdr, p_col, outf, out_delim, outd, 
         
         log_ = "Number of Bonferroni significant: {:,}".format(len(df[df['Bonferroni significant'] == 'Yes'])); logs = log_action(logs, log_, verbose)
 
+    if fdr is False and bonferroni is False:
+        fdr_pval = fdr_pval_cal(df[p_col].tolist())
+        df['FDR P-value'] = fdr_pval
+        df['FDR significant'] = df['FDR P-value'].apply(lambda x: pval_sig(x))
+        log_ = "Number of FDR significant: {:,}".format(len(df[df['FDR significant'] == 'Yes'])); logs = log_action(logs, log_, verbose)
+
+        log_ = "Number of comparisons: {:,}".format(len(df)); logs = log_action(logs, log_, verbose)
+        log_ = "Bonferroni correction threshold (0.05/{}): {:,}".format(len(df), 0.05/len(df)); logs = log_action(logs, log_, verbose)
+
+        bonferroni_pval = bonferroni_pval_cal(df[p_col].tolist())
+        df['Bonferroni P-value'] = bonferroni_pval
+        df['Bonferroni significant'] = df['Bonferroni P-value'].apply(lambda x: pval_sig(x))
+
+        df.sort_values(by=['Bonferroni P-value'], inplace=True)
+        
+        log_ = "Number of Bonferroni significant: {:,}".format(len(df[df['Bonferroni significant'] == 'Yes'])); logs = log_action(logs, log_, verbose)
+
     if quoting:
         df.to_csv(os.path.join(outd, outf), sep=out_delim, index=False, quoting=csv.QUOTE_ALL)
     else:
