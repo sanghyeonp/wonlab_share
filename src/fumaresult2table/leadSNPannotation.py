@@ -63,9 +63,24 @@ def leadSNPannotation(result_dir, outd, verbose=False):
 
     # Rename columns
     df.rename(columns={'GenomicLocus':'Genomic locus', 'chr':"Chr", 'pos':"Pos", 'effect_allele':"EA", 'non_effect_allele':"NEA",
-        'gwasP':"P-value", 'beta':"Beta", 'se':"SE", 'nearestGene':"Nearest gene", 'func':"Gene function", 
+        'gwasP':"P-value", 'beta':"Beta", 'se':"SE", 'nearestGene':"Nearest gene", 'func':"Functional consequence of SNP on gene", 
         'RDB':"RegulomeDB score", 'minChrState':"Minimum chromatin state", 'commonChrState':"Commmon chromatin state", 
         'PMID':"PUBMED ID"}, inplace=True)
+
+    # Match functional consequence on the genes for exonic SNPs
+    file_annov = os.path.join(result_dir, "annov.txt")
+    df_annov = pd.read_csv(file_annov, sep="\t", index_col=False)
+    df_annov_sub = df_annov[['uniqID', 'exonic_func']]
+    df_annov_sub.columns = ['uniqID', 'Functional consequence of exonic SNP on gene']
+    
+    df = df.merge(df_annov_sub, how="left", on="uniqID")
+
+    # Re-order columns
+    df = df[['Genomic locus', 'rsID', 'uniqID', 'Chr', 'Pos', 'EA', 'NEA', 'MAF',
+            'P-value', 'Beta', 'SE', 'Nearest gene', 'Functional consequence of SNP on gene', 
+            'Functional consequence of exonic SNP on gene', 'CADD',
+            'RegulomeDB score', 'Minimum chromatin state',
+            'Commmon chromatin state', 'PUBMED ID', 'Trait']]
 
     # Replace Nan to -
     df.fillna("-")
