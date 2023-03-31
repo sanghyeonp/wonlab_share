@@ -46,3 +46,15 @@ def read_formatted_file(file):
     
     df = pd.DataFrame(data[1:], columns=data[0])
     return df
+
+
+def split_into_chunks(list1, n_chunk):
+    # Split list into n chunks
+    k, m = divmod(len(list1), n_chunk)
+    return list(list1[i*k+min(i, m):(i+1)*k+min(i+1, m)] for i in range(n_chunk))
+
+
+def read_filelist(filelist):
+    with open(filelist, 'r') as f:
+        files = [v.strip() for v in f.readlines()]
+    return files
