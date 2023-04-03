@@ -37,8 +37,8 @@ def generate_cmd(filenames, username, host, remote_dir, local_dir):
             'for idx in ${!files[@]}', 
             'do', 
             '\tif [[ $idx == 0 ]]; then', 
-            '\t\techo "{}"'.format(remote_dir), 
-            '\t\techo "{}"'.format(local_dir),
+            '\t\techo "cd {}"'.format(remote_dir), 
+            '\t\techo "lcd {}"'.format(local_dir),
             '\tfi',
             '\techo "get ${files[$idx]}"',
             'done | sftp {}@{}'.format(username, host)
