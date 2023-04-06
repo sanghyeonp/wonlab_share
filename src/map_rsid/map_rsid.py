@@ -81,13 +81,18 @@ def main(file, file_compression, delim_in,
         data_format = data_format.split(sep=separator)
         idx = {v:data_format.index(v) for v in ['CHR', 'POS']}
 
-        df_[['CHR', 'POS']] = df_.apply(lambda row: [row[infer_col].split(sep=separator)[idx['CHR']], 
+        df_[[chr_col, pos_col]] = df_.apply(lambda row: [row[infer_col].split(sep=separator)[idx['CHR']], 
                                                     row[infer_col].split(sep=separator)[idx['POS']]
                                                     ], axis=1, result_type='expand')
 
 
-    df_['CHR'] = df_['CHR'].astype(str)
-    df_['POS'] = df_['POS'].astype(str)
+    df_[chr_col] = df_[chr_col].astype(str)
+    df_[pos_col] = df_[pos_col].astype(str)
+
+    # Check CHR
+    chr_check = 'chr' in df_.loc[0, 'CHR']
+    if chr_check:
+        df_['CHR'] = df_['CHR'].apply(lambda x: x.replace('chr', ''))
 
     # Read mapping reference file
     print("## Reading the reference mapping file...")
@@ -111,6 +116,9 @@ def main(file, file_compression, delim_in,
     if not keep_unmapped:
         print("## Dropping SNPs with unmapped rsID...")
         df = df[~df['SNP_ref'].isna()]
+    # If unmapped SNPs are kept, let it have the following rsID
+    df['SNP_ref'] = df.apply(lambda row: "{}:{}:{}:{}".format(row[chr_col], row[pos_col]) if row['SNP_ref'].isna() else row['SNP_ref'], axis=1)
+
     if not keep_refmap_position:
         print("## Dropping CHR and POS from the reference mapping file...")
         df.drop(columns=['CHR_ref', 'POS_ref'], inplace=True)
