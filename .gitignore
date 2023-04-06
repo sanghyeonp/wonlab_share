@@ -12,6 +12,10 @@ __pycache__
 # Large files
 *.tsv
 
+## Ignore software files
+# Location: /data1/sanghyeon/wonlab_contribute/combined/software
+software/
+
 # MAGMA
 *REPORT
 *.synonyms
