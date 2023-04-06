@@ -11,3 +11,5 @@ def read_geneinfo():
     df.columns = ['GeneID', 'GeneName']
     return df
 
+# NCBI dbSNP rsID mapping file
+rsID_MAP_dbSNP_GRCh37 = "/data1/sanghyeon/Projects/MetabolicSyndrome/commonFiles/reference/NCBI_dbsnp/human_9606_b151_GRCh37p13.tsv.gz"
