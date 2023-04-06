@@ -67,8 +67,26 @@ def leadSNPannotation(result_dir, outd, verbose=False):
         'RDB':"RegulomeDB score", 'minChrState':"Minimum chromatin state", 'commonChrState':"Commmon chromatin state", 
         'PMID':"PUBMED ID"}, inplace=True)
 
+    # Match functional consequence on the genes for exonic SNPs
+    file_annov = os.path.join(result_dir, "annov.txt")
+    df_annov = pd.read_csv(file_annov, sep="\t", index_col=False)
+    df_annov_sub = df_annov[['uniqID', 'exonic_func']]
+    df_annov_sub.fillna({'exonic_func':"-"}, inplace=True)
+    df_annov_sub.drop_duplicates(subset=['uniqID'], inplace=True)
+    
+    df_annov_sub.columns = ['uniqID', 'Exonic gene function']
+    
+    df = df.merge(df_annov_sub, how="left", on="uniqID")
+
+    # Re-order columns
+    df = df[['Genomic locus', 'rsID', 'uniqID', 'Chr', 'Pos', 'EA', 'NEA', 'MAF',
+            'P-value', 'Beta', 'SE', 'Nearest gene', 'Gene function', 
+            'Exonic gene function', 'CADD',
+            'RegulomeDB score', 'Minimum chromatin state',
+            'Commmon chromatin state', 'PUBMED ID', 'Trait']]
+
     # Replace Nan to -
-    df.fillna("-")
+    df.fillna("-", inplace=True)
 
     # Save the result
     df.to_csv(os.path.join(outd, "leadSNP_annotation_table.csv"), sep=",", index=False, quoting=csv.QUOTE_ALL)

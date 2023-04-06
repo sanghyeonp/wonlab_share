@@ -15,6 +15,8 @@ def parse_args():
     # Input
     parser.add_argument('--file', required=True,
                         help='Path to the input file being lifted over.')
+    parser.add_argument('--file_compression', required=False, default="infer",
+                        help="Specify compression type from the following ['zip', 'gzip', 'bz2', 'zstd', 'tar']. Default='infer'.")
     parser.add_argument('--delim', required=False, default="tab",
                     help="Delimiter used in the input file. Choices = ['tab', 'comma', 'whitespace']. Default = 'tab'.")
     parser.add_argument('--snp_col', required=False, default="SNP",
@@ -45,7 +47,7 @@ def parse_args():
                         help="Specify the name of the output file. Default = 'lifted.<file>'.")
     parser.add_argument('--outd', required=False, default="NA",
                         help="Specify the path to output directory. Default = Current working directory.")
-    
+
     # Other optional.
     parser.add_argument('--verbose', action='store_true',
                 help='Specify see the summary in the terminal. Default = False')
@@ -54,7 +56,7 @@ def parse_args():
     return args
 
 
-def main(file, delim, snp_col, chr_col, pos_col, 
+def main(file, file_compression, delim, snp_col, chr_col, pos_col, 
         build_from, build_to, 
         keep_initial_pos, keep_unlifted, keep_intermediate, unlifted_snplist, 
         outf, outd,
@@ -64,7 +66,7 @@ def main(file, delim, snp_col, chr_col, pos_col,
     log_ = "Performing liftover for:\n\t{}\n\tGenome build from GRCh{} to GRCh{}".format(file, build_from, build_to); logger(logs_, log_, verbose)
 
     # 1. Make bed file
-    input_bed = make_bed(file, delim, snp_col, chr_col, pos_col, outd)
+    input_bed = make_bed(file, file_compression, delim, snp_col, chr_col, pos_col, outd)
 
     # 2. Perform liftover
     run_liftover(input_bed, build_from, build_to, outd)
@@ -87,6 +89,7 @@ if __name__ == "__main__":
         args.outd = os.getcwd()
 
     main(file=args.file,
+        file_compression=args.file_compression,
         delim=map_delim(args.delim),
         snp_col=args.snp_col,
         chr_col=args.chr_col,

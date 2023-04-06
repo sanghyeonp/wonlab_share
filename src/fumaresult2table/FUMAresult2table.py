@@ -31,6 +31,9 @@ def parse_args():
     # SNP2GENE
     parser.add_argument('--snp2gene_mapping', action='store_true',
                     help='Specify to make SNP2Gene mapping result table. Default = False.')
+    parser.add_argument('--max_dis', required=False, default=10, type=int,
+                    help='Specify maximum distance (in kb) used to map SNP to genes using positional mapping. Default = 10.')
+    
     # MAGMA gene-based analysis
     parser.add_argument('--magma_genebased', action='store_true',
                     help='Specify to make MAGMA gene-based analysis result table. Default = False.')
@@ -85,6 +88,7 @@ if __name__ == "__main__":
     if args.snp2gene_mapping:
         leadSNP2GeneMapping(result_dir=args.result_dir, 
                             verbose=args.verbose,
+                            max_dis=args.max_dis,
                             outd=args.outd
                             )
     
