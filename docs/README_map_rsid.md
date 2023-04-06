@@ -6,4 +6,8 @@ modified version: `human_9606_b151_GRCh37p13.tsv.gz`
 - 다운로드 링크: https://o365skku-my.sharepoint.com/:u:/g/personal/austin_park_o365_skku_edu/ES0w-YBrbytEikaQ9qOrGwMBTsA6BtA4L3A7mwUqyZhCqg?e=bqdL7u
 
 
-이 script를 자동화 시키기. `/data1/sanghyeon/Projects/MetabolicSyndrome/GWASsumstat/raw/01_match_rsid.py`
+이 script를 자동화 시키기. `/data1/sanghyeon/Projects/MetabolicSyndrome/GWASsumstat/raw/01_match_rsid.py`  
+-> 자동화 script 작성 완료.  
+-> Readme 정리 필요.
+
+Todo: GRCh38 mapping reference file 준비하기.
