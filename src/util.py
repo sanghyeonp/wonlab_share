@@ -48,6 +48,16 @@ def read_formatted_file(file):
     return df
 
 
+def read_vcf(path):
+    with open(path, 'r') as f:
+        lines = [l for l in f if not l.startswith('##')]
+    return pd.read_csv(io.StringIO(''.join(lines)),
+                        dtype={'#CHROM': str, 'POS': int, 'ID': str, 'REF': str, 'ALT': str,
+                            'QUAL': str, 'FILTER': str, 'INFO': str},
+                        sep='\t'
+                    ).rename(columns={'#CHROM': 'CHROM'})
+
+
 def split_into_chunks(list1, n_chunk):
     # Split list into n chunks
     k, m = divmod(len(list1), n_chunk)
@@ -58,3 +68,4 @@ def read_filelist(filelist):
     with open(filelist, 'r') as f:
         files = [v.strip() for v in f.readlines()]
     return files
+
