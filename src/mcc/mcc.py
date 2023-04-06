@@ -14,7 +14,7 @@ def parse_args():
                         help='Path to the input file.')
     parser.add_argument('--p_col', required=True, 
                         help='P-value column name in the input file.')
-    parser.add_argument('--delim', required=False, type=str, default="tab",
+    parser.add_argument('--delim_in', required=False, type=str, default="tab",
                         help='Delimiter of the input file. Default = "tab". Choices = ["tab", "comma", "whitespace"].')
     parser.add_argument('--skip_rows', required=False, type=int, default=0,
                         help='Specify the number of first lines in the input file to skip. Default = 0.')
@@ -27,8 +27,8 @@ def parse_args():
 
     parser.add_argument('--outf', required=False, type=str, default='NA',
                         help='Name of output file. Default = mcc.<Input file name>')
-    parser.add_argument('--out_delim', required=False, type=str, default="NA",
-                        help='Delimiter of the input file. Default = "NA" then identical delimiter as the input file. Choices = ["tab", "comma", "whitespace"].')
+    parser.add_argument('--delim_out', required=False, type=str, default="NA",
+                        help='Delimiter of the output file. Default = "NA" then identical delimiter as the input file. Choices = ["tab", "comma", "whitespace"].')
     parser.add_argument('--outd', required=False, type=str, default='NA',
                         help='Directory where the output will be saved. Default = Current working directory.')
     parser.add_argument('--quoting', action='store_true',
@@ -62,12 +62,12 @@ def log_action(logs, log_, verbose):
     return logs
 
 
-def main(file, skip_rows, delim, bonferroni, fdr, p_col, outf, out_delim, outd, quoting, log, verbose):
+def main(file, skip_rows, delim_in, bonferroni, fdr, p_col, outf, delim_out, outd, quoting, log, verbose):
     logs = []
     log_ = "Conducting multiple comparisons correction for:\n\t{}".format(file); logs = log_action(logs, log_, verbose)
     log_ = "Reading the input file...".format(file); logs = log_action(logs, log_, verbose)
 
-    df = pd.read_csv(file, sep=delim, index_col=False, skiprows=skip_rows)
+    df = pd.read_csv(file, sep=delim_in, index_col=False, skiprows=skip_rows)
 
     if fdr:
         fdr_pval = fdr_pval_cal(df[p_col].tolist())
@@ -105,9 +105,9 @@ def main(file, skip_rows, delim, bonferroni, fdr, p_col, outf, out_delim, outd, 
         log_ = "Number of Bonferroni significant: {:,}".format(len(df[df['Bonferroni significant'] == 'Yes'])); logs = log_action(logs, log_, verbose)
 
     if quoting:
-        df.to_csv(os.path.join(outd, outf), sep=out_delim, index=False, quoting=csv.QUOTE_ALL)
+        df.to_csv(os.path.join(outd, outf), sep=delim_out, index=False, quoting=csv.QUOTE_ALL)
     else:
-        df.to_csv(os.path.join(outd, outf), sep=out_delim, index=False)
+        df.to_csv(os.path.join(outd, outf), sep=delim_out, index=False)
 
     if log:
         with open(os.path.join(outd, outf + ".log"), 'w') as f:
@@ -123,17 +123,17 @@ if __name__ == "__main__":
     if args.outd == "NA":
         args.outd = os.getcwd()
     
-    if args.out_delim == "NA":
-        args.out_delim = args.delim
+    if args.delim_out == "NA":
+        args.delim_out = args.delim
     
     main(file=args.file, 
         skip_rows=args.skip_rows,
-        delim=map_delim(args.delim),
+        delim_in=map_delim(args.delim_in),
         p_col=args.p_col, 
         bonferroni=args.bonferroni_only, 
         fdr=args.fdr_only,
         outf=args.outf, 
-        out_delim=map_delim(args.out_delim),
+        delim_out=map_delim(args.delim_out),
         outd=args.outd, 
         quoting=args.quoting, 
         log=args.log, 
