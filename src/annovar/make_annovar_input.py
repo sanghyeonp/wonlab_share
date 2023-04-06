@@ -8,9 +8,8 @@ from util import *
 from packages import *
 
 
-def make_annovar_input(file, delim_in, file_compression,
+def read_input(file, delim_in, file_compression,
         infer_chr_pos_ref_alt, chr_col, pos_col, ref_col, alt_col):
-
     # Read input file
     print("## Reading the input file...")
     df_ = pd.read_csv(file, sep=delim_in, index_col=False, compression=file_compression, low_memory=False)
@@ -44,13 +43,17 @@ def make_annovar_input(file, delim_in, file_compression,
     chr_check = 'chr' in df_.loc[0, chr_col]
     if chr_check:
         df_[chr_col] = df_[chr_col].apply(lambda x: x.replace('chr', ''))
+    
+    return df_
 
+
+def make_annovar_input(input_df, file, chr_col, pos_col, ref_col, alt_col):
     # Subset columns
-    df = df_[[chr_col, pos_col, pos_col, ref_col, alt_col]]
+    df = input_df[[chr_col, pos_col, pos_col, ref_col, alt_col]]
 
     df.columns = ['CHR', 'BP', 'BP', 'A2', 'A1']
 
-    df.to_csv(os.path.split(file)[-1]+".annovin", sep="\t", index=False)
-    df[['CHR', 'BP', 'BP', 'A1', 'A2']].to_csv(os.path.split(file)[-1]+".flip.annovin", sep="\t", index=False)
+    df.to_csv(os.path.split(file)[-1]+".annovin", sep="\t", index=False, header=False)
+    df[['CHR', 'BP', 'BP', 'A1', 'A2']].to_csv(os.path.split(file)[-1]+".flip.annovin", sep="\t", index=False, header=False)
 
     return os.path.split(file)[-1]+".annovin", os.path.split(file)[-1]+".flip.annovin"

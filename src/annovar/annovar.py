@@ -11,7 +11,7 @@ from shared_data import ANNOVAR_software, ANNOVAR_humandb
 
 def generate_cmd(annov_input):
     prefix = os.path.split(annov_input)[-1].replace(".annovin", "")
-    cmd = "{} {} {} -buildver hg19 -protocol refGene,avsnp150 -operation g,f -remove -nastring . -out {}.1".format(
+    cmd = "{} {} {} -buildver hg19 -protocol refGene,avsnp150 -operation g,f -remove -nastring . -out {}".format(
         ANNOVAR_software, annov_input, ANNOVAR_humandb, prefix)
     
     # print(cmd)
