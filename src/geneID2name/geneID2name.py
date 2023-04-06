@@ -30,11 +30,12 @@ def parse_args():
 
 
 def main(file, skip_rows, delim, gene_id_col, outf, outd):
+    print("## Reading input file...")
     if delim == "formatted":
         df = read_formatted_file(file)
     else:
         df = pd.read_csv(file, sep=delim, skiprows=skip_rows)
-
+    print("## Reading gene ID to gene name mapping reference file...")
     df[gene_id_col] = df[gene_id_col].astype('int64')
 
     df_map = read_geneinfo()
