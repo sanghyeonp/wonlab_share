@@ -13,5 +13,7 @@ def read_geneinfo():
 
 # NCBI dbSNP rsID mapping file
 rsID_MAP_dbSNP_GRCh37 = "/data1/sanghyeon/Projects/MetabolicSyndrome/commonFiles/reference/NCBI_dbsnp/human_9606_b151_GRCh37p13.tsv.gz"
-
-rsID_MAP_dbSNP = {37: rsID_MAP_dbSNP_GRCh37}
+rsID_MAP_dbSNP_GRCh38 = "/data1/sanghyeon/Projects/MetabolicSyndrome/commonFiles/reference/NCBI_dbsnp/human_9606_b151_GRCh38p7.tsv.gz"
+rsID_MAP_dbSNP = {37: rsID_MAP_dbSNP_GRCh37,
+                38: rsID_MAP_dbSNP_GRCh38
+                }
