@@ -16,3 +16,9 @@ rsID_MAP_dbSNP_GRCh38 = "/data1/sanghyeon/Projects/MetabolicSyndrome/commonFiles
 rsID_MAP_dbSNP = {37: rsID_MAP_dbSNP_GRCh37,
                 38: rsID_MAP_dbSNP_GRCh38
                 }
+
+
+# ANNOVAR
+ANNOVAR_software = "/data1/sanghyeon/wonlab_contribute/combined/software/annovar/annovar/table_annovar.pl"
+# ANNOVAR_humandb = "/data1/sanghyeon/wonlab_contribute/combined/software/annovar/annovar/humandb/"
+ANNOVAR_humandb = "/data/software/Annovar/annovar_20221005/humandb/"
