@@ -9,11 +9,12 @@ from packages import *
 
 
 def read_input(file, delim_in, file_compression,
-        infer_chr_pos_ref_alt, chr_col, pos_col, ref_col, alt_col):
+        infer_chr_pos_ref_alt, chr_col, pos_col, ref_col, alt_col,
+        log_list=[]):
     # Read input file
-    print("## Reading the input file...")
+    log_list = logger(log_list, log="## Reading the input file...")
     df_ = pd.read_csv(file, sep=delim_in, index_col=False, compression=file_compression, low_memory=False)
-    print("Number of SNPs in the input file: {:,}".format(len(df_)))
+    log_list = logger(log_list, log="Number of SNPs in the input file: {:,}".format(len(df_)))
 
     # Infer chromosome and position
     if infer_chr_pos_ref_alt:
@@ -23,7 +24,7 @@ def read_input(file, delim_in, file_compression,
         data_format = infer_chr_pos_ref_alt[1]
         separator = infer_chr_pos_ref_alt[2]
 
-        print("## Inferring CHR and POS from the column '{}' with data structure '{}'...".format(infer_col, data_format))
+        log_list = logger(log_list, log="## Inferring CHR and POS from the column '{}' with data structure '{}'...".format(infer_col, data_format))
 
         data_format = data_format.split(sep=separator)
         idx = {v:data_format.index(v) for v in ['CHR', 'POS', 'REF', 'ALT']}
@@ -45,7 +46,7 @@ def read_input(file, delim_in, file_compression,
     if chr_check:
         df_[chr_col] = df_[chr_col].apply(lambda x: x.replace('chr', ''))
     
-    return df_
+    return df_, log_list
 
 
 def make_annovar_input(input_df, file, chr_col, pos_col, ref_col, alt_col):

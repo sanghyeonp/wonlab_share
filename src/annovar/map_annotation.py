@@ -8,11 +8,11 @@ from util import *
 from packages import *
 
 
-def combine_annov_out(annov_input1, annov_input2):
-    print("## Merging multianno.txt and flipped multianno.txt...")
+def combine_annov_out(annov_input1, annov_input2, log_list=[]):
+    log_list = logger(log_list, log="## Merging multianno.txt and flipped multianno.txt...")
     df_annov1 = pd.read_csv(annov_input1, sep="\t", index_col=False, dtype=str)
     df_annov1 = df_annov1.loc[df_annov1['avsnp150'] != '.', ]
-    print("Number of SNPs annotated with multianno.txt: {:,}".format(len(df_annov1)))
+    log_list = logger(log_list, log="Number of SNPs annotated with multianno.txt: {:,}".format(len(df_annov1)))
     
     df_annov1['chr_pos_ref_alt_new'] = df_annov1.apply(lambda row: "{}:{}:{}:{}".format(row['Chr'], row['End'], row['Ref'], row['Alt']), axis=1)
 
@@ -32,7 +32,7 @@ def combine_annov_out(annov_input1, annov_input2):
         df_annov2 = df_annov2.loc[~df_annov2['chr_pos_ref_alt_new'].isin(df_annov1['chr_pos_ref_alt_new'].tolist()), ]
 
         if not df_annov2.empty:
-            print("Number of SNPs annotated with flipped multianno.txt: {:,}".format(len(df_annov2)))
+            log_list = logger(log_list, log="Number of SNPs annotated with flipped multianno.txt: {:,}".format(len(df_annov2)))
 
             df_annov1['flipped'] = '.'
             df_annov2['flipped'] = '1'
@@ -42,24 +42,24 @@ def combine_annov_out(annov_input1, annov_input2):
     if df_annov is None:
         df_annov1['flipped'] = '.'
         df_annov = df_annov1
-    
-    print("Total number of SNPs annotated: {:,}".format(len(df_annov)))
+
+    log_list = logger(log_list, log="Total number of SNPs annotated: {:,}".format(len(df_annov)))
 
     df_annov = df_annov[['chr_pos_ref_alt_new', 'avsnp150', 'flipped']]
     df_annov.columns = ['chr_pos_ref_alt_new', 'rsID_annov', 'flipped_annov']
 
-    return df_annov
+    return df_annov, log_list
 
 
-def map_annovar_out(input_df, annov_input1, annov_input2, chr_col, pos_col, ref_col, alt_col):
+def map_annovar_out(input_df, annov_input1, annov_input2, chr_col, pos_col, ref_col, alt_col, log_list=[]):
     annov_output1 = annov_input1.replace(".annovin", ".hg19_multianno.txt")
     annov_output2 = annov_input2.replace(".annovin", ".hg19_multianno.txt")
-    df_annov = combine_annov_out(annov_output1, annov_output2)
+    df_annov, log_list = combine_annov_out(annov_output1, annov_output2)
 
-    print("## Mapping annotated SNPs to the input file...")
+    log_list = logger(log_list, log="## Mapping annotated SNPs to the input file...")
     input_df['chr_pos_ref_alt'] = input_df.apply(lambda row: "{}:{}:{}:{}".format(row[chr_col], row[pos_col], row[ref_col], row[alt_col]), axis=1)
 
     output_df = input_df.merge(df_annov, how="left", left_on="chr_pos_ref_alt", right_on="chr_pos_ref_alt_new")
 
-    return output_df
+    return output_df, log_list
 

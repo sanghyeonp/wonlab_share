@@ -64,32 +64,35 @@ def main(file, delim_in, in_compression,
         infer_chr_pos_ref_alt, chr_col, pos_col, ref_col, alt_col,
         outf, outd, delim_out, out_compression,
         save_unannotated_snp, save_flipped_snp, save_mapping_file, do_not_save_annotated_input,
-        delete_intermediate_files):
+        delete_intermediate_files,
+        log_list):
     
+    start_time = datetime.now()
+
     # Read input file
-    input_df_ = read_input(file, delim_in, in_compression, infer_chr_pos_ref_alt, chr_col, pos_col, ref_col, alt_col)
+    input_df_, log_list = read_input(file, delim_in, in_compression, infer_chr_pos_ref_alt, chr_col, pos_col, ref_col, alt_col, log_list)
 
     # Make ANNOVAR input file
     annov_input1, annov_input2 = make_annovar_input(input_df_, file, chr_col, pos_col, ref_col, alt_col)
 
     # Run ANNOVAR
-    annovar(annov_input1, annov_input2)
+    log_list = annovar(annov_input1, annov_input2, log_list)
 
     # Map ANNOVAR result
-    df_out_ = map_annovar_out(input_df_, annov_input1, annov_input2, chr_col, pos_col, ref_col, alt_col)
+    df_out_, log_list = map_annovar_out(input_df_, annov_input1, annov_input2, chr_col, pos_col, ref_col, alt_col, log_list)
 
     ## Save necessary data
     n_tot = len(df_out_)
-    print("Number of SNPs in the input file: {:,}".format(n_tot))
+    log_list = logger(log_list, log="Number of SNPs in the input file: {:,}".format(n_tot))
     
     # Annotated.
     df_out = df_out_[~df_out_['rsID_annov'].isna()]
-    print("Number of SNPs annotated: {:,} ({:.1%})".format(len(df_out), len(df_out)/n_tot))
+    log_list = logger(log_list, log="Number of SNPs annotated: {:,} ({:.1%})".format(len(df_out), len(df_out)/n_tot))
     
     ## Un-annotated.
     # Not annotated.
     df_out_no_annot = df_out_[df_out_['rsID_annov'].isna()]
-    print("Number of SNPs not annotated: {:,} ({:.1%})".format(len(df_out_no_annot), len(df_out_no_annot)/n_tot))
+    log_list = logger(log_list, log="Number of SNPs not annotated: {:,} ({:.1%})".format(len(df_out_no_annot), len(df_out_no_annot)/n_tot))
 
     # Save SNPs that were not annotated
     if save_unannotated_snp:
@@ -97,16 +100,17 @@ def main(file, delim_in, in_compression,
 
     ## Flipped.
     if not df_out[df_out['flipped_annov'] == "1"].empty:
-        print("Number of SNPs flipped: {:,}".format(len(df_out[df_out['flipped_annov'] == "1"])))
+        log_list = logger(log_list, log="Number of SNPs flipped: {:,}".format(len(df_out[df_out['flipped_annov'] == "1"])))
+
         if save_flipped_snp:
             df_out[df_out['flipped_annov'] == "1"][['chr_pos_ref_alt', 'chr_pos_ref_alt_new']].to_csv("flipped_variant.list", sep="\t", index=False)
     else:
-        print("Number of SNPs flipped: 0")
+        log_list = logger(log_list, log="Number of SNPs flipped: 0")
 
     # Save mapping file
     if save_mapping_file:
-        df_mapping = df_out[['chr_pos_ref_alt', 'chr_pos_ref_alt_new', 'rsID_annov']]
-        df_mapping.columns = ['chr_pos_ref_alt', 'chr_pos_ref_alt_new', 'rsid']
+        df_mapping = df_out[['chr_pos_ref_alt', 'chr_pos_ref_alt_new', 'rsID_annov', 'flipped_annov']]
+        df_mapping.columns = ['chr_pos_ref_alt', 'chr_pos_ref_alt_new', 'rsid', 'flipped']
         df_mapping.to_csv("mapping.file", sep="\t", index=False)
 
     # Save output file with annotated input file
@@ -125,9 +129,16 @@ def main(file, delim_in, in_compression,
         )
         run_bash(cmd)
 
+    end_time = datetime.now()
+    log_list = logger(log_list, log="Elapsed: {}".format(end_time - start_time))
+
+    return log_list
+
 
 if __name__ == "__main__":
     args = parse_args()
+
+    log_list = []
 
     if args.outf == "NA":
         args.outf = "annovarmapped.{}".format(os.path.split(args.file)[-1])
@@ -141,21 +152,25 @@ if __name__ == "__main__":
     if args.out_compression == "NA":
         args.out_compression = None
 
-    main(file=args.file, 
-        delim_in=map_delim(args.delim_in), 
-        in_compression=args.in_compression,
-        infer_chr_pos_ref_alt=args.infer_chr_pos_ref_alt, 
-        chr_col=args.chr_col, 
-        pos_col=args.pos_col, 
-        ref_col=args.ref_col, 
-        alt_col=args.alt_col,
-        outf=args.outf, 
-        outd=args.outd, 
-        delim_out=map_delim(args.delim_out), 
-        out_compression=args.out_compression,
-        save_unannotated_snp=args.save_unannotated_snp, 
-        save_flipped_snp=args.save_flipped_snp, 
-        save_mapping_file=args.save_mapping_file, 
-        do_not_save_annotated_input=args.do_not_save_annotated_input,
-        delete_intermediate_files=args.delete_intermediate_files
-        )
+    log_list = main(file=args.file, 
+                    delim_in=map_delim(args.delim_in), 
+                    in_compression=args.in_compression,
+                    infer_chr_pos_ref_alt=args.infer_chr_pos_ref_alt, 
+                    chr_col=args.chr_col, 
+                    pos_col=args.pos_col, 
+                    ref_col=args.ref_col, 
+                    alt_col=args.alt_col,
+                    outf=args.outf, 
+                    outd=args.outd, 
+                    delim_out=map_delim(args.delim_out), 
+                    out_compression=args.out_compression,
+                    save_unannotated_snp=args.save_unannotated_snp, 
+                    save_flipped_snp=args.save_flipped_snp, 
+                    save_mapping_file=args.save_mapping_file, 
+                    do_not_save_annotated_input=args.do_not_save_annotated_input,
+                    delete_intermediate_files=args.delete_intermediate_files,
+                    log_list=log_list
+                    )
+
+    with open("annovar_map.{}.log".format(os.path.split(args.file)[-1]), 'w') as f:
+        f.writelines([v+"\n" for v in log_list])

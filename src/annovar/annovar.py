@@ -19,11 +19,13 @@ def generate_cmd(annov_input):
     return cmd
 
 
-def annovar(annov_input1, annov_input2):
-    print("## Running ANNOVAR with {}...".format(annov_input1))
+def annovar(annov_input1, annov_input2, log_list=[]):
+    log_list = logger(log_list, log="## Running ANNOVAR with {}...".format(annov_input1))
     cmd1 = generate_cmd(annov_input1)
     run_bash(cmd1)
 
-    print("## Running ANNOVAR with {}...".format(annov_input2))
+    log_list = logger(log_list, log="## Running ANNOVAR with {}...".format(annov_input2))
     cmd2 = generate_cmd(annov_input2)
     run_bash(cmd2)
+    
+    return log_list
