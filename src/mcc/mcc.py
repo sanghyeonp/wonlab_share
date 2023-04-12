@@ -124,7 +124,7 @@ if __name__ == "__main__":
         args.outd = os.getcwd()
     
     if args.delim_out == "NA":
-        args.delim_out = args.delim
+        args.delim_out = args.delim_in
     
     main(file=args.file, 
         skip_rows=args.skip_rows,
