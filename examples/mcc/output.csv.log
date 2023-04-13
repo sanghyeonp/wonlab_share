@@ -1,0 +1,11 @@
+Conducting multiple comparisons correction for:
+	data/inputf.tsv
+Reading the input file...
+Number of FDR significant in P: 180
+Number of comparisons in P: 18,222
+Bonferroni correction threshold (0.05/18,222) in P: 2.7439359016573376e-06
+Number of Bonferroni significant in P: 62
+Number of FDR significant in P2: 0
+Number of comparisons in P2: 18,222
+Bonferroni correction threshold (0.05/18,222) in P2: 2.7439359016573376e-06
+Number of Bonferroni significant in P2: 0

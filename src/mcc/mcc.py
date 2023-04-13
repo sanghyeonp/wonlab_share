@@ -12,8 +12,9 @@ def parse_args():
     parser = argparse.ArgumentParser(description=":: Multiple comparisons correction ::")
     parser.add_argument('--file', required=True,
                         help='Path to the input file.')
-    parser.add_argument('--p_col', required=True, 
-                        help='P-value column name in the input file.')
+    parser.add_argument('--p_col', nargs="+", 
+                        help='P-value column name in the input file. If there are multiple P-values to compute, those column name can be specified subsequently. \
+                            For example, --p_col P1 P2 P3')
     parser.add_argument('--delim_in', required=False, type=str, default="tab",
                         help='Delimiter of the input file. Default = "tab". Choices = ["tab", "comma", "whitespace"].')
     parser.add_argument('--skip_rows', required=False, type=int, default=0,
@@ -62,7 +63,30 @@ def log_action(logs, log_, verbose):
     return logs
 
 
-def main(file, skip_rows, delim_in, bonferroni, fdr, p_col, outf, delim_out, outd, quoting, log, verbose):
+def compute_fdr(df, p_col, logs, verbose):
+    fdr_pval = fdr_pval_cal(df[p_col].tolist())
+    df['FDR {}'.format(p_col)] = fdr_pval
+    df['FDR significant {}'.format(p_col)] = df['FDR {}'.format(p_col)].apply(lambda x: pval_sig(x))
+    log_ = "Number of FDR significant in {}: {:,}".format(p_col,
+                                                        len(df[df['FDR significant {}'.format(p_col)] == 'Yes'])); logs = log_action(logs, log_, verbose)
+    return df, logs
+
+
+def compute_bonferroni(df, p_col, logs, verbose):
+    log_ = "Number of comparisons in {}: {:,}".format(p_col, len(df)); logs = log_action(logs, log_, verbose)
+    log_ = "Bonferroni correction threshold (0.05/{:,}) in {}: {}".format(len(df), 
+                                                                        p_col, 
+                                                                        0.05/len(df)); logs = log_action(logs, log_, verbose)
+
+    bonferroni_pval = bonferroni_pval_cal(df[p_col].tolist())
+    df['Bonferroni {}'.format(p_col)] = bonferroni_pval
+    df['Bonferroni significant {}'.format(p_col)] = df['Bonferroni {}'.format(p_col)].apply(lambda x: pval_sig(x))
+    log_ = "Number of Bonferroni significant in {}: {:,}".format(p_col,
+                                                                len(df[df['Bonferroni significant {}'.format(p_col)] == 'Yes'])); logs = log_action(logs, log_, verbose)
+    return df, logs
+
+
+def main(file, skip_rows, delim_in, bonferroni, fdr, p_col_list, outf, delim_out, outd, quoting, log, verbose):
     logs = []
     log_ = "Conducting multiple comparisons correction for:\n\t{}".format(file); logs = log_action(logs, log_, verbose)
     log_ = "Reading the input file...".format(file); logs = log_action(logs, log_, verbose)
@@ -70,39 +94,21 @@ def main(file, skip_rows, delim_in, bonferroni, fdr, p_col, outf, delim_out, out
     df = pd.read_csv(file, sep=delim_in, index_col=False, skiprows=skip_rows)
 
     if fdr:
-        fdr_pval = fdr_pval_cal(df[p_col].tolist())
-        df['FDR P-value'] = fdr_pval
-        df['FDR significant'] = df['FDR P-value'].apply(lambda x: pval_sig(x))
-        log_ = "Number of FDR significant: {:,}".format(len(df[df['FDR significant'] == 'Yes'])); logs = log_action(logs, log_, verbose)
+        for p_col in p_col_list:
+            df, logs = compute_fdr(df, p_col, logs, verbose)
 
     if bonferroni:
-        log_ = "Number of comparisons: {:,}".format(len(df)); logs = log_action(logs, log_, verbose)
-        log_ = "Bonferroni correction threshold (0.05/{}): {:,}".format(len(df), 0.05/len(df)); logs = log_action(logs, log_, verbose)
-
-        bonferroni_pval = bonferroni_pval_cal(df[p_col].tolist())
-        df['Bonferroni P-value'] = bonferroni_pval
-        df['Bonferroni significant'] = df['Bonferroni P-value'].apply(lambda x: pval_sig(x))
-
-        df.sort_values(by=['Bonferroni P-value'], inplace=True)
-        
-        log_ = "Number of Bonferroni significant: {:,}".format(len(df[df['Bonferroni significant'] == 'Yes'])); logs = log_action(logs, log_, verbose)
+        for p_col in p_col_list:
+            df, logs = compute_bonferroni(df, p_col, logs, verbose)
 
     if fdr is False and bonferroni is False:
-        fdr_pval = fdr_pval_cal(df[p_col].tolist())
-        df['FDR P-value'] = fdr_pval
-        df['FDR significant'] = df['FDR P-value'].apply(lambda x: pval_sig(x))
-        log_ = "Number of FDR significant: {:,}".format(len(df[df['FDR significant'] == 'Yes'])); logs = log_action(logs, log_, verbose)
+        for p_col in p_col_list:
+            df, logs = compute_fdr(df, p_col, logs, verbose)
+            df, logs = compute_bonferroni(df, p_col, logs, verbose)
 
-        log_ = "Number of comparisons: {:,}".format(len(df)); logs = log_action(logs, log_, verbose)
-        log_ = "Bonferroni correction threshold (0.05/{}): {:,}".format(len(df), 0.05/len(df)); logs = log_action(logs, log_, verbose)
 
-        bonferroni_pval = bonferroni_pval_cal(df[p_col].tolist())
-        df['Bonferroni P-value'] = bonferroni_pval
-        df['Bonferroni significant'] = df['Bonferroni P-value'].apply(lambda x: pval_sig(x))
-
-        df.sort_values(by=['Bonferroni P-value'], inplace=True)
+    df.sort_values(by=['{}'.format(p_col_list[0])], inplace=True)
         
-        log_ = "Number of Bonferroni significant: {:,}".format(len(df[df['Bonferroni significant'] == 'Yes'])); logs = log_action(logs, log_, verbose)
 
     if quoting:
         df.to_csv(os.path.join(outd, outf), sep=delim_out, index=False, quoting=csv.QUOTE_ALL)
@@ -129,7 +135,7 @@ if __name__ == "__main__":
     main(file=args.file, 
         skip_rows=args.skip_rows,
         delim_in=map_delim(args.delim_in),
-        p_col=args.p_col, 
+        p_col_list=args.p_col, 
         bonferroni=args.bonferroni_only, 
         fdr=args.fdr_only,
         outf=args.outf, 
