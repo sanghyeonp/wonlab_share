@@ -1,11 +1,26 @@
 # Load packages from env_R.R
-if(!require(rstudioapi)){
-    install.packages("rstudioapi", repos = "http://cran.us.r-project.org")
-    library(rstudioapi)
+list.of.packages <- c("tidyverse", "rstudioapi")
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages, repos = "http://cran.us.r-project.org")
+
+library(tidyverse)
+getCurrentFileLocation <-  function()
+{
+    this_file <- commandArgs() %>% 
+    tibble::enframe(name = NULL) %>%
+    tidyr::separate(col=value, into=c("key", "value"), sep="=", fill='right') %>%
+    dplyr::filter(key == "--file") %>%
+    dplyr::pull(value)
+    if (length(this_file)==0){
+        this_file <- rstudioapi::getSourceEditorContext()$path
+    }
+    return(dirname(this_file))
 }
-current <- rstudioapi::getSourceEditorContext()$path
-env_file <- paste(dirname(current), "env_R.R", sep="/")
+
+env_file <- paste(getCurrentFileLocation(), "env_R.R", sep="/")
 source(env_file)
+
+
 
 
 ### Define parser arguments
