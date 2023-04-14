@@ -27,7 +27,7 @@ parser <- argparse::ArgumentParser(description=":: Reformat GWAS summary statist
 
 parser$add_argument("--gwas", required=TRUE,
                     help="Path to the GWAS summary statistics.")
-parser$add_argument("--col-map", dest="col_maps", nargs = "*", default = "NA=NA",
+parser$add_argument("--col-map", dest="col_map", nargs = "*", default = "NA=NA",
                     help = "Specify the dictionaries of common column names to the columns in GWAS summary statistics. Options for common column name: [CHR, POS, ALT, REF, EAF, MAF, BETA, SE, PVAL, N]")
 parser$add_argument("--keep-unspecified-col", dest="keep_unspecified_col", action="store_true", 
                     help="Specify to retain unspecified columns in --col_map. Default=FALSE.")
@@ -35,22 +35,24 @@ parser$add_argument("--keep-unspecified-col", dest="keep_unspecified_col", actio
 ### Get parser arguments
 args <- parser$parse_args()
 gwas <- args$gwas
-col_maps <- args$col_maps
+col_map <- args$col_map
 keep_unspecified_col <- args$keep_unspecified_col
 
 ################################################
 
+### Read GWAS summary statistics
 df <- readr::read_table(gwas, col_names = TRUE)
 
-# Process the received dictionaries
+### Parse column mapping from `--col-map` parser argument
 old_col_names1 <- NULL
 new_col_names1 <- NULL
-for (d in col_maps) {
+for (d in col_map) {
     dict <- strsplit(d, "=")
     old_col_names1 <- c(old_col_names1, dict[[1]][1])
     new_col_names1 <- c(new_col_names1, dict[[1]][2])
 }
 
+### Make another column name vector -> used for re-naming the input GWAS summary statistics
 old_col_names2 <- old_col_names1
 new_col_names2 <- new_col_names1
 for (col in colnames(df)) {
@@ -62,10 +64,14 @@ for (col in colnames(df)) {
     }
 }
 
+### Make column name renaming vector
 col_map_dict <- setNames(new_col_names2, old_col_names2)
 
+### Rename the columns
 names(df) <- col_map_dict
 
+### Subset only the specified columns in `--col-map` if `--keep-unspecified-col` is not specified.
+### If `--keep-unspecified-col` is specified, do not subset.
 if (keep_unspecified_col == FALSE){
     df <- subset(df, select=new_col_names1)
 }
