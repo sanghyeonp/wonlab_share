@@ -1,21 +1,12 @@
-list.of.packages <- c("argparse", "fmsb", "dplyr", "data.table", "hash")
-new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
-if(length(new.packages)) install.packages(new.packages, repos = "http://cran.us.r-project.org")
+# Load packages from env_R.R
+if(!require(rstudioapi)){
+    install.packages("rstudioapi", repos = "http://cran.us.r-project.org")
+    library(rstudioapi)
+}
+current <- rstudioapi::getSourceEditorContext()$path
+env_file <- paste(dirname(current), "env_R.R", sep="/")
+source(env_file)
 
-suppressPackageStartupMessages({
-  require(argparse)
-  library(fmsb)
-  library(dplyr)
-  library(data.table)
-  library(hash)
-  library(here)
-})
-
-base_dir <- dirname(sub(
-  "--file=", "", commandArgs(trailingOnly = FALSE)[4]
-))
-
-source(here::here(base_dir, "src/fnc_cohen_kappa.R"))
 
 ### Define parser arguments
 parser <- argparse::ArgumentParser(description=":: Compute Cohen's kappa coefficient ::", 
