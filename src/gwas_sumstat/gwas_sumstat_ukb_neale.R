@@ -184,7 +184,7 @@ cat("\n::Run:: Save output GWAS summary statistics")
 
 cat(paste0("\n\tSaved at: ", out_path))
 
-delim_map <- list(tab = "\n\t", comma = ",", whitespace = " ")
+delim_map <- list(tab = "\t", comma = ",", whitespace = " ")
 
 write.table(df, 
             out_path, 
