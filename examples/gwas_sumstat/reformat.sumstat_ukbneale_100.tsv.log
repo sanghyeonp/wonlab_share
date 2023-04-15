@@ -1,0 +1,26 @@
+
+::Run:: Reading input GWAS summary statistics
+::Run:: Reading variant file
+::Run:: Extract CHR, POS, REF, ALT and EAF
+::Run:: Mapping rsID
+	Number of SNPs before: 100
+	Number of SNPs without rsID: 3
+	Number of SNPs after filtering unmapped rsID: 97
+::Run:: MAF filter with threshold: 0.001
+	Number of SNPs before: 97
+	Number of SNPs after: 97
+::Run:: Handle duplicated SNP
+	Number of SNPs before: 97
+	Number of duplicated SNPs: 0
+	Removing duplicates...
+	Number of SNPs after: 97
+::Run:: Handle rows with NA
+	Number of rows: 97
+	Number of rows with NA: 0
+	Removing rows with NA...
+	Number of rows after: 97
+::Run:: Subset specified columns
+	Columns specified: RSID, CHR, POS, ALT, REF, EAF, BETA, SE, PVAL, N
+::Run:: Rename the columns
+::Run:: Save output GWAS summary statistics
+	Saved at: /data1/sanghyeon/wonlab_contribute/combined/examples/gwas_sumstat/reformat.sumstat_ukbneale_100.tsv
