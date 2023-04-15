@@ -175,9 +175,14 @@ cat("\n::Run:: Rename the columns")
 if (rename_col[1] == "NA"){
     cat("\n\t`--rename-col` not specified. No renaming done.")
 } else{
+    cat(paste0("\n\tNew column names: ", paste(rename_col, collapse=", ")))
     col_new_name <- setNames(rename_col, retain_col)
     names(df) <- col_new_name
 }
+
+### Sort by CHR and POS
+# 여기서 df_sorted <- df[order(df$col1, df$col2), ]
+# 이런식으로 sorting 하기
 
 ### Save the output
 cat("\n::Run:: Save output GWAS summary statistics")
