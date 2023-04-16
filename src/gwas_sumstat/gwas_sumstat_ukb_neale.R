@@ -33,7 +33,7 @@ parser$add_argument("--keep-na", dest="keep_na", action="store_true",
 
 parser$add_argument("--outf", required=FALSE, default="NA",
                     help="Specify the name of the output file. Default = reformat.<Input file name>")
-parser$add_argument("--delim_out", required=FALSE, default="tab",
+parser$add_argument("--delim-out", dest="delim_out", required=FALSE, default="tab",
                     help="Specify the delimiter for the output file. Options = [tab, comma, whitespace]. Default = tab.")
 parser$add_argument("--outd", required=FALSE, default="NA",
                     help="Specify the output directory. Default = current working directory.")

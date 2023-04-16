@@ -21,8 +21,8 @@ parser$add_argument("--retain-all-instances", dest="retain_all_instances", actio
 parser$add_argument("--drop-na", dest="drop_na", action="store_true", 
                     help="Specify to drop the rows if any field has NA. Default=FALSE.")
 parser$add_argument("--outf", required=FALSE, default="NA",
-                    help="Specify the name of the output file. Default = reformat.<Input file name>")
-parser$add_argument("--delim_out", required=FALSE, default="tab",
+                    help="Specify the name of the output file. Default = UKB_phenotype_extract.tsv")
+parser$add_argument("--delim-out", dest="delim_out", required=FALSE, default="tab",
                     help="Specify the delimiter for the output file. Options = [tab, comma, whitespace]. Default = tab.")
 parser$add_argument("--outd", required=FALSE, default="NA",
                     help="Specify the output directory. Default = current working directory.")
