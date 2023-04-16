@@ -186,7 +186,6 @@ if (rename_col[1] == "NA"){
 
 ### Save the output
 cat("\n::Run:: Save output GWAS summary statistics")
-
 cat(paste0("\n\tSaved at: ", out_path))
 
 delim_map <- list(tab = "\t", comma = ",", whitespace = " ")
