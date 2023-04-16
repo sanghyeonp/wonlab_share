@@ -1,0 +1,10 @@
+#!/bin/bash
+
+### Ensembl gene ID to gene symbol, gene chromosome, gene TSS, and gene strand direction (mapping)
+script=../../src/gene_annotation/gene_annotation.py
+
+python3 ${script} --file ./data/example_data_ensembl.tsv \
+                --gene-id-col Probe_Ensembl \
+                --delim-in tab \
+                --outf example_data_Ensembl_gene_annotation.tsv \
+                --delim-out tab

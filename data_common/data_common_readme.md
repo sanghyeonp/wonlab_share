@@ -16,3 +16,10 @@
     Genome build: GRCh37  
     Download: `wget https://ftp.ensembl.org/pub/grch37/release-109/gtf/homo_sapiens/Homo_sapiens.GRCh37.87.gtf.gz`
 
+
+# NCBI Entrez gene ID to gene name mapping
+
+- gene_info.gz
+    NCBI에서 제공하는 gene information 파일.
+    NCBI Entrez gene ID를 gene symbol로 mapping 할 때 사용.
+    Download: `wget https://ftp.ncbi.nih.gov/gene/DATA/gene_info.gz`

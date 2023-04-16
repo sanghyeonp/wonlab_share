@@ -10,14 +10,14 @@ from shared_data import read_geneinfo
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description=":: Map NCBI Entrez gene ID to gene name ::")
+    parser = argparse.ArgumentParser(description=":: Map NCBI Entrez gene ID to gene symbol ::")
     parser.add_argument('--file', required=True,
                         help='Path to the input file.')
-    parser.add_argument('--gene_id_col', required=True, 
+    parser.add_argument('--gene-id-col', dest="gene_id_col", required=True, 
                         help='Column name of gene ID in the input file.')
     parser.add_argument('--delim', required=False, type=str, default="tab",
                         help='Delimiter of the input file. Default = "tab". Choices = ["tab", "comma", "whitespace", "formatted"].')
-    parser.add_argument('--skip_rows', required=False, type=int, default=0,
+    parser.add_argument('--skip-rows', dest="skip_rows", required=False, type=int, default=0,
                         help='Specify the number of first lines in the input file to skip. Default = 0.')
 
     parser.add_argument('--outf', required=False, type=str, default='NA',
