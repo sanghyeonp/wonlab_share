@@ -12,12 +12,12 @@ def parse_args():
     parser = argparse.ArgumentParser(description=":: Multiple comparisons correction ::")
     parser.add_argument('--file', required=True,
                         help='Path to the input file.')
-    parser.add_argument('--p_col', nargs="+", 
+    parser.add_argument('--p-col', dest="p_col", nargs="+", 
                         help='P-value column name in the input file. If there are multiple P-values to compute, those column name can be specified subsequently. \
                             For example, --p_col P1 P2 P3')
-    parser.add_argument('--delim_in', required=False, type=str, default="tab",
+    parser.add_argument('--delim-in', dest="delim_in", required=False, type=str, default="tab",
                         help='Delimiter of the input file. Default = "tab". Choices = ["tab", "comma", "whitespace"].')
-    parser.add_argument('--skip_rows', required=False, type=int, default=0,
+    parser.add_argument('--skip-rows', dest="skip_rows", required=False, type=int, default=0,
                         help='Specify the number of first lines in the input file to skip. Default = 0.')
 
     parser.add_argument('--bonferroni-only', dest='bonferroni_only', action='store_true',
@@ -28,7 +28,7 @@ def parse_args():
 
     parser.add_argument('--outf', required=False, type=str, default='NA',
                         help='Name of output file. Default = mcc.<Input file name>')
-    parser.add_argument('--delim_out', required=False, type=str, default="NA",
+    parser.add_argument('--delim-out', dest="delim_out", required=False, type=str, default="NA",
                         help='Delimiter of the output file. Default = "NA" then identical delimiter as the input file. Choices = ["tab", "comma", "whitespace"].')
     parser.add_argument('--outd', required=False, type=str, default='NA',
                         help='Directory where the output will be saved. Default = Current working directory.')
