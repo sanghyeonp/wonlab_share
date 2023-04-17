@@ -16,44 +16,44 @@ def parse_args():
     parser.add_argument('--file', required=True,
                         help='Path to the input file.')
 
-    parser.add_argument('--in_compression', required=False, default="infer",
+    parser.add_argument('--in-compression', dest="in_compression", required=False, default="infer",
                         help="Specify compression type from the following ['zip', 'gzip', 'bz2', 'zstd', 'tar']. Default='infer'.")
-    parser.add_argument('--delim_in', required=False, default="tab",
+    parser.add_argument('--delim-in', dest="delim_in", required=False, default="tab",
                     help="Delimiter used in the input file. Choices = ['tab', 'comma', 'whitespace']. Default = 'tab'.")
     
-    parser.add_argument('--infer_chr_pos_ref_alt', nargs='+', required=False,
+    parser.add_argument('--infer-chr-pos-ref-alt', dest="infer_chr_pos_ref_alt", nargs='+', required=False,
                         help="Specify column name, data format, and separator to infer chr and pos from specified column.\
                             For example, column named 'variant' have variant name '2:179816990:C:T' where chromosome and position can be inferred as 2 and 179816990, respectively.\
-                            Then, specify as follows: --infer_chr_pos_ref_alt variant CHR:POS:REF:ALT :")
-    parser.add_argument('--chr_col', required=False, default="CHR",
+                            Then, specify as follows: --infer-chr-pos-ref-alt variant CHR:POS:REF:ALT :")
+    parser.add_argument('--chr-col', dest="chr_col", required=False, default="CHR",
                     help="Name of the chromosome column in the input file. Default = 'CHR'.")
-    parser.add_argument('--pos_col', required=False, default="POS",
+    parser.add_argument('--pos-col', dest="pos_col", required=False, default="POS",
                     help="Name of the base position column in the input file. Default = 'POS'.")
-    parser.add_argument('--ref_col', required=False, default="REF",
+    parser.add_argument('--ref-col', dest="ref_col", required=False, default="REF",
                     help="Name of the reference allele column in the input file. Default = 'REF'.")
-    parser.add_argument('--alt_col', required=False, default="ALT",
+    parser.add_argument('--alt-col', dest="alt_col", required=False, default="ALT",
                     help="Name of the alternative allele column in the input file. Default = 'ALT'.")
     
     parser.add_argument('--outf', required=False, default="NA",
                         help="Specify the name of the output file. Default = 'rsidmapped.<file>'.")
     parser.add_argument('--outd', required=False, default="NA",
                         help="Specify the path to output directory. Default = Current working directory.")
-    parser.add_argument('--delim_out', required=False, default="NA",
+    parser.add_argument('--delim-out', dest="delim_out", required=False, default="NA",
                         help="Delimiter for the output file. Choices = ['NA', 'tab', 'comma', 'whitespace']. If 'NA', identical delimiter as input delimiter will be used. Default = 'NA'.")
-    parser.add_argument('--out_compression', required=False, default="NA",
+    parser.add_argument('--out-compression', dest="out_compression", required=False, default="NA",
                         help="Specify compression type from the following ['NA', 'zip', 'gzip', 'bz2', 'zstd', 'tar']. Default='NA'.")
 
-    parser.add_argument('--do_not_save_annotated_input', action='store_true',
+    parser.add_argument('--do-not-save-annotated-input', dest="do_not_save_annotated_input", action='store_true',
                     help='Specify to avoid saving annotated input file. Default = False.')
-    parser.add_argument('--save_unannotated_snp', action='store_true',
+    parser.add_argument('--save-unannotated-snp', dest="save_unannotated_snp", action='store_true',
                     help='Specify to save un-annotated SNP list as chr:pos:ref:alt format with following file name: "unannotated_variant.list". Default = False.')
-    parser.add_argument('--save_flipped_snp', action='store_true',
+    parser.add_argument('--save-flipped-snp', dest="save_flipped_snp", action='store_true',
                     help='Specify to save flipped SNP list with columns chr:pos:ref:alt and chr:pos:ref:alt_new and with following file name: "flipped_variant.list". Default = False.')
-    parser.add_argument('--save_mapping_file', action='store_true',
+    parser.add_argument('--save-mapping-file', dest="save_mapping_file", action='store_true',
                     help='Specify to save the SNP mapping file that can be used to map GWAS summary statistics from identical cohort. \
                         Columns are ["chr_pos_ref_alt", "chr_pos_ref_alt_new", "rsid"] and tab-delimited. \
                         Saved with the following file name: "mapping.file". Default = False.')
-    parser.add_argument('--delete_intermediate_files', action='store_true',
+    parser.add_argument('--delete-intermediate-files', dest="delete_intermediate_files", action='store_true',
                     help='Specify to delete all the intermediate files generated during annotation. Default = False.')
 
     args = parser.parse_args()
