@@ -21,6 +21,9 @@ def parse_args():
     parser.add_argument('--skip-rows', dest="skip_rows", required=False, type=int, default=0,
                         help='Specify the number of first lines in the input file to skip. Default = 0.')
 
+    parser.add_argument('--gene-symbol-only', dest="gene_symbol_only", action='store_true',
+                    help='Specify to map only the gene symbol. Default = False.')
+
     parser.add_argument('--outf', required=False, type=str, default='NA',
                         help='Name of output file. Default = geneannot.<Input file name>')
     parser.add_argument('--outd', required=False, type=str, default='NA',
@@ -33,23 +36,32 @@ def parse_args():
     return args
 
 
-def read_ensembl():
+def read_ensembl(gene_symbol_only):
     df_gene_info_ = pd.read_csv(ENSEMBL_GENE_INFO, sep="\t", index_col=False, compression="gzip", skiprows=5,
-                            names=['seqname', 'source', 'feature', 'start', 'end', 'score', 'strand', 'frame', 'attribute'])
+                            names=['seqname', 'source', 'feature', 'start', 'end', 'score', 'strand', 'frame', 'attribute'],
+                            low_memory=False)
     
-    df_gene_info_['Probe_Ensembl'] = df_gene_info_['attribute'].apply(lambda x: x.split(sep=";")[0].split(sep='"')[1])
+    def attribute_map(x):
+        x = x.split(sep="; ")
+        x_map = {x1.split(sep=" ")[0]:x1.split(sep=" ")[1] for x1 in x}
+        return x_map
+
+    df_gene_info_['Probe_Ensembl'] = df_gene_info_['attribute'].apply(lambda x: attribute_map(x)['gene_id'].replace('"', ''))
+    df_gene_info_['gene_symbol'] = df_gene_info_['attribute'].apply(lambda x: attribute_map(x)['gene_name'].replace('"', ''))
     df_gene_info_ = df_gene_info_[df_gene_info_['feature'] == 'gene']
 
-    df_gene_info = df_gene_info_[['Probe_Ensembl', 'seqname', 'start', 'strand']]
-    df_gene_info.columns = ['ensembl_gene', 'chr_gene', 'TSS', 'strand']
+    df_gene_info = df_gene_info_[['Probe_Ensembl', 'gene_symbol', 'seqname', 'start', 'strand']]
+    df_gene_info.columns = ['ensembl_gene', 'gene_symbol', 'chr_gene', 'TSS', 'strand']
+    if gene_symbol_only:
+        df_gene_info = df_gene_info[['ensembl_gene', 'gene_symbol']]
 
     return df_gene_info
 
 
-def main(file, delim_in, compression_in, gene_id_col, outf, outd, delim_out):
-    df_ = pd.read_csv(file, sep=delim_in, index_col=False, compression=compression_in)
+def main(file, delim_in, compression_in, gene_id_col, gene_symbol_only, outf, outd, delim_out):
+    df_ = pd.read_csv(file, sep=delim_in, index_col=False, compression=compression_in, low_memory=False)
 
-    df_gene_info = read_ensembl()
+    df_gene_info = read_ensembl(gene_symbol_only)
 
     ### Mapping
     df = df_.merge(df_gene_info, how="left", left_on = gene_id_col, right_on = "ensembl_gene")
@@ -78,6 +90,7 @@ if __name__ == "__main__":
         delim_in=map_delim(args.delim_in), 
         compression_in=args.compression_in, 
         gene_id_col=args.gene_id_col, 
+        gene_symbol_only=args.gene_symbol_only,
         outf=args.outf, 
         outd=args.outd, 
         delim_out=map_delim(args.delim_out)
