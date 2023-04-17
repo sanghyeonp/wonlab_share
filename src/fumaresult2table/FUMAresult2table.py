@@ -18,36 +18,36 @@ def parse_args():
     parser = argparse.ArgumentParser(description=":: Make a neat summarized results of FUMA and MAGMA ::")
 
     # Data directory
-    parser.add_argument('--result_dir', required=True,
+    parser.add_argument('--result-dir', dest="result_dir", required=True,
                         help='Specify path to directory where the necessary result files are present.')
     
     # Run all
-    parser.add_argument('--run_all', action='store_true',
+    parser.add_argument('--run-all', dest="run_all", action='store_true',
                     help='Specify to make tables for all the available results. Default = False.')
     
     # SNP annotation
-    parser.add_argument('--snp_annotation', action='store_true',
+    parser.add_argument('--snp-annotation', dest="snp_annotation", action='store_true',
                     help='Specify to make SNP annotation result table. Default = False.')
     # SNP2GENE
-    parser.add_argument('--snp2gene_mapping', action='store_true',
+    parser.add_argument('--snp2gene-mapping', dest="snp2gene_mapping", action='store_true',
                     help='Specify to make SNP2Gene mapping result table. Default = False.')
-    parser.add_argument('--max_dis', required=False, default=10, type=int,
+    parser.add_argument('--max-dis', dest="max_dis", required=False, default=10, type=int,
                     help='Specify maximum distance (in kb) used to map SNP to genes using positional mapping. Default = 10.')
     
     # MAGMA gene-based analysis
-    parser.add_argument('--magma_genebased', action='store_true',
+    parser.add_argument('--magma-genebased', dest="magma_genebased", action='store_true',
                     help='Specify to make MAGMA gene-based analysis result table. Default = False.')
     # MAGMA gene-set analysis
-    parser.add_argument('--magma_geneset', action='store_true',
+    parser.add_argument('--magma-geneset', dest="magma_geneset", action='store_true',
                     help='Specify to make MAGMA gene-set analysis result table. Default = False.')
     # MAGMA gene-property analysis
-    parser.add_argument('--magma_geneproperty_gtex_specific', action='store_true',
+    parser.add_argument('--magma-geneproperty-gtex-specific', dest="magma_geneproperty_gtex_specific", action='store_true',
                     help='Specify to make MAGMA gene-property analysis in GTEx v8 specific tissues result table. Default = False.')
-    parser.add_argument('--magma_geneproperty_gtex_general', action='store_true',
+    parser.add_argument('--magma-geneproperty-gtex-general', dest="magma_geneproperty_gtex_general", action='store_true',
                     help='Specify to make MAGMA gene-property analysis in GTEx v8 general tissues result table. Default = False.')
-    parser.add_argument('--magma_geneproperty_brainspan_age', action='store_true',
+    parser.add_argument('--magma-geneproperty-brainspan-age', dest="magma_geneproperty_brainspan_age", action='store_true',
                     help='Specify to make MAGMA gene-property analysis in BrainSpan age result table. Default = False.')
-    parser.add_argument('--magma_geneproperty_brainspan_dev', action='store_true',
+    parser.add_argument('--magma-geneproperty-brainspan-dev', dest="magma_geneproperty_brainspan_dev", action='store_true',
                     help='Specify to make MAGMA gene-property analysis in BrainSpan developmental stages result table. Default = False.')
     
     # Output.
