@@ -15,31 +15,31 @@ def parse_args():
     # Input
     parser.add_argument('--file', required=True,
                         help='Path to the input file being lifted over.')
-    parser.add_argument('--file_compression', required=False, default="infer",
+    parser.add_argument('--file-compression', dest="file_compression", required=False, default="infer",
                         help="Specify compression type from the following ['zip', 'gzip', 'bz2', 'zstd', 'tar']. Default='infer'.")
     parser.add_argument('--delim', required=False, default="tab",
                     help="Delimiter used in the input file. Choices = ['tab', 'comma', 'whitespace']. Default = 'tab'.")
-    parser.add_argument('--snp_col', required=False, default="SNP",
+    parser.add_argument('--snp-col', dest="snp_col", required=False, default="SNP",
                     help="Name of the SNP column in the input file. Default = 'SNP'.")
-    parser.add_argument('--chr_col', required=False, default="CHR",
+    parser.add_argument('--chr-col', dest="chr_col", required=False, default="CHR",
                     help="Name of the chromosome column in the input file. Default = 'CHR'.")
-    parser.add_argument('--pos_col', required=False, default="POS",
+    parser.add_argument('--pos-col', dest="pos_col", required=False, default="POS",
                     help="Name of the base position column in the input file. Default = 'POS'.")
 
     # Liftover options.
-    parser.add_argument('--build_from', required=True, type=int,
+    parser.add_argument('--build-from', dest="build_from", required=True, type=int,
                     help="Genome build number initial. Choices = [18, 37, 38].")
-    parser.add_argument('--build_to', required=True, type=int,
+    parser.add_argument('--build-to', dest="build_to", required=True, type=int,
                     help="Genome build number after performing liftover. Choices = [19, 37, 38].")
     
     # Merging lifted result options.
-    parser.add_argument('--keep_initial_pos', action='store_true',
+    parser.add_argument('--keep-initial-pos', dest="keep_initial_pos", action='store_true',
                 help='Specify to save both previous and lifted Chr and Pos columns. Default = False.')
-    parser.add_argument('--keep_unlifted', action='store_true',
+    parser.add_argument('--keep-unlifted', dest="keep_unlifted", action='store_true',
                 help='Specify to retain unlifted SNPs with their base position value as -9. Default = False.')
-    parser.add_argument('--keep_intermediate', action='store_true',
+    parser.add_argument('--keep-intermediate', dest="keep_intermediate", action='store_true',
                 help='Specify to keep the intermediate files generated; <>.bed, <>.liftover.lifted, and <>.liftover.unlifted. Default = False.')
-    parser.add_argument('--unlifted_snplist', action='store_true',
+    parser.add_argument('--unlifted-snplist', dest="unlifted_snplist", action='store_true',
                 help='Specify to save the SNP list that has been unlifed. <>.unlifted.snplist. Default = False.')
 
     # Output options.
