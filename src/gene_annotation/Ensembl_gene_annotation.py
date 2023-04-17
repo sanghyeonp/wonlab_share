@@ -18,7 +18,7 @@ def parse_args():
                         help='Delimiter of the input file. Default = "tab". Choices = ["tab", "comma", "whitespace", "formatted"].')
     parser.add_argument('--compression-in', dest="compression_in", required=False, default="infer",
                         help="Specify compression type from the following ['zip', 'gzip', 'bz2', 'zstd', 'tar']. Default='infer'.")
-    parser.add_argument('--skip_rows', required=False, type=int, default=0,
+    parser.add_argument('--skip-rows', dest="skip_rows", required=False, type=int, default=0,
                         help='Specify the number of first lines in the input file to skip. Default = 0.')
 
     parser.add_argument('--outf', required=False, type=str, default='NA',
