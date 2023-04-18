@@ -39,17 +39,20 @@ def merge_lifted(file, delim, snp_col, chr_col, pos_col,
             for idx, row in enumerate(reader):
                 if idx % 2 == 1:
                     retain.append([row[0], -9, row[3]])
-
+        del reader
+        
         unlifted_retained = pd.DataFrame(retain, columns=['Chr_lifted', 'Pos_lifted', 'SNP_lifted'])
         unlifted_retained['Chr_lifted'] = unlifted_retained['Chr_lifted'].apply(lambda x: is_chr(x))
         unlifted_retained = unlifted_retained[unlifted_retained['Chr_lifted'] != False]
 
         liftover_out = pd.concat([liftover_out, unlifted_retained])
+        del unlifted_retained
         
     ## Merge
-    df = pd.read_csv(file, sep=delim, index_col=False)
+    df_ = pd.read_csv(file, sep=delim, index_col=False)
 
-    df = pd.merge(df, liftover_out, how="left", left_on=snp_col, right_on="SNP_lifted")
+    df = pd.merge(df_, liftover_out, how="left", left_on=snp_col, right_on="SNP_lifted")
+    del df_
 
     log_ = "Number of SNPs initially: {:,}".format(len(df)); logger(logs, log_, verbose)
     log_ = "Number of SNPs lifted: {:,}".format(len(df[~df['SNP_lifted'].isna()])); logger(logs, log_, verbose)

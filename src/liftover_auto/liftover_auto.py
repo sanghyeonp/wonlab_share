@@ -66,10 +66,13 @@ def main(file, file_compression, delim, snp_col, chr_col, pos_col,
     log_ = "Performing liftover for:\n\t{}\n\tGenome build from GRCh{} to GRCh{}".format(file, build_from, build_to); logger(logs_, log_, verbose)
 
     # 1. Make bed file
-    input_bed = make_bed(file, file_compression, delim, snp_col, chr_col, pos_col, outd)
+    _, filename = os.path.split(file)
+    bed_file_exists = os.path.exists(os.path.join(outd, filename+".liftover.bed"))
+    input_bed = make_bed(file, file_compression, delim, snp_col, chr_col, pos_col, outd, bed_file_exists)
 
     # 2. Perform liftover
-    run_liftover(input_bed, build_from, build_to, outd)
+    if not os.path.exists(os.path.join(outd, filename+".lifted")):
+        run_liftover(input_bed, build_from, build_to, outd)
 
     # 3. Merge the result
     logs = merge_lifted(file, delim, snp_col, chr_col, pos_col, 
