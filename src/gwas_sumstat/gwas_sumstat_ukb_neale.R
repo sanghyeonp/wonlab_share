@@ -93,8 +93,8 @@ df <- suppressMessages(suppressWarnings(readr::read_table(gwas, col_names = TRUE
 ### Read variant to rsID mapping file
 cat("\n::Run:: Reading variant file")
 df_variant <- suppressMessages(suppressWarnings(readr::read_table(variant_file, col_names = TRUE)))
-df_variant <- subset(df_variant, select=c('variant', 'rsid'))
-colnames(df_variant) <- c("variant", "RSID")
+df_variant <- subset(df_variant, select=c('variant', 'rsid', 'info'))
+colnames(df_variant) <- c("variant", "RSID", "INFO")
 
 ### Make column name renaming vector
 col_map_dict <- setNames(c('variant', 'minor_allele', 'MAF', 'low_confidence_variant', 'N', 'AC', 'ytx', 'BETA', 'SE', 'tstat', 'PVAL'), 
@@ -110,7 +110,13 @@ df <- df %>%
     mutate(variant = paste0(CHR, ":", POS, ":", REF, ":", ALT)) %>%
     mutate(EAF = if_else(ALT == minor_allele, MAF, 1 - MAF)) 
 
-### Map rsID
+### Calculate Z-score
+if ("Z" %in% retain_col){
+    df$Z <- df$BETA / df$SE
+}
+
+
+### Map rsID, INFO
 cat("\n::Run:: Mapping rsID")
 df <- merge(df, df_variant, by='variant')
 nsnp <- nrow(df)
