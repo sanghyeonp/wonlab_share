@@ -112,7 +112,7 @@ df <- df %>%
 
 ### Calculate Z-score
 if ("Z" %in% retain_col){
-    df$Z <- df$BETA / df$SE
+    df$Z <- ifelse(is.na(df$BETA) | is.na(df$SE), NA, as.numeric(df$BETA) / as.numeric(df$SE))
 }
 
 
