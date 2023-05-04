@@ -91,20 +91,19 @@ def main(file, skip_rows, delim_in, bonferroni, fdr, p_col_list, outf, delim_out
     log_ = "Conducting multiple comparisons correction for:\n\t{}".format(file); logs = log_action(logs, log_, verbose)
     log_ = "Reading the input file...".format(file); logs = log_action(logs, log_, verbose)
 
-    df = pd.read_csv(file, sep=delim_in, index_col=False, skiprows=skip_rows)
+    df_ = pd.read_csv(file, sep=delim_in, index_col=False, skiprows=skip_rows)
 
-    if fdr:
-        for p_col in p_col_list:
-            df, logs = compute_fdr(df, p_col, logs, verbose)
+    for p_col in p_col_list:
+        df = df_[~df_[p_col].isna()]
+        if fdr:
+                df, logs = compute_fdr(df, p_col, logs, verbose)
 
-    if bonferroni:
-        for p_col in p_col_list:
-            df, logs = compute_bonferroni(df, p_col, logs, verbose)
+        if bonferroni:
+                df, logs = compute_bonferroni(df, p_col, logs, verbose)
 
-    if fdr is False and bonferroni is False:
-        for p_col in p_col_list:
-            df, logs = compute_fdr(df, p_col, logs, verbose)
-            df, logs = compute_bonferroni(df, p_col, logs, verbose)
+        if fdr is False and bonferroni is False:
+                df, logs = compute_fdr(df, p_col, logs, verbose)
+                df, logs = compute_bonferroni(df, p_col, logs, verbose)
 
 
     df.sort_values(by=['{}'.format(p_col_list[0])], inplace=True)
