@@ -1,5 +1,5 @@
 #!/bin/bash
-
+# script=/data1/sanghyeon/wonlab_contribute/combined/src/annovar/run_annovar.py
 script=../../src/annovar/run_annovar.py
 
 # python3 ${script} --file ./data/example.1k \
