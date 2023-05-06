@@ -26,6 +26,12 @@ def parse_args():
     parser.add_argument('--pos-col', dest="pos_col", required=False, default="POS",
                     help="Name of the base position column in the input file. Default = 'POS'.")
 
+    # New column names
+    parser.add_argument('--chr-col-new', dest="chr_col_new", required=False, default="NA",
+                    help="New column name for chromosome in the lifted file. Default = 'NA'.")
+    parser.add_argument('--pos-col-new', dest="pos_col_new", required=False, default="NA",
+                    help="New column name for base position in the lifted file. Default = 'NA'.")
+
     # Liftover options.
     parser.add_argument('--build-from', dest="build_from", required=True, type=int,
                     help="Genome build number initial. Choices = [18, 37, 38].")
@@ -57,6 +63,7 @@ def parse_args():
 
 
 def main(file, file_compression, delim, snp_col, chr_col, pos_col, 
+        chr_col_new, pos_col_new,
         build_from, build_to, 
         keep_initial_pos, keep_unlifted, keep_intermediate, unlifted_snplist, 
         outf, outd,
@@ -75,7 +82,7 @@ def main(file, file_compression, delim, snp_col, chr_col, pos_col,
         run_liftover(input_bed, build_from, build_to, outd)
 
     # 3. Merge the result
-    logs = merge_lifted(file, delim, snp_col, chr_col, pos_col, 
+    logs = merge_lifted(file, delim, snp_col, chr_col, pos_col, chr_col_new, pos_col_new,
                 unlifted_snplist, keep_initial_pos, keep_unlifted, keep_intermediate,
                 outf, outd, verbose); logs_ += logs
 
@@ -97,6 +104,8 @@ if __name__ == "__main__":
         snp_col=args.snp_col,
         chr_col=args.chr_col,
         pos_col=args.pos_col,
+        chr_col_new=args.chr_col_new,
+        pos_col_new=args.pos_col_new,
         build_from=args.build_from,
         build_to=args.build_to,
         keep_initial_pos=args.keep_initial_pos, 

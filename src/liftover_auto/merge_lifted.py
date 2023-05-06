@@ -15,7 +15,7 @@ def is_chr(x):
     return chr
 
 
-def merge_lifted(file, delim, snp_col, chr_col, pos_col, 
+def merge_lifted(file, delim, snp_col, chr_col, pos_col, chr_col_new, pos_col_new,
                 unlifted_snplist, keep_initial_pos, keep_unlifted, keep_intermediate,
                 outf, outd, verbose=False):
     logs = []
@@ -70,12 +70,16 @@ def merge_lifted(file, delim, snp_col, chr_col, pos_col,
 
     if not keep_initial_pos:
         df.drop(columns=[chr_col, pos_col], inplace=True)
-        df.rename(columns={'Chr_lifted':chr_col, 'Pos_lifted':pos_col}, inplace=True)
 
     if not keep_intermediate:
         run_bash(bash_cmd="rm {}".format(lifted_file))
         run_bash(bash_cmd="rm {}".format(unlifted_file))
         run_bash(bash_cmd="rm {}".format(os.path.join(outd, filename+".liftover.bed")))
+
+    if chr_col_new != "NA":
+        df.rename(columns={'Chr_lifted':chr_col_new}, inplace=True)
+    if pos_col_new != "NA":
+        df.rename(columns={'Pos_lifted':chr_col_new}, inplace=True)
 
     df.to_csv(os.path.join(outd, outf), sep=delim, index=False)
 
