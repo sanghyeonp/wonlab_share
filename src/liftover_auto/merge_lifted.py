@@ -79,7 +79,7 @@ def merge_lifted(file, delim, snp_col, chr_col, pos_col, chr_col_new, pos_col_ne
     if chr_col_new != "NA":
         df.rename(columns={'Chr_lifted':chr_col_new}, inplace=True)
     if pos_col_new != "NA":
-        df.rename(columns={'Pos_lifted':chr_col_new}, inplace=True)
+        df.rename(columns={'Pos_lifted':pos_col_new}, inplace=True)
 
     df.to_csv(os.path.join(outd, outf), sep=delim, index=False)
 
