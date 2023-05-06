@@ -63,9 +63,12 @@ def main(file, delim_in, compression_in, gene_id_col, gene_symbol_only, outf, ou
 
     df_gene_info = read_ensembl(gene_symbol_only)
 
+    ### Drop version in gene ID if present
+    df_['gene_id_new'] = df_[gene_id_col].apply(lambda x: x.split(sep=".")[0])
+
     ### Mapping
-    df = df_.merge(df_gene_info, how="left", left_on = gene_id_col, right_on = "ensembl_gene")
-    df.drop(columns=['ensembl_gene'], inplace=True)
+    df = df_.merge(df_gene_info, how="left", left_on = "gene_id_new", right_on = "ensembl_gene")
+    df.drop(columns=['ensembl_gene', 'gene_id_new'], inplace=True)
 
     ### Fill NA 
     df.fillna(".", inplace=True)
