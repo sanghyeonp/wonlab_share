@@ -61,11 +61,11 @@ def read_ensembl(gene_symbol_only):
 def main(file, delim_in, compression_in, gene_id_col, gene_symbol_only, outf, outd, delim_out):
     df_ = pd.read_csv(file, sep=delim_in, index_col=False, compression=compression_in, low_memory=False)
 
-    df_gene_info = read_ensembl(gene_symbol_only)
-
     ### Drop version in gene ID if present
     df_[gene_id_col] = df_[gene_id_col].astype(str)
-    df_['gene_id_new'] = df_[gene_id_col].apply(lambda x: x.split(sep=".")[0])
+    df_['gene_id_new'] = df_[gene_id_col].apply(lambda x: x.split(sep=".")[0] if "ENSG" in x and x != "nan" else x)
+
+    df_gene_info = read_ensembl(gene_symbol_only)
 
     ### Mapping
     df = df_.merge(df_gene_info, how="left", left_on = "gene_id_new", right_on = "ensembl_gene")
