@@ -3,6 +3,9 @@ __pycache__
 # Ignore data directory
 data_common/
 
+# Ignore troubleshoot
+issues/
+
 # Compressed files
 *.zip
 *.gz
