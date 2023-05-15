@@ -14,6 +14,8 @@ def parse_args():
                         help='Path to the input file.')
     parser.add_argument('--gene-id-col', dest="gene_id_col", required=True, 
                         help='Column name of Ensembl gene ID in the input file.')
+    parser.add_argument('--genome-build', dest='genome_build', required=False, default=37,
+                        help='Specify genome build. Choices = [37, 38]. Default=37.')
     parser.add_argument('--delim-in', dest="delim_in", required=False, type=str, default="tab",
                         help='Delimiter of the input file. Default = "tab". Choices = ["tab", "comma", "whitespace", "formatted"].')
     parser.add_argument('--compression-in', dest="compression_in", required=False, default="infer",
@@ -36,43 +38,27 @@ def parse_args():
     return args
 
 
-def read_ensembl(gene_symbol_only):
-    df_gene_info_ = pd.read_csv(ENSEMBL_GENE_INFO, sep="\t", index_col=False, compression="gzip", skiprows=5,
-                            names=['seqname', 'source', 'feature', 'start', 'end', 'score', 'strand', 'frame', 'attribute'],
-                            low_memory=False)
-    
-    def attribute_map(x):
-        x = x.split(sep="; ")
-        x_map = {x1.split(sep=" ")[0]:x1.split(sep=" ")[1] for x1 in x}
-        return x_map
-
-    df_gene_info_['Probe_Ensembl'] = df_gene_info_['attribute'].apply(lambda x: attribute_map(x)['gene_id'].replace('"', ''))
-    df_gene_info_['gene_symbol'] = df_gene_info_['attribute'].apply(lambda x: attribute_map(x)['gene_name'].replace('"', ''))
-    df_gene_info_ = df_gene_info_[df_gene_info_['feature'] == 'gene']
-
-    df_gene_info = df_gene_info_[['Probe_Ensembl', 'gene_symbol', 'seqname', 'start', 'strand']]
-    df_gene_info.columns = ['ensembl_gene', 'gene_symbol', 'chr_gene', 'TSS', 'strand']
-    if gene_symbol_only:
-        df_gene_info = df_gene_info[['ensembl_gene', 'gene_symbol']]
-
-    return df_gene_info
 
 
-def main(file, delim_in, compression_in, gene_id_col, gene_symbol_only, outf, outd, delim_out):
+
+def main(file, delim_in, compression_in, gene_id_col, genome_build, gene_symbol_only, outf, outd, delim_out):
     df_ = pd.read_csv(file, sep=delim_in, index_col=False, compression=compression_in, low_memory=False)
 
     ### Drop version in gene ID if present
     df_[gene_id_col] = df_[gene_id_col].astype(str)
     df_['gene_id_new'] = df_[gene_id_col].apply(lambda x: x.split(sep=".")[0] if "ENSG" in x and x != "nan" else x)
 
-    df_gene_info = read_ensembl(gene_symbol_only)
+    ### Read gene annotation table
+    df_gene_info = pd.read.csv(ENSEMBL_GENE_INFO[genome_build], sep="\t", index_col=False, compression="gzip")
+    if gene_symbol_only:
+        df_gene_info = df_gene_info[['ensembl_gene', 'gene_symbol']]
 
     ### Mapping
     df = df_.merge(df_gene_info, how="left", left_on = "gene_id_new", right_on = "ensembl_gene")
     df.drop(columns=['ensembl_gene', 'gene_id_new'], inplace=True)
 
     ### TSS
-    df['TSS'] = df['TSS'].astype(int)
+    df['TSS'] = df['TSS'].astype('Int64')
 
     ### Fill NA 
     df.fillna(".", inplace=True)
@@ -97,6 +83,7 @@ if __name__ == "__main__":
         delim_in=map_delim(args.delim_in), 
         compression_in=args.compression_in, 
         gene_id_col=args.gene_id_col, 
+        genome_build=args.genome_build,
         gene_symbol_only=args.gene_symbol_only,
         outf=args.outf, 
         outd=args.outd, 
