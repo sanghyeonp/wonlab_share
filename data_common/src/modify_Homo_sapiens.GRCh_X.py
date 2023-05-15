@@ -1,4 +1,6 @@
 import pandas as pd
+import code
+# code.interact(local=dict(globals(), **locals()))
 
 
 def read_ensembl(ENSEMBL_GENE_INFO):
@@ -12,7 +14,7 @@ def read_ensembl(ENSEMBL_GENE_INFO):
         return x_map
 
     df_gene_info_['Probe_Ensembl'] = df_gene_info_['attribute'].apply(lambda x: attribute_map(x)['gene_id'].replace('"', ''))
-    df_gene_info_['gene_symbol'] = df_gene_info_['attribute'].apply(lambda x: attribute_map(x)['gene_name'].replace('"', ''))
+    df_gene_info_['gene_symbol'] = df_gene_info_['attribute'].apply(lambda x: attribute_map(x)['gene_name'].replace('"', '') if 'gene_name' in attribute_map(x) else ".")
     df_gene_info_ = df_gene_info_[df_gene_info_['feature'] == 'gene']
 
     df_gene_info = df_gene_info_[['Probe_Ensembl', 'gene_symbol', 'seqname', 'start', 'strand']]
