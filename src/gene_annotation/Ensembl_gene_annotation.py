@@ -55,12 +55,16 @@ def main(file, delim_in, compression_in, gene_id_col, genome_build, gene_symbol_
     df.drop(columns=['ensembl_gene', 'gene_id_new'], inplace=True)
 
     ### TSS
-    df['TSS'] = df['TSS'].astype('Int64')
+    if not gene_symbol_only:
+        df['TSS'] = df['TSS'].astype('Int64')
 
     ### Fill NA
-    df[['Gene', 'Probe_Ensembl', 'gene_symbol', 'chr_gene', 'strand']] = df[['Gene', 'Probe_Ensembl', 'gene_symbol', 'chr_gene', 'strand']].fillna(value=".")
-    df[['TSS']] = df[['TSS']].fillna(value="-9")
-
+    if not gene_symbol_only:
+        df[['Gene', gene_id_col, 'gene_symbol', 'chr_gene', 'strand']] = df[['Gene', gene_id_col, 'gene_symbol', 'chr_gene', 'strand']].fillna(value=".")
+        df[['TSS']] = df[['TSS']].fillna(value="-9")
+    else:
+        df[[gene_id_col, 'gene_symbol']] = df[[gene_id_col, 'gene_symbol']].fillna(value=".")
+        
     ### Save output    
     df.to_csv(os.path.join(outd, outf), sep=delim_out, index=False)
 
