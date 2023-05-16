@@ -23,3 +23,24 @@
     NCBI에서 제공하는 gene information 파일.
     NCBI Entrez gene ID를 gene symbol로 mapping 할 때 사용.
     Download: `wget https://ftp.ncbi.nih.gov/gene/DATA/gene_info.gz`
+
+# NCBI variant annotation
+
+- 00_All_b37.vcf.gz
+    NCBI에서 제공하는 variant information 파일.  
+    Genome build: GRCh37  
+    Download: `https://ftp.ncbi.nih.gov/snp/organisms/human_9606_b151_GRCh37p13/VCF/00-All.vcf.gz -O 00_All_b37.vcf.gz`
+
+- /00_All_b37_dict_chr/00_All_b37_dict_chr_*.pkl
+    `00_All_b37.vcf.gz`에서 rsID:{CHR, POS, REF, ALT} 이런 dictionary를 만들어 놓은 것.   
+    Script: `/data_common/src/modify_00_All_bX.vcf.py`
+
+- 00_All_b38.vcf.gz
+    NCBI에서 제공하는 variant information 파일.  
+    Genome build: GRCh38  
+    Download: `https://ftp.ncbi.nih.gov/snp/organisms/human_9606_b151_GRCh38p7/VCF/00-All.vcf.gz -O 00_All_b38.vcf.gz`
+
+- /00_All_b38_dict_chr/00_All_b38_dict_chr_*.pkl
+    `00_All_b38.vcf.gz`에서 rsID:{CHR, POS, REF, ALT} 이런 dictionary를 만들어 놓은 것.   
+    Script: `/data_common/src/modify_00_All_bX.vcf.py`
+
