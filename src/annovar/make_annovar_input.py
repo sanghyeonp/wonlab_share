@@ -29,11 +29,10 @@ def read_input(file, delim_in, file_compression,
         data_format = data_format.split(sep=separator)
         idx = {v:data_format.index(v) for v in ['CHR', 'POS', 'REF', 'ALT']}
 
-        df_[[chr_col, pos_col, ref_col, alt_col]] = df_.apply(lambda row: [row[infer_col].split(sep=separator)[idx['CHR']], 
-                                                    row[infer_col].split(sep=separator)[idx['POS']],
-                                                    row[infer_col].split(sep=separator)[idx['REF']],
-                                                    row[infer_col].split(sep=separator)[idx['ALT']]
-                                                    ], axis=1, result_type='expand')
+        df_[chr_col] = df_[infer_col].apply(lambda x: x.split(sep=separator)[idx['CHR']])
+        df_[pos_col] = df_[infer_col].apply(lambda x: x.split(sep=separator)[idx['POS']])
+        df_[ref_col] = df_[infer_col].apply(lambda x: x.split(sep=separator)[idx['REF']])
+        df_[alt_col] = df_[infer_col].apply(lambda x: x.split(sep=separator)[idx['ALT']])
 
     df_[chr_col] = df_[chr_col].astype(str)
     df_[pos_col] = df_[pos_col].astype(int)
