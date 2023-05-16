@@ -60,10 +60,10 @@ def main(file, delim_in, compression_in, gene_id_col, genome_build, gene_symbol_
 
     ### Fill NA
     if not gene_symbol_only:
-        df[['Gene', gene_id_col, 'gene_symbol', 'chr_gene', 'strand']] = df[['Gene', gene_id_col, 'gene_symbol', 'chr_gene', 'strand']].fillna(value=".")
-        df[['TSS']] = df[['TSS']].fillna(value="-9")
+        df[['gene_symbol', 'chr_gene', 'strand']] = df[['gene_symbol', 'chr_gene', 'strand']].fillna(value=".")
+        df[['TSS']] = df[['TSS']].fillna(value=-9)
     else:
-        df[[gene_id_col, 'gene_symbol']] = df[[gene_id_col, 'gene_symbol']].fillna(value=".")
+        df[['gene_symbol']] = df[['gene_symbol']].fillna(value=".")
         
     ### Save output    
     df.to_csv(os.path.join(outd, outf), sep=delim_out, index=False)
