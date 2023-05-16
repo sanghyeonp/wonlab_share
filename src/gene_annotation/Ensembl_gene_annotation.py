@@ -38,9 +38,6 @@ def parse_args():
     return args
 
 
-
-
-
 def main(file, delim_in, compression_in, gene_id_col, genome_build, gene_symbol_only, outf, outd, delim_out):
     df_ = pd.read_csv(file, sep=delim_in, index_col=False, compression=compression_in, low_memory=False)
 
@@ -49,7 +46,7 @@ def main(file, delim_in, compression_in, gene_id_col, genome_build, gene_symbol_
     df_['gene_id_new'] = df_[gene_id_col].apply(lambda x: x.split(sep=".")[0] if "ENSG" in x and x != "nan" else x)
 
     ### Read gene annotation table
-    df_gene_info = pd.read.csv(ENSEMBL_GENE_INFO[genome_build], sep="\t", index_col=False, compression="gzip")
+    df_gene_info = pd.read_csv(ENSEMBL_GENE_INFO[genome_build], sep="\t", index_col=False, compression="gzip")
     if gene_symbol_only:
         df_gene_info = df_gene_info[['ensembl_gene', 'gene_symbol']]
 
@@ -60,8 +57,9 @@ def main(file, delim_in, compression_in, gene_id_col, genome_build, gene_symbol_
     ### TSS
     df['TSS'] = df['TSS'].astype('Int64')
 
-    ### Fill NA 
-    df.fillna(".", inplace=True)
+    ### Fill NA
+    df[['Gene', 'Probe_Ensembl', 'gene_symbol', 'chr_gene', 'strand']] = df[['Gene', 'Probe_Ensembl', 'gene_symbol', 'chr_gene', 'strand']].fillna(value=".")
+    df[['TSS']] = df[['TSS']].fillna(value="-9")
 
     ### Save output    
     df.to_csv(os.path.join(outd, outf), sep=delim_out, index=False)
