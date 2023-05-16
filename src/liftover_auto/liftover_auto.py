@@ -15,10 +15,14 @@ def parse_args():
     # Input
     parser.add_argument('--file', required=True,
                         help='Path to the input file being lifted over.')
-    parser.add_argument('--file-compression', dest="file_compression", required=False, default="infer",
+    parser.add_argument('--in-compression', dest="in_compression", required=False, default="infer",
                         help="Specify compression type from the following ['zip', 'gzip', 'bz2', 'zstd', 'tar']. Default='infer'.")
     parser.add_argument('--delim', required=False, default="tab",
                     help="Delimiter used in the input file. Choices = ['tab', 'comma', 'whitespace']. Default = 'tab'.")
+    parser.add_argument('--infer-chr-pos', dest="infer_chr_pos", nargs='+', required=False,
+                        help="Specify column name, data format, and separator to infer chr and pos from specified column.\
+                            For example, column named 'variant' have variant name '2:179816990:C:T' where chromosome and position can be inferred as 2 and 179816990, respectively.\
+                            Then, specify as follows: --infer-chr-pos variant CHR:POS :")
     parser.add_argument('--snp-col', dest="snp_col", required=False, default="SNP",
                     help="Name of the SNP column in the input file. Default = 'SNP'.")
     parser.add_argument('--chr-col', dest="chr_col", required=False, default="CHR",
@@ -53,6 +57,8 @@ def parse_args():
                         help="Specify the name of the output file. Default = 'lifted.<file>'.")
     parser.add_argument('--outd', required=False, default="NA",
                         help="Specify the path to output directory. Default = Current working directory.")
+    parser.add_argument('--out-compression', dest="out_compression", required=False, default=None,
+                        help="Specify compression type from the following ['zip', 'gzip', 'bz2', 'zstd', 'tar']. Default='infer'.")
 
     # Other optional.
     parser.add_argument('--verbose', action='store_true',
@@ -62,11 +68,11 @@ def parse_args():
     return args
 
 
-def main(file, file_compression, delim, snp_col, chr_col, pos_col, 
+def main(file, in_compression, delim, snp_col, infer_chr_pos, chr_col, pos_col, 
         chr_col_new, pos_col_new,
         build_from, build_to, 
         keep_initial_pos, keep_unlifted, keep_intermediate, unlifted_snplist, 
-        outf, outd,
+        outf, outd, out_compression,
         verbose):
     
     logs_ = []
@@ -75,7 +81,7 @@ def main(file, file_compression, delim, snp_col, chr_col, pos_col,
     # 1. Make bed file
     _, filename = os.path.split(file)
     bed_file_exists = os.path.exists(os.path.join(outd, filename+".liftover.bed"))
-    input_bed = make_bed(file, file_compression, delim, snp_col, chr_col, pos_col, outd, bed_file_exists)
+    input_bed = make_bed(file, in_compression, delim, snp_col, infer_chr_pos, chr_col, pos_col, outd, bed_file_exists)
 
     # 2. Perform liftover
     if not os.path.exists(os.path.join(outd, filename+".lifted")):
@@ -84,7 +90,7 @@ def main(file, file_compression, delim, snp_col, chr_col, pos_col,
     # 3. Merge the result
     logs = merge_lifted(file, delim, snp_col, chr_col, pos_col, chr_col_new, pos_col_new,
                 unlifted_snplist, keep_initial_pos, keep_unlifted, keep_intermediate,
-                outf, outd, verbose); logs_ += logs
+                outf, outd, out_compression, verbose); logs_ += logs
 
     # 4. Save the log
     save_log(logs_, os.path.join(outd, outf+".liftover.log"))
@@ -99,9 +105,10 @@ if __name__ == "__main__":
         args.outd = os.getcwd()
 
     main(file=args.file,
-        file_compression=args.file_compression,
+        in_compression=args.in_compression,
         delim=map_delim(args.delim),
         snp_col=args.snp_col,
+        infer_chr_pos=args.infer_chr_pos,
         chr_col=args.chr_col,
         pos_col=args.pos_col,
         chr_col_new=args.chr_col_new,
@@ -114,5 +121,6 @@ if __name__ == "__main__":
         unlifted_snplist=args.unlifted_snplist,
         outf=args.outf,
         outd=args.outd,
+        out_compression=args.out_compression,
         verbose=args.verbose
         )
