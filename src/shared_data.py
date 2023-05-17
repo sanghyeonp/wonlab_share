@@ -25,3 +25,8 @@ ANNOVAR_humandb = "/data1/sanghyeon/wonlab_contribute/combined/software/annovar/
 
 ### Ensembl gene information
 ENSEMBL_GENE_INFO = "/data1/sanghyeon/wonlab_contribute/combined/data_common/Homo_sapiens.GRCh37.87.gtf.gz"
+
+### NCBI variant annotation
+NCBI_VARIANT_ANNOT = {37: "/data1/sanghyeon/wonlab_contribute/combined/data_common/00_All_b37.vcf.parquet.gz",
+                    38: "/data1/sanghyeon/wonlab_contribute/combined/data_common/00_All_b38.vcf.parquet.gz"
+                    }
