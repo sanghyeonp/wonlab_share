@@ -7,6 +7,9 @@ sys.path.append(parent)
 from util import *
 from packages import *
 
+import_or_install('statsmodels')
+from statsmodels.sandbox.stats.multicomp import multipletests
+
 
 def parse_args():
     parser = argparse.ArgumentParser(description=":: Multiple comparisons correction ::")
