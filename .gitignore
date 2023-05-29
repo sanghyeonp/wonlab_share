@@ -3,6 +3,7 @@ dask-worker-space
 
 # Ignore data directory
 data_common/
+issues/
 
 # Compressed files
 *.zip
