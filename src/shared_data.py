@@ -32,3 +32,8 @@ ANNOVAR_humandb = "/data1/sanghyeon/wonlab_contribute/combined/software/annovar/
 ENSEMBL_GENE_INFO = {37: "/data1/sanghyeon/wonlab_contribute/combined/data_common/modified.Homo_sapiens.GRCh37.87.gtf.gz",
                     38: "/data1/sanghyeon/wonlab_contribute/combined/data_common/modified.Homo_sapiens.GRCh38.109.gtf.gz"
                     }
+
+### NCBI variant annotation
+NCBI_VARIANT_ANNOT_DIR = {37: "/data1/sanghyeon/wonlab_contribute/combined/data_common/00_All_b37_parquet_partitioned",
+                    38: "/data1/sanghyeon/wonlab_contribute/combined/data_common/00_All_b38_parquet_partitioned"
+                    }

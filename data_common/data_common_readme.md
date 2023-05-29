@@ -33,23 +33,26 @@
 # NCBI Entrez gene ID to gene name mapping
 
 - gene_info.gz
-    NCBI에서 제공하는 gene information 파일.  
-    NCBI Entrez gene ID를 gene symbol로 mapping 할 때 사용.  
+    NCBI에서 제공하는 gene information 파일.
+    NCBI Entrez gene ID를 gene symbol로 mapping 할 때 사용.
     Download: `wget https://ftp.ncbi.nih.gov/gene/DATA/gene_info.gz`
 
-
-# dbGAP Variant information mapping file
+# NCBI variant annotation
 
 - 00_All_b37.vcf.gz
-    dbGAP에서 제공하는 SNP 정보 파일. (human_9606_b151_GRCh37p13, 2018-04-27 release)
-    SNP rsID만 있을 때, chromosome, base position, reference allele, alternative allele mapping 할 때 사용하면 됨.
-    이건 GRCh37.
-    Downlaod: `wget https://ftp.ncbi.nih.gov/snp/organisms/human_9606_b151_GRCh37p13/VCF/00-All.vcf.gz -O 00_All_b37.vcf.gz`
-    md5: `wget https://ftp.ncbi.nih.gov/snp/organisms/human_9606_b151_GRCh37p13/VCF/00-All.vcf.gz.md5 -O 00_All_b37.vcf.gz.md5`
+    NCBI에서 제공하는 variant information 파일.  
+    Genome build: GRCh37  
+    Download: `https://ftp.ncbi.nih.gov/snp/organisms/human_9606_b151_GRCh37p13/VCF/00-All.vcf.gz -O 00_All_b37.vcf.gz`
+
+- /00_All_b37_parquet_partitioned/part.*.parquet
+    `00_All_b37.vcf.gz`에서 rsID, CHR, POS, REF, ALT dataframe을 chromosome별로 parquet format으로 저장해놓은 것.   
+    Script: `/data_common/src/modify_00_All_bX.vcf.py`
 
 - 00_All_b38.vcf.gz
-    dbGAP에서 제공하는 SNP 정보 파일. (human_9606_b151_GRCh38p7, 2018-04-24 release)
-    SNP rsID만 있을 때, chromosome, base position, reference allele, alternative allele mapping 할 때 사용하면 됨.
-    이건 GRCh38.
-    Downlaod: `wget https://ftp.ncbi.nih.gov/snp/organisms/human_9606_b151_GRCh38p7/VCF/00-All.vcf.gz -O 00_All_b38.vcf.gz`
-    md5: `wget https://ftp.ncbi.nih.gov/snp/organisms/human_9606_b151_GRCh38p7/VCF/00-All.vcf.gz.md5 -O 00_All_b38.vcf.gz.md5`
+    NCBI에서 제공하는 variant information 파일.  
+    Genome build: GRCh38  
+    Download: `https://ftp.ncbi.nih.gov/snp/organisms/human_9606_b151_GRCh38p7/VCF/00-All.vcf.gz -O 00_All_b38.vcf.gz`
+
+- /00_All_b38_parquet_partitioned/part.*.parquet
+    `00_All_b38.vcf.gz`에서 rsID, CHR, POS, REF, ALT dataframe을 chromosome별로 parquet format으로 저장해놓은 것.   
+    Script: `/data_common/src/modify_00_All_bX.vcf.py`

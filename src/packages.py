@@ -6,22 +6,25 @@ def import_or_install(package):
     except ImportError:
         pip.main(['install', package])       
 
-packages_list = ['pandas', 'os', 'subprocess', 'multiprocessing', 
-                'csv', 'argparse', 'code', 'tqdm', 'statsmodels']
+packages_list = ['os',
+                'pandas', 'csv', 'numpy',
+                'argparse', 'code', 'tqdm',
+                'subprocess', 'multiprocessing', 
+                'statsmodels']
 
 [import_or_install(p) for p in packages_list]    
 
 import pandas as pd
 pd.set_option('mode.chained_assignment',  None)
 import os
-import subprocess
-from multiprocessing import Pool, Manager
 from datetime import datetime
 import csv
 import argparse
 from tqdm import tqdm
-from statsmodels.sandbox.stats.multicomp import multipletests
 import io
+import numpy as np
+import subprocess
+from multiprocessing import Pool, Manager
 
 import code
 # code.interact(local=dict(globals(), **locals()))
