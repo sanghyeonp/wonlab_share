@@ -5,6 +5,9 @@ dask-worker-space
 data_common/
 issues/
 
+# Ignore troubleshoot
+issues/
+
 # Compressed files
 *.zip
 *.gz

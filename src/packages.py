@@ -6,9 +6,11 @@ def import_or_install(package):
     except ImportError:
         pip.main(['install', package])       
 
-packages_list = ['pandas', 'os', 'numpy',
-                'csv', 'argparse', 'code', 'tqdm',
-                'subprocess', 'multiprocessing']
+packages_list = ['os',
+                'pandas', 'csv', 'numpy',
+                'argparse', 'code', 'tqdm',
+                'subprocess', 'multiprocessing', 
+                'statsmodels']
 
 [import_or_install(p) for p in packages_list]    
 

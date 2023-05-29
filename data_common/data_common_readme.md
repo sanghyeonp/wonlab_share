@@ -16,6 +16,19 @@
     Genome build: GRCh37  
     Download: `wget https://ftp.ensembl.org/pub/grch37/release-109/gtf/homo_sapiens/Homo_sapiens.GRCh37.87.gtf.gz`
 
+- modified.Homo_sapiens.GRCh37.87.gtf.gz  
+    `Homo_sapiens.GRCh37.87.gtf.gz`를 modify한 파일.
+    Script: ./src/modify_Homo_sapiens.GRCh_X.py  
+
+- Homo_sapiens.GRCh38.109.gtf.gz
+    Ensembl에서 제공하는 gene annotation 파일.  
+    Ensembl gene ID와 gene의 transcription start site (TSS) position과 strand direction 등에 대한 정보를 얻을 수 있음.  
+    Genome build: GRCh38  
+    Download: `wget https://ftp.ensembl.org/pub/release-109/gtf/homo_sapiens/Homo_sapiens.GRCh38.109.gtf.gz`
+
+- modified.Homo_sapiens.GRCh38.109.gtf.gz  
+    `Homo_sapiens.GRCh38.109.gtf.gz`를 modify한 파일.  
+    Script: ./src/modify_Homo_sapiens.GRCh_X.py  
 
 # NCBI Entrez gene ID to gene name mapping
 
@@ -43,5 +56,3 @@
 - /00_All_b38_parquet_partitioned/part.*.parquet
     `00_All_b38.vcf.gz`에서 rsID, CHR, POS, REF, ALT dataframe을 chromosome별로 parquet format으로 저장해놓은 것.   
     Script: `/data_common/src/modify_00_All_bX.vcf.py`
-
-

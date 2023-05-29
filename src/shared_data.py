@@ -1,3 +1,7 @@
+"""
+Data source에 대한 설명은 /data_common/data_common_readme.md 를 보시면 됩니다.
+"""
+
 from packages import *
 
 ### NCBI Entrez gene ID to gene name mapping file
@@ -23,8 +27,11 @@ ANNOVAR_software = "/data1/sanghyeon/wonlab_contribute/combined/software/annovar
 ANNOVAR_humandb = "/data1/sanghyeon/wonlab_contribute/combined/software/annovar/annovar/humandb/"
 # ANNOVAR_humandb = "/data/software/Annovar/annovar_20221005/humandb/"
 
+
 ### Ensembl gene information
-ENSEMBL_GENE_INFO = "/data1/sanghyeon/wonlab_contribute/combined/data_common/Homo_sapiens.GRCh37.87.gtf.gz"
+ENSEMBL_GENE_INFO = {37: "/data1/sanghyeon/wonlab_contribute/combined/data_common/modified.Homo_sapiens.GRCh37.87.gtf.gz",
+                    38: "/data1/sanghyeon/wonlab_contribute/combined/data_common/modified.Homo_sapiens.GRCh38.109.gtf.gz"
+                    }
 
 ### NCBI variant annotation
 NCBI_VARIANT_ANNOT_DIR = {37: "/data1/sanghyeon/wonlab_contribute/combined/data_common/00_All_b37_parquet_partitioned",
