@@ -6,9 +6,9 @@ def import_or_install(package):
     except ImportError:
         pip.main(['install', package])       
 
-packages_list = ['pandas', 'os', 
+packages_list = ['pandas', 'os', 'numpy',
                 'csv', 'argparse', 'code', 'tqdm',
-                'numpy']
+                'subprocess', 'multiprocessing']
 
 [import_or_install(p) for p in packages_list]    
 
@@ -21,6 +21,8 @@ import argparse
 from tqdm import tqdm
 import io
 import numpy as np
+import subprocess
+from multiprocessing import Pool, Manager
 
 import code
 # code.interact(local=dict(globals(), **locals()))
