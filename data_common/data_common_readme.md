@@ -31,8 +31,8 @@
     Genome build: GRCh37  
     Download: `https://ftp.ncbi.nih.gov/snp/organisms/human_9606_b151_GRCh37p13/VCF/00-All.vcf.gz -O 00_All_b37.vcf.gz`
 
-- /00_All_b37_dict_chr/00_All_b37_dict_chr_*.pkl
-    `00_All_b37.vcf.gz`에서 rsID:{CHR, POS, REF, ALT} 이런 dictionary를 만들어 놓은 것.   
+- /00_All_b37_parquet_partitioned/part.*.parquet
+    `00_All_b37.vcf.gz`에서 rsID, CHR, POS, REF, ALT dataframe을 chromosome별로 parquet format으로 저장해놓은 것.   
     Script: `/data_common/src/modify_00_All_bX.vcf.py`
 
 - 00_All_b38.vcf.gz
@@ -40,7 +40,8 @@
     Genome build: GRCh38  
     Download: `https://ftp.ncbi.nih.gov/snp/organisms/human_9606_b151_GRCh38p7/VCF/00-All.vcf.gz -O 00_All_b38.vcf.gz`
 
-- /00_All_b38_dict_chr/00_All_b38_dict_chr_*.pkl
-    `00_All_b38.vcf.gz`에서 rsID:{CHR, POS, REF, ALT} 이런 dictionary를 만들어 놓은 것.   
+- /00_All_b38_parquet_partitioned/part.*.parquet
+    `00_All_b38.vcf.gz`에서 rsID, CHR, POS, REF, ALT dataframe을 chromosome별로 parquet format으로 저장해놓은 것.   
     Script: `/data_common/src/modify_00_All_bX.vcf.py`
+
 
