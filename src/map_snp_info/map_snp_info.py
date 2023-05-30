@@ -52,7 +52,6 @@ def parse_args():
     return args
 
 
-
 def main(file, delim_in, compression_in, 
         rsid_col, genome_build, chromosome_filter,
         outf, outd, delim_out, compression_out
@@ -80,7 +79,8 @@ def main(file, delim_in, compression_in,
     print("Elapsed: {}".format(timedelta(seconds=timer() - start1)))
 
     # Rename the annotation dataframe columns
-    col_rename = {"CHR":"CHR_b{}".format(genome_build), 
+    col_rename = {"SNP":"SNP_b{}".format(genome_build),
+                    "CHR":"CHR_b{}".format(genome_build), 
                     "POS":"POS_b{}".format(genome_build),
                     "REF":"REF_b{}".format(genome_build),
                     "ALT":"ALT_b{}".format(genome_build)
@@ -90,9 +90,9 @@ def main(file, delim_in, compression_in,
     ### Merge
     print(":: Mapping ::")
     
-    df_annot_filter = df_annot[df_annot['SNP'].isin(snp_list)]
+    df_annot_filter = df_annot[df_annot["SNP_b{}".format(genome_build)].isin(snp_list)]
 
-    df = df_.merge(df_annot_filter, how="left", left_on=rsid_col, right_on="SNP")
+    df = df_.merge(df_annot_filter, how="left", left_on=rsid_col, right_on="SNP_b{}".format(genome_build))
 
     df2 = df.compute()
 
@@ -129,6 +129,7 @@ def main(file, delim_in, compression_in,
     else:
         df4 = df_automsome.copy()
         del df_automsome
+
     df4 = pd.concat([df4, df_missing])
 
     print("Elapsed: {}".format(timedelta(seconds=timer() - start3)))
