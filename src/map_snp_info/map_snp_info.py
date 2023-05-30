@@ -110,8 +110,8 @@ def main(file, delim_in, compression_in,
     ### Sort values by chromosome and base position
     start3 = timer()
     print(":: Sort by chromosome and base position ::")
-    df_missing = df2[df2['CHR_b{}'.format(genome_build)] == -9]
-    df3 = df2[~df2['CHR_b{}'.format(genome_build)] == -9]
+    df_missing = df2[df2['CHR_b{}'.format(genome_build)] == '-9']
+    df3 = df2[df2['CHR_b{}'.format(genome_build)] != '-9']
     
     df_automsome = df3[~df3['CHR_b{}'.format(genome_build)].isin(['X', 'Y', 'MT'])]
     df_automsome['CHR_b{}'.format(genome_build)] = df_automsome['CHR_b{}'.format(genome_build)].astype(int)
