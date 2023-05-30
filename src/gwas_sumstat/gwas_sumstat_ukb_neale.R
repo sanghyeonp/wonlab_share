@@ -92,7 +92,9 @@ df <- suppressMessages(suppressWarnings(readr::read_table(gwas, col_names = TRUE
 
 ### Read variant to rsID mapping file
 cat("\n::Run:: Reading variant file")
-df_variant <- suppressMessages(suppressWarnings(readr::read_table(variant_file, col_names = TRUE)))
+df_variant <- suppressMessages(suppressWarnings(readr::read_table(variant_file, col_names = TRUE,
+                                                                col_types = cols_only(variant="character", rsid="character", info="character"))
+                                                                ))
 df_variant <- subset(df_variant, select=c('variant', 'rsid', 'info'))
 colnames(df_variant) <- c("variant", "RSID", "INFO")
 
