@@ -51,7 +51,7 @@ def vcf_to_parquet(vcf, build):
                             'POS':'int64',
                             'REF':'object',
                             'ALT':'object'})
-        ddf.to_parquet("../00_All_b{}_parquet_partitioned".format(build), 
+        ddf.to_parquet("/data1/sanghyeon/wonlab_contribute/combined/data_common/00_All_b{}_parquet_partitioned".format(build), 
                     engine="pyarrow", 
                     compression="snappy"
                     )
