@@ -40,3 +40,31 @@ NCBI_VARIANT_ANNOT_DIR = {37: "/data1/sanghyeon/wonlab_contribute/combined/data_
 
 ### 1000 Genomes phase 3 VCF modified (Genome build: GRCh37)
 VCF_1kGp3_modified_dir = "/data1/sanghyeon/wonlab_contribute/combined/data_common/1kGp3_vcf"
+
+
+### 1000 Genomes phase 3 QC-ed PLINK file
+
+### PLINK files
+PLINK_bfile = {
+    "1kGp3": {
+        "rsid": {
+            "European": "/data1/sanghyeon/wonlab_contribute/combined/data_common/1kGp3_PLINK/EUR/1kg.phase3.auto.snp.qc.EUR.clean.rsid",
+            "East Asian": "/data1/sanghyeon/wonlab_contribute/combined/data_common/1kGp3_PLINK/EAS/1kg.phase3.auto.snp.qc.EAS.clean.rsid"
+        },
+        "chrpos": {
+            "European": "/data1/sanghyeon/wonlab_contribute/combined/data_common/1kGp3_PLINK/EUR/1kg.phase3.auto.snp.qc.EUR.clean.chrpos",
+            "East Asian": "/data1/sanghyeon/wonlab_contribute/combined/data_common/1kGp3_PLINK/EAS/1kg.phase3.auto.snp.qc.EAS.clean.chrpos"
+        }
+    },
+    "UKB": {
+        "rsid": {
+            "European": "/data1/UKbiobank/PLINK/QC/ukb_eur_unrel_comb/ukb_eur_unrel_comb",
+            "Asian": "/data1/kyeongmin/study/2102_Irritable/UKBB_QC_nonEUR/QC_nonEUR/ukb_imp_v3_snp_rmdup_sampleqc_nokin_varqc_Asian",
+            "Black": "/data1/kyeongmin/study/2102_Irritable/UKBB_QC_nonEUR/QC_nonEUR/ukb_imp_v3_snp_rmdup_sampleqc_nokin_varqc_Black",
+            "Chinese": "/data1/kyeongmin/study/2102_Irritable/UKBB_QC_nonEUR/QC_nonEUR/ukb_imp_v3_snp_rmdup_sampleqc_nokin_varqc_Chinese"
+        },
+        "chrpos": {
+            "European": "/data1/UKbiobank/PLINK/QC/ukb_eur_unrel_comb/ukb_eur_unrel_comb_chrpos_alleles_sorted"
+        }
+    }
+}
