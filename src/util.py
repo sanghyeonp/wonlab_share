@@ -69,3 +69,9 @@ def read_filelist(filelist):
         files = [v.strip() for v in f.readlines()]
     return files
 
+
+def isin_list(str1, list1):
+    for l in list1:
+        if l in str1:
+            return True
+    return False
