@@ -37,3 +37,6 @@ ENSEMBL_GENE_INFO = {37: "/data1/sanghyeon/wonlab_contribute/combined/data_commo
 NCBI_VARIANT_ANNOT_DIR = {37: "/data1/sanghyeon/wonlab_contribute/combined/data_common/00_All_b37_parquet_partitioned",
                     38: "/data1/sanghyeon/wonlab_contribute/combined/data_common/00_All_b38_parquet_partitioned"
                     }
+
+### 1000 Genomes phase 3 VCF modified (Genome build: GRCh37)
+VCF_1kGp3_modified_dir = "/data1/sanghyeon/wonlab_contribute/combined/data_common/1kGp3_vcf"
