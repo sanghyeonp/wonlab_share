@@ -74,3 +74,7 @@ Source : https://www.biostars.org/p/310841/
 # Harmonization
 
 ### GWAS summary statistics가 있을 때, minor allele frequency (MAF)가 0.5 이상인 경우.
+
+이걸로 설명
+
+![alt text](../../img/reverse_allele.jpg)
