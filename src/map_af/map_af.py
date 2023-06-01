@@ -7,15 +7,16 @@ sys.path.append(parent)
 from util import *
 from packages import *
 from shared_data import VCF_1kGp3_modified_dir
-MAF_SOURCE = {'1kgp3': VCF_1kGp3_modified_dir
+AF_SOURCE = {'1kgp3': VCF_1kGp3_modified_dir
             }
 
 from timeit import default_timer as timer
 from datetime import timedelta
+tqdm.pandas(leave=False, bar_format='{l_bar}{bar:30}{r_bar}{bar:-30b}')
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description=":: Map MAF by chromosome and base position ::")
+    parser = argparse.ArgumentParser(description=":: Map AF by chromosome and base position ::")
     
     # Required arguments
     parser.add_argument('--file', required=True,
@@ -26,6 +27,8 @@ def parse_args():
                         help="Name of the pos column in the input file. Must be in genome build GRCh37.")
     # parser.add_argument('--rsid-col', dest="rsid_col", required=True,
     #                     help="Name of the rsID column in the input file.")
+    parser.add_argument('--a1-col', dest="a1_col", required=True,
+                        help="Name of the a1 column, which is effect allele, in the input file.")
     parser.add_argument('--ancestry', required=True, nargs='+',
                         help="Specify ancestry (or ancestries if MAF from multiple ancestries are required.).\
                             Choices = ['GLOBAL', 'EAS', 'EUR', 'AMR', 'AFR', 'SAS'].\
@@ -45,7 +48,7 @@ def parse_args():
                         Choices = ['autosome', 'all']")
 
     parser.add_argument('--outf', required=False, default="NA",
-                        help="Specify the name of the output file. Default = 'maf.<file>'.")
+                        help="Specify the name of the output file. Default = 'af.<file>'.")
     parser.add_argument('--outd', required=False, default="NA",
                         help="Specify the path to output directory. Default = Current working directory.")
     parser.add_argument('--delim-out', dest="delim_out", required=False, default="NA",
@@ -65,10 +68,10 @@ def parse_args():
 #         ):
 # > VCF파일에 rsID mappind하면 rsid_col argument 추가한거 사용하기
 def main(file, delim_in, compression_in, 
-        chr_col, pos_col, ancestry, source, chromosome_filter,
+        chr_col, pos_col, a1_col, ancestry, source, chromosome_filter,
         outf, outd, delim_out, compression_out
         ):
-    global MAF_SOURCE
+    global AF_SOURCE
     
     ### Read input file
     start0 = timer()
@@ -84,7 +87,7 @@ def main(file, delim_in, compression_in,
     print(":: Prepare annotation file path ::")
     if source == '1kgp3':
         print("MAF from 1000 Genome phase 3 VCF")
-        vcf_files = [os.path.join(MAF_SOURCE[source], f) for f in os.listdir(MAF_SOURCE[source])]
+        vcf_files = [os.path.join(AF_SOURCE[source], f) for f in os.listdir(AF_SOURCE[source])]
     
     if chromosome_filter == 'autosome':
         vcf_files = [f for f in vcf_files if not isin_list(f.split(sep="chr")[-1], ['X', 'Y', 'MT'])]
@@ -107,9 +110,11 @@ def main(file, delim_in, compression_in,
     for idx, vcf in enumerate(tqdm(vcf_files, desc="Chromosome", leave=False, bar_format='{l_bar}{bar:30}{r_bar}{bar:-30b}')):
         df_annot = pd.read_csv(vcf, sep="\t", index_col=False, compression="gzip", dtype=str)
         df_annot.rename(columns={'#CHROM':'CHR_1kG',
-                                'POS':'POS_1kG'}, inplace=True)
+                                'POS':'POS_1kG',
+                                'REF':'REF_1kG',
+                                'ALT':'ALT_1kG'}, inplace=True)
 
-        df_annot = df_annot[['CHR_1kG', 'POS_1kG'] + col_retain]
+        df_annot = df_annot[['CHR_1kG', 'POS_1kG', 'REF_1kG', 'ALT_1kG'] + col_retain]
         if idx == 0:
             df = pd.merge(df_, df_annot, how="left", left_on=[chr_col, pos_col], right_on=['CHR_1kG', 'POS_1kG'])
             df.drop(columns=['CHR_1kG', 'POS_1kG'], inplace=True)
@@ -117,7 +122,7 @@ def main(file, delim_in, compression_in,
             df = pd.merge(df, df_annot, how="left", left_on=[chr_col, pos_col], right_on=['CHR_1kG', 'POS_1kG'], suffixes=['', '_'])
             df.drop(columns=['CHR_1kG', 'POS_1kG'], inplace=True)
             # code.interact(local=dict(globals(), **locals()))
-            for col in col_retain:
+            for col in col_retain + ['REF_1kG', 'ALT_1kG']:
                 df[col] = df[col].fillna(df[col + '_'])
                 df.drop(columns=[col + "_"], inplace=True)
             
@@ -132,11 +137,26 @@ def main(file, delim_in, compression_in,
     print("Elapsed: {}".format(timedelta(seconds=timer() - start2)))
 
 
-    ### Save the result
+    ### Align allele frequency to a1 column
     start3 = timer()
+    print(":: Aligning allele frequency to A1 column ::")
+    def align(a1, alt, af):
+        if a1 == alt:
+            return af
+        return str(1 - float(af))
+
+    for col in tqdm(col_retain, desc="Align", leave=False, bar_format='{l_bar}{bar:30}{r_bar}{bar:-30b}'):
+        df[col + "_aligned"] = df.apply(lambda row: align(row[a1_col], row['ALT_1kG'], row[col]), axis=1)
+        df.drop(columns=[col], inplace=True)
+        df.rename(columns={col + "_aligned":col}, inplace=True)
+
+    print("Elapsed: {}".format(timedelta(seconds=timer() - start3)))
+
+    ### Save the result
+    start4 = timer()
     print(":: Saving the annotated result ::")
     if outf == "NA":
-        outf = "maf." + os.path.split(file)[-1]
+        outf = "af." + os.path.split(file)[-1]
     if outd == "NA":
         outd = "."
     if compression_out == "NA":
@@ -145,7 +165,7 @@ def main(file, delim_in, compression_in,
 
     df.to_csv(os.path.join(outd, outf), sep=delim_out, 
                 index=False, compression=compression_out)
-    print("Elapsed: {}".format(timedelta(seconds=timer() - start3)))
+    print("Elapsed: {}".format(timedelta(seconds=timer() - start4)))
 
 
 if __name__ == "__main__":
@@ -159,6 +179,7 @@ if __name__ == "__main__":
         compression_in=args.compression_in,
         chr_col=args.chr_col,
         pos_col=args.pos_col,
+        a1_col=args.a1_col,
         chromosome_filter=args.chromosome_filter,
         ancestry=args.ancestry,
         source=args.source,
