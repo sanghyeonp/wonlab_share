@@ -101,3 +101,10 @@
 - /1kGp3_vcf/1kgp3_chr*.tsv.gz
     - VCF에서 제공하는 #CHROM, POS, ID, REF, ALT, QUAL, FILTER, INFO, 그리고 INFO에서 extract한 정보를 dataframe으로 저장함.
     - tab-delimited and gzip
+
+
+# PLINK QC-ed files
+    - /1kGp3_PLINK/
+        - /EUR/
+        - /EAS/
+        - Both directory contains PLINK bfile with SNP in format of rsID or chr:pos
