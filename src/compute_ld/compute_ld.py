@@ -27,7 +27,7 @@ def parse_args():
                     help='Specify to compute LD for all possible pairs from SNP1 and SNP2 list. Default = False.')
 
     parser.add_argument('--threads', required=False, type=int, default=1,
-                    help='Number of threads to use.')
+                    help='Number of threads to use. Default = 1.')
     parser.add_argument('--variant-identifier', dest="variant_identifier", required=True,
                         help='Type of variant identifier. Choices = ["rsid", "chr:pos"]')
     parser.add_argument('--reference', required=True,
