@@ -33,7 +33,13 @@ def make_bed(file, file_compression, delim, snp_col, infer_chr_pos, chr_col, pos
     if 'chr' not in df.loc[0, chr_col]:
         df[chr_col] = df[chr_col].apply(lambda x: "chr{}".format(x))
 
-    df['pos-1'] = df[pos_col].apply(lambda x: int(x) - 1)
+    def fnc(pos):
+        try:
+            return int(pos) - 1
+        except:
+            return -9
+    
+    df['pos-1'] = df[pos_col].apply(lambda x: fnc(x))
     df = df[[chr_col, 'pos-1', pos_col, snp_col]]
 
     df.dropna(axis='index', how="any", subset=[snp_col], inplace=True)
