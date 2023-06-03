@@ -48,9 +48,9 @@ Source : https://www.biostars.org/p/310841/
 **3. Effect allele vs Other allele**
 
 - Effect allele 이란?
-    - GWAS 분석을 할 때, phenotype과 association을 확인한 allele을 effect allele이라고 부른다고 합니다.
+    - GWAS summary statistics에서 report된 association 결과 (effect estimate)가 allele 1에 대한것이라면, allele 1이 effect allele이 됨.
 - Other allele 이란?
-    - Effect allele의 반대.
+    - Test statistics가 report되지 않은 다른 allele.
 
 ```
 GWAS 분석을 할 때, 어떤 allele을 기준으로 SNP과 phenotype 간의 association을 확인했는지에 따라, association을 확인한 allele을 effect allele 이라 부르는 것 같습니다.
@@ -60,16 +60,18 @@ Effect allele이 minor allele 과 같은 의미인가?
 >>> 그렇게 생각할 수 있음.
 >>> 왜냐하면 GWAS 분석으로 SNP과 phenotype간의 association을 확일할 때, 기준이 되는 allele은 less frequent allele (즉 minor allele)을 이용함. 그리고 association을 확인한 allele을 effect allele이라고 부르기 때문에, minor allele이 effect allele과 같은 의미로 생각할 수 있음.
 >>> 그래서 minor allele frequency (MAF)가 effect allele의 frequency를 의미한다고 생각 할 수 있음.
-```
-```
-Effect allele이 alternative allele과 같은 의미인가?
->>> 아님.
->>> Alternative allele이 association 분석의 주가 되었다면 effect allele이라고 부를 수 있음. 하지만 항상 그렇지는 않기 때문에 단순히 alternative allele을 effect allele이라고 생각하면 안됨.
+>>> Geneticist 입장에서는 population 내에 적은 frequency로 보이는 allele이 관심사 이니 minor allele이라고 표현하는 것 같고, statistician 입장에서는 report하는 association test의 test statistics가 두개의 allele 중 첫번째 allele에 대한거면 이걸 effect allele이라고 부르는 것 같음. 관점의 차이.
 ```
 
 Source : https://www.biostars.org/p/310841/
 
 ---
+
+*Contributor:*
+    - 김혜진 선생님
+    - 김유진 선생님
+    - 안예은 선생님
+    - 이동준 선생님
 
 # Harmonization
 
@@ -78,3 +80,5 @@ Source : https://www.biostars.org/p/310841/
 이걸로 설명
 
 ![alt text](../../img/reverse_allele.jpg)
+
+
