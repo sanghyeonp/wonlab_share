@@ -115,7 +115,7 @@ def main(file_in, delim_in, all_possible_pairs,
 
     ### Sorting by R2
     if not all_possible_pairs and sort_by_r2:
-        df.sort_values(by='R2', ascending=True, inplace=True)
+        df.sort_values(by='R2', ascending=False, inplace=True)
 
     ### Save the result
     if outf == "NA" and not all_possible_pairs:
