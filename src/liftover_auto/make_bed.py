@@ -29,21 +29,32 @@ def make_bed(file, file_compression, delim, snp_col, infer_chr_pos, chr_col, pos
         df_[pos_col] = df_[infer_col].apply(lambda x: x.split(sep=separator)[idx['POS']])
 
     df_[chr_col] = df_[chr_col].astype(str)
+    def check_chr_col(chr):
+        try:
+            return int(float(chr.replace("chr", "")))
+        except:
+            return -9
+    df_[chr_col] = df_[chr_col].apply(lambda x: check_chr_col(x))
+    df_[chr_col] = df_[chr_col].astype(int)
+
     df = df_[[chr_col, pos_col, snp_col]]
-    if 'chr' not in df.loc[0, chr_col]:
-        df[chr_col] = df[chr_col].apply(lambda x: "chr{}".format(x))
+    df[chr_col] = df[chr_col].apply(lambda x: "chr{}".format(x))
 
     def fnc(pos):
         try:
-            return int(pos) - 1
+            return int(float(pos)) - 1
         except:
             return -9
     
-    df['pos-1'] = df[pos_col].apply(lambda x: fnc(x))
+    df[pos_col] = df[pos_col].apply(lambda x: fnc(x))
+    df['pos-1'] = df[pos_col].apply(lambda x: x - 1)
     df = df[[chr_col, 'pos-1', pos_col, snp_col]]
 
     df.dropna(axis='index', how="any", subset=[snp_col], inplace=True)
     df.drop_duplicates(subset=snp_col, keep=False, inplace=True)
+
+    # df[pos_col] = df[pos_col].astype(int)
+    # df['pos-1'] = df['pos-1'].astype(int)
 
     df.to_csv(os.path.join(outd, filename+".liftover.bed"), sep="\t", header=False, index=False)
 

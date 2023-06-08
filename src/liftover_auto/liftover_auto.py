@@ -80,8 +80,14 @@ def main(file, in_compression, delim, snp_col, infer_chr_pos, chr_col, pos_col,
 
     # 1. Make bed file
     _, filename = os.path.split(file)
-    bed_file_exists = os.path.exists(os.path.join(outd, filename+".liftover.bed"))
-    input_bed = make_bed(file, in_compression, delim, snp_col, infer_chr_pos, chr_col, pos_col, outd, bed_file_exists)
+    
+    ## << 수정하기 (1) 
+    """
+    script를 다시 돌리는 건 bed 파일이 잘못 만들어진게 있는데, 다시 안 만들면 계속 liftover 결과 잘못된걸 테니까. 
+    """
+    # bed_file_exists = os.path.exists(os.path.join(outd, filename+".liftover.bed"))
+    ## >> 수정하기 (1)
+    input_bed = make_bed(file, in_compression, delim, snp_col, infer_chr_pos, chr_col, pos_col, outd, bed_file_exists=False)
 
     # 2. Perform liftover
     if not os.path.exists(os.path.join(outd, filename+".lifted")):
