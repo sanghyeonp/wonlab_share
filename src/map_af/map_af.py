@@ -104,7 +104,7 @@ def main(file, delim_in, compression_in,
 
     ### Annotation
     start1 = timer()
-    print(":: Annotating MAF ::")
+    print(":: Annotating AF ::")
 
     df = None
     for idx, vcf in enumerate(tqdm(vcf_files, desc="Chromosome", leave=False, bar_format='{l_bar}{bar:30}{r_bar}{bar:-30b}')):
@@ -141,6 +141,8 @@ def main(file, delim_in, compression_in,
     start3 = timer()
     print(":: Aligning allele frequency to A1 column ::")
     def align(a1, alt, af):
+        if "," in af: # Multi-allelic인 경우, 따로 aligning 하지 않기.
+            return af
         if a1 == alt:
             return af
         return str(1 - float(af))
