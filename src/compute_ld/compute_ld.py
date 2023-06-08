@@ -36,6 +36,8 @@ def parse_args():
                         help='Ancestry of the input file. \
                             Choices from 1kg = ["European", "East-asian"] \
                             Choices from ukb = ["European"]')
+    parser.add_argument('--sort-by-r2', dest="sort_by_r2", action='store_true',
+                        help='Specify to sort the result by R2.')
 
     parser.add_argument('--outf', required=False, default="NA",
                         help="Specify the name of the output file. Default = 'r2.<file>'.")
@@ -66,7 +68,7 @@ def compute_ld_parallel(bfile, snp1_list, snp2_list, fnc, threads):
 
 def main(file_in, delim_in, all_possible_pairs,
         reference, variant_identifier, ancestry,
-        threads,
+        threads, sort_by_r2,
         outf, outd, delim_out):
     
     ### Read input file
@@ -111,6 +113,10 @@ def main(file_in, delim_in, all_possible_pairs,
 
         df = df.pivot_table(index=col_snp1, columns=col_snp2, values='R2', fill_value='.')
 
+    ### Sorting by R2
+    if not all_possible_pairs and sort_by_r2:
+        df.sort_values(by='R2', ascending=True, inplace=True)
+
     ### Save the result
     if outf == "NA" and not all_possible_pairs:
         outf = "r2." + os.path.split(file_in)[-1]
@@ -138,6 +144,7 @@ if __name__ == "__main__":
         variant_identifier=args.variant_identifier, 
         ancestry=args.ancestry,
         threads=args.threads,
+        sort_by_r2=args.sort_by_r2,
         outf=args.outf, 
         outd=args.outd, 
         delim_out=map_delim(args.delim_out)
