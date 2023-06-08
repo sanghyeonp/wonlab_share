@@ -35,6 +35,16 @@ def read_input(file, delim_in, file_compression,
         df_[alt_col] = df_[infer_col].apply(lambda x: x.split(sep=separator)[idx['ALT']])
 
     df_[chr_col] = df_[chr_col].astype(str)
+    # Drop any inappropriate base position
+    def check_pos(pos):
+        try:
+            int(pos)
+            return False
+        except:
+            return True
+    df_['Drop'] = df_[pos_col].apply(lambda x: check_pos(x))
+    df_ = df_[df_['Drop'] == False]
+    df_.drop(columns=['Drop'], inplace=True)
     df_[pos_col] = df_[pos_col].astype(int)
     df_[pos_col] = df_[pos_col].astype(str)
     df_[ref_col] = df_[ref_col].astype(str)

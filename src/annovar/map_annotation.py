@@ -14,7 +14,8 @@ def combine_annov_out(annov_input1, annov_input2, log_list=[]):
     df_annov1 = df_annov1.loc[df_annov1['avsnp150'] != '.', ]
     log_list = logger(log_list, log="Number of SNPs annotated with multianno.txt: {:,}".format(len(df_annov1)))
     
-    df_annov1['chr_pos_ref_alt_new'] = df_annov1.apply(lambda row: "{}:{}:{}:{}".format(row['Chr'], row['End'], row['Ref'], row['Alt']), axis=1)
+    if not df_annov1.empty:
+        df_annov1['chr_pos_ref_alt_new'] = df_annov1.apply(lambda row: "{}:{}:{}:{}".format(row['Chr'], row['End'], row['Ref'], row['Alt']), axis=1)
 
     df_annov2 = pd.read_csv(annov_input2, sep="\t", index_col=False, dtype=str)
     df_annov2 = df_annov2.loc[df_annov2['avsnp150'] != '.', ]
@@ -29,7 +30,8 @@ def combine_annov_out(annov_input1, annov_input2, log_list=[]):
         
         # Get annotated SNPs not in df_annov1.
         # If annotated SNP is present in df_annov2 after filtering the ones in df_annov1, it means this SNP has flipped allele. 
-        df_annov2 = df_annov2.loc[~df_annov2['chr_pos_ref_alt_new'].isin(df_annov1['chr_pos_ref_alt_new'].tolist()), ]
+        if not df_annov1.empty:
+            df_annov2 = df_annov2.loc[~df_annov2['chr_pos_ref_alt_new'].isin(df_annov1['chr_pos_ref_alt_new'].tolist()), ]
 
         if not df_annov2.empty:
             log_list = logger(log_list, log="Number of SNPs annotated with flipped multianno.txt: {:,}".format(len(df_annov2)))
@@ -39,6 +41,9 @@ def combine_annov_out(annov_input1, annov_input2, log_list=[]):
 
             df_annov = pd.concat([df_annov1, df_annov2])
     
+    if df_annov is None and df_annov1.empty:
+        return None, None, False
+
     if df_annov is None:
         df_annov1['flipped'] = '.'
         df_annov = df_annov1
@@ -48,18 +53,21 @@ def combine_annov_out(annov_input1, annov_input2, log_list=[]):
     df_annov = df_annov[['chr_pos_ref_alt_new', 'avsnp150', 'flipped']]
     df_annov.columns = ['chr_pos_ref_alt_new', 'rsID_annov', 'flipped_annov']
 
-    return df_annov, log_list
+    return df_annov, log_list, True
 
 
 def map_annovar_out(input_df, annov_input1, annov_input2, chr_col, pos_col, ref_col, alt_col, log_list=[]):
     annov_output1 = annov_input1.replace(".annovin", ".hg19_multianno.txt")
     annov_output2 = annov_input2.replace(".annovin", ".hg19_multianno.txt")
-    df_annov, log_list = combine_annov_out(annov_output1, annov_output2)
+    df_annov, log_list, have_result = combine_annov_out(annov_output1, annov_output2)
+
+    if not have_result:
+        return None, None, False
 
     log_list = logger(log_list, log="## Mapping annotated SNPs to the input file...")
     input_df['chr_pos_ref_alt'] = input_df.apply(lambda row: "{}:{}:{}:{}".format(row[chr_col], row[pos_col], row[ref_col], row[alt_col]), axis=1)
 
     output_df = input_df.merge(df_annov, how="left", left_on="chr_pos_ref_alt", right_on="chr_pos_ref_alt_new")
 
-    return output_df, log_list
+    return output_df, log_list, have_result
 

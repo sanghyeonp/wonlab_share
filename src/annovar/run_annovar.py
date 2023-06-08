@@ -79,7 +79,9 @@ def main(file, delim_in, in_compression,
     log_list = annovar(annov_input1, annov_input2, log_list)
 
     # Map ANNOVAR result
-    df_out_, log_list = map_annovar_out(input_df_, annov_input1, annov_input2, chr_col, pos_col, ref_col, alt_col, log_list)
+    df_out_, log_list, have_result = map_annovar_out(input_df_, annov_input1, annov_input2, chr_col, pos_col, ref_col, alt_col, log_list)
+
+    assert have_result, "There are no mapped rsID"
 
     ## Save necessary data
     n_tot = len(df_out_)
