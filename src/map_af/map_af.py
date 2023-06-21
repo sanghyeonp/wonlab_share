@@ -45,7 +45,7 @@ def parse_args():
                         help="Specify compression type from the following ['zip', 'gzip', 'bz2', 'zstd', 'tar']. Default='NA'.")
     parser.add_argument('--chromosome-filter', dest="chromosome_filter", required=False, default="autosome",
                         help="Specify which chromosomes to include. Default = 'autosome'. If 'all' is specified, then chromosome X, Y, MT are included. \
-                        Choices = ['autosome', 'all']")
+                        Choices = ['autosome', 'all', either from 1 to 23]")
 
     parser.add_argument('--outf', required=False, default="NA",
                         help="Specify the name of the output file. Default = 'af.<file>'.")
@@ -91,6 +91,11 @@ def main(file, delim_in, compression_in,
     
     if chromosome_filter == 'autosome':
         vcf_files = [f for f in vcf_files if not isin_list(f.split(sep="chr")[-1], ['X', 'Y', 'MT'])]
+    
+    if chromosome_filter.isdigit():
+        vcf_files = [f for f in vcf_files if chromosome_filter == f.split(sep="chr")[-1].replace(".tsv.gz", "")]
+
+    # code.interact(local=dict(globals(), **locals()))
 
     ### Columns to retain in annotation dataframe
     ancestry_col_mapper = {'GLOBAL':'AF_global', 
