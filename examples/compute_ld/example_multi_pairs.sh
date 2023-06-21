@@ -17,7 +17,7 @@
 python3 ../../src/compute_ld/compute_ld.py \
     --file-in ./data/example_data_20.txt \
     --delim-in whitespace \
-    --all-pair-wise \
+    --all-possible-pairs \
     --threads 15 \
     --reference 1kg \
     --variant-identifier rsid \
