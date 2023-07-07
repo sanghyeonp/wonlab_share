@@ -16,32 +16,32 @@ def parse_args():
     parser.add_argument('--build', required=True, type=int,
                         help="Genome build number (GRCh). Choices = [18, 37, 38].")
     
-    parser.add_argument('--file_compression', required=False, default="infer",
+    parser.add_argument('--file-compression', dest="file_compression", required=False, default="infer",
                         help="Specify compression type from the following ['zip', 'gzip', 'bz2', 'zstd', 'tar']. Default='infer'.")
-    parser.add_argument('--delim_in', required=False, default="tab",
+    parser.add_argument('--delim-in', dest="delim_in", required=False, default="tab",
                     help="Delimiter used in the input file. Choices = ['tab', 'comma', 'whitespace']. Default = 'tab'.")
     
-    parser.add_argument('--infer_chr_pos', nargs='+', required=False,
+    parser.add_argument('--infer-chr-pos', dest="infer_chr_pos", nargs='+', required=False,
                         help="Specify column name, data format, and separator to infer chr and pos from specified column.\
                             For example, column named 'variant' have variant name '2:179816990:C:T' where chromosome and position can be inferred as 2 and 179816990, respectively.\
-                            Then, specify as follows: --infer_chr_pos variant CHR:POS:REF:ALT :")
-    parser.add_argument('--chr_col', required=False, default="CHR",
+                            Then, specify as follows: --infer-chr-pos variant CHR:POS:REF:ALT :")
+    parser.add_argument('--chr-col', dest="chr_col", required=False, default="CHR",
                     help="Name of the chromosome column in the input file. Default = 'CHR'.")
-    parser.add_argument('--pos_col', required=False, default="POS",
+    parser.add_argument('--pos-col', dest="pos_col", required=False, default="POS",
                     help="Name of the base position column in the input file. Default = 'POS'.")
-    parser.add_argument('--new_snp_col', required=False, default="SNP_ref",
+    parser.add_argument('--new-snp-col', dest="new_snp_col", required=False, default="SNP_ref",
                     help="Name of the new SNP column mapped from the reference mapping file. Default = 'SNP_ref'.")
 
     # 
-    parser.add_argument('--keep_unmapped', action='store_true',
+    parser.add_argument('--keep-unmapped', dest="keep_unmapped", action='store_true',
                         help='Specify to keep unmapped SNPs in the output file.')
-    parser.add_argument('--keep_refmap_position', action='store_true',
+    parser.add_argument('--keep-refmap-position', dest="keep_refmap_position", action='store_true',
                         help='Specify to keep the genome position of the reference mapping file (columns: CHR_ref, POS_ref) in the output file rather than dropping them. \
                                 Keeping theses columns allow comparisons of input CHR and POS to the reference mapping file CHR and POS. Default = False.')
-    parser.add_argument('--keep_refmap_allele', action='store_true',
+    parser.add_argument('--keep-refmap-allele', dest="keep_refmap_allele", action='store_true',
                         help='Specify to keep the reference and alternative allele from the reference mapping file (columns: REF_ref, ALT_ref) in the output file rather than dropping them. \
                                 Keeping theses columns allow comparisons of input REF and ALT to the reference mapping file REF and ALT. Default = False.')
-    parser.add_argument('--keep_col', nargs='+', required=False,
+    parser.add_argument('--keep-col', dest="keep_col", nargs='+', required=False,
                         help='Keep only the specified columns in the output file. Multiple column names can be specified as following: --keep_col COL1 COL2 COL3')
 
     # Output options.
@@ -49,9 +49,9 @@ def parse_args():
                         help="Specify the name of the output file. Default = 'rsidmapped.<file>'.")
     parser.add_argument('--outd', required=False, default="NA",
                         help="Specify the path to output directory. Default = Current working directory.")
-    parser.add_argument('--delim_out', required=False, default="NA",
+    parser.add_argument('--delim-out', dest="delim_out", required=False, default="NA",
                         help="Delimiter for the output file. Choices = ['NA', 'tab', 'comma', 'whitespace']. If 'NA', identical delimiter as input delimiter will be used. Default = 'NA'.")
-    parser.add_argument('--out_compression', required=False, default="NA",
+    parser.add_argument('--out-compression', dest="out_compression", required=False, default="NA",
                         help="Specify compression type from the following ['NA', 'zip', 'gzip', 'bz2', 'zstd', 'tar']. Default='NA'.")
 
     args = parser.parse_args()
@@ -90,9 +90,9 @@ def main(file, file_compression, delim_in,
     df_[pos_col] = df_[pos_col].astype(str)
 
     # Check CHR
-    chr_check = 'chr' in df_.loc[0, 'CHR']
+    chr_check = 'chr' in df_.loc[0, chr_col]
     if chr_check:
-        df_['CHR'] = df_['CHR'].apply(lambda x: x.replace('chr', ''))
+        df_[chr_col] = df_[chr_col].apply(lambda x: x.replace('chr', ''))
 
     # Read mapping reference file
     print("## Reading the reference mapping file...")
@@ -150,6 +150,9 @@ if __name__ == "__main__":
 
     if args.outd == "NA":
         args.outd = os.getcwd()
+    
+    if args.delim_out == "NA":
+        args.delim_out = args.delim_in
 
     main(file=args.file, 
         file_compression=args.file_compression, 
