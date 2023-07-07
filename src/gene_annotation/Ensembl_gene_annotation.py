@@ -10,9 +10,15 @@ from shared_data import ENSEMBL_GENE_INFO
 
 def parse_args():
     parser = argparse.ArgumentParser(description=":: Map Ensembl gene ID to gene symbol, TSS, and strand ::")
-    parser.add_argument('--file', required=True,
+    
+    parser.add_argument('--single-gene', dest="single_gene", action='store_true',
+                    help='Specify get annotation for a single gene. Default = False.')
+    parser.add_argument('--ensembl-id', dest="ensembl_id", required=False,
+                        help='ENSEMBL ID for a single gene. Default = False.')
+
+    parser.add_argument('--file', required=False, default="NA",
                         help='Path to the input file.')
-    parser.add_argument('--gene-id-col', dest="gene_id_col", required=True, 
+    parser.add_argument('--gene-id-col', dest="gene_id_col", required=False, default="NA",
                         help='Column name of Ensembl gene ID in the input file.')
     parser.add_argument('--genome-build', dest='genome_build', required=False, default=37,
                         help='Specify genome build. Choices = [37, 38]. Default=37.')
@@ -38,12 +44,13 @@ def parse_args():
     return args
 
 
-def main(file, delim_in, compression_in, gene_id_col, genome_build, gene_symbol_only, outf, outd, delim_out):
-    df_ = pd.read_csv(file, sep=delim_in, index_col=False, compression=compression_in, low_memory=False)
+def main(single_gene, ensembl_id, file, delim_in, compression_in, gene_id_col, genome_build, gene_symbol_only, outf, outd, delim_out):
+    if file != "NA" and not single_gene:
+        df_ = pd.read_csv(file, sep=delim_in, index_col=False, compression=compression_in, low_memory=False)
 
-    ### Drop version in gene ID if present
-    df_[gene_id_col] = df_[gene_id_col].astype(str)
-    df_['gene_id_new'] = df_[gene_id_col].apply(lambda x: x.split(sep=".")[0] if "ENSG" in x and x != "nan" else x)
+        ### Drop version in gene ID if present
+        df_[gene_id_col] = df_[gene_id_col].astype(str)
+        df_['gene_id_new'] = df_[gene_id_col].apply(lambda x: x.split(sep=".")[0] if "ENSG" in x and x != "nan" else x)
 
     ### Read gene annotation table
     df_gene_info = pd.read_csv(ENSEMBL_GENE_INFO[genome_build], sep="\t", index_col=False, compression="gzip")
@@ -51,6 +58,10 @@ def main(file, delim_in, compression_in, gene_id_col, genome_build, gene_symbol_
         df_gene_info = df_gene_info[['ensembl_gene', 'gene_symbol']]
 
     ### Mapping
+    if file == "NA" and single_gene:
+        print(df_gene_info[df_gene_info['ensembl_gene'] == ensembl_id])
+        return None
+    
     df = df_.merge(df_gene_info, how="left", left_on = "gene_id_new", right_on = "ensembl_gene")
     df.drop(columns=['ensembl_gene', 'gene_id_new'], inplace=True)
 
@@ -81,7 +92,9 @@ if __name__ == "__main__":
     if args.delim_out == "NA":
         args.delim_out = args.delim_in
 
-    main(file=args.file, 
+    main(single_gene=args.single_gene,
+        ensembl_id=args.ensembl_id,
+        file=args.file, 
         delim_in=map_delim(args.delim_in), 
         compression_in=args.compression_in, 
         gene_id_col=args.gene_id_col, 
