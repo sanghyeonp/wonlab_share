@@ -58,13 +58,13 @@ def read_input(file, delim_in, file_compression,
     return df_, log_list
 
 
-def make_annovar_input(input_df, file, chr_col, pos_col, ref_col, alt_col):
+def make_annovar_input(input_df, file, chr_col, pos_col, ref_col, alt_col, outd):
     # Subset columns
     df = input_df[[chr_col, pos_col, pos_col, ref_col, alt_col]]
 
     df.columns = ['CHR', 'BP1', 'BP2', 'A2', 'A1']
 
-    df.to_csv(os.path.split(file)[-1]+".annovin", sep="\t", index=False, header=False)
-    df[['CHR', 'BP1', 'BP2', 'A1', 'A2']].to_csv(os.path.split(file)[-1]+".flip.annovin", sep="\t", index=False, header=False)
+    df.to_csv(os.path.join(outd, os.path.split(file)[-1]+".annovin"), sep="\t", index=False, header=False)
+    df[['CHR', 'BP1', 'BP2', 'A1', 'A2']].to_csv(os.path.join(outd, os.path.split(file)[-1]+".flip.annovin"), sep="\t", index=False, header=False)
 
     return os.path.split(file)[-1]+".annovin", os.path.split(file)[-1]+".flip.annovin"

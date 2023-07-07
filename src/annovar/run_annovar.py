@@ -73,13 +73,13 @@ def main(file, delim_in, in_compression,
     input_df_, log_list = read_input(file, delim_in, in_compression, infer_chr_pos_ref_alt, chr_col, pos_col, ref_col, alt_col, log_list)
 
     # Make ANNOVAR input file
-    annov_input1, annov_input2 = make_annovar_input(input_df_, file, chr_col, pos_col, ref_col, alt_col)
+    annov_input1, annov_input2 = make_annovar_input(input_df_, file, chr_col, pos_col, ref_col, alt_col, outd)
 
     # Run ANNOVAR
-    log_list = annovar(annov_input1, annov_input2, log_list)
+    log_list = annovar(annov_input1, annov_input2, outd, log_list)
 
     # Map ANNOVAR result
-    df_out_, log_list, have_result = map_annovar_out(input_df_, annov_input1, annov_input2, chr_col, pos_col, ref_col, alt_col, log_list)
+    df_out_, log_list, have_result = map_annovar_out(input_df_, annov_input1, annov_input2, chr_col, pos_col, ref_col, alt_col, outd, log_list)
 
     assert have_result, "There are no mapped rsID"
 
@@ -98,14 +98,14 @@ def main(file, delim_in, in_compression,
 
     # Save SNPs that were not annotated
     if save_unannotated_snp:
-        df_out_no_annot[['chr_pos_ref_alt']].to_csv("unannotated_variant.list", sep="\t", index=False, header=False)
+        df_out_no_annot[['chr_pos_ref_alt']].to_csv(os.path.join(outd, "unannotated_variant.list"), sep="\t", index=False, header=False)
 
     ## Flipped.
     if not df_out[df_out['flipped_annov'] == "1"].empty:
         log_list = logger(log_list, log="Number of SNPs flipped: {:,}".format(len(df_out[df_out['flipped_annov'] == "1"])))
 
         if save_flipped_snp:
-            df_out[df_out['flipped_annov'] == "1"][['chr_pos_ref_alt', 'chr_pos_ref_alt_new']].to_csv("flipped_variant.list", sep="\t", index=False)
+            df_out[df_out['flipped_annov'] == "1"][['chr_pos_ref_alt', 'chr_pos_ref_alt_new']].to_csv(os.path.join(outd, "flipped_variant.list"), sep="\t", index=False)
     else:
         log_list = logger(log_list, log="Number of SNPs flipped: 0")
 
@@ -174,5 +174,5 @@ if __name__ == "__main__":
                     log_list=log_list
                     )
 
-    with open("annovar_map.{}.log".format(os.path.split(args.file)[-1]), 'w') as f:
+    with open(os.path.join(args.outd, "annovar_map.{}.log".format(os.path.split(args.file)[-1])), 'w') as f:
         f.writelines([v+"\n" for v in log_list])

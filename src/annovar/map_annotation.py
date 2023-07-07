@@ -8,16 +8,16 @@ from util import *
 from packages import *
 
 
-def combine_annov_out(annov_input1, annov_input2, log_list=[]):
+def combine_annov_out(annov_input1, annov_input2, outd, log_list=[]):
     log_list = logger(log_list, log="## Merging multianno.txt and flipped multianno.txt...")
-    df_annov1 = pd.read_csv(annov_input1, sep="\t", index_col=False, dtype=str)
+    df_annov1 = pd.read_csv(os.path.join(outd, annov_input1), sep="\t", index_col=False, dtype=str)
     df_annov1 = df_annov1.loc[df_annov1['avsnp150'] != '.', ]
     log_list = logger(log_list, log="Number of SNPs annotated with multianno.txt: {:,}".format(len(df_annov1)))
     
     if not df_annov1.empty:
         df_annov1['chr_pos_ref_alt_new'] = df_annov1.apply(lambda row: "{}:{}:{}:{}".format(row['Chr'], row['End'], row['Ref'], row['Alt']), axis=1)
 
-    df_annov2 = pd.read_csv(annov_input2, sep="\t", index_col=False, dtype=str)
+    df_annov2 = pd.read_csv(os.path.join(outd, annov_input2), sep="\t", index_col=False, dtype=str)
     df_annov2 = df_annov2.loc[df_annov2['avsnp150'] != '.', ]
 
     df_annov = None
@@ -56,10 +56,10 @@ def combine_annov_out(annov_input1, annov_input2, log_list=[]):
     return df_annov, log_list, True
 
 
-def map_annovar_out(input_df, annov_input1, annov_input2, chr_col, pos_col, ref_col, alt_col, log_list=[]):
+def map_annovar_out(input_df, annov_input1, annov_input2, chr_col, pos_col, ref_col, alt_col, outd, log_list=[]):
     annov_output1 = annov_input1.replace(".annovin", ".hg19_multianno.txt")
     annov_output2 = annov_input2.replace(".annovin", ".hg19_multianno.txt")
-    df_annov, log_list, have_result = combine_annov_out(annov_output1, annov_output2)
+    df_annov, log_list, have_result = combine_annov_out(annov_output1, annov_output2, outd)
 
     if not have_result:
         return None, None, False
