@@ -66,14 +66,13 @@ def main(file, delim_in, compression_in,
 
     ### Save the table
     file_content = [delim_out.join(line) + "\n" for line in file_content]
-
+    outp = os.path.join(outd, outf)
+    with open(outp, "w") as f:
+        f.writelines(file_content)
+    
     if compression_out == "gzip":
-        with open(os.path.join(outd, outf), "wb") as f:
-            file_content = [line.encode() for line in file_content]
-            f.writelines(file_content)
-    elif compression_out == "NA":
-        with open(os.path.join(outd, outf), "w") as f:
-            f.writelines(file_content)
+        run_bash("mv {} {}".format(outp, outp.replace(".gz", "")))
+        run_bash("gzip {}".format(outp.replace(".gz", "")))
 
 
 if __name__ == "__main__":
