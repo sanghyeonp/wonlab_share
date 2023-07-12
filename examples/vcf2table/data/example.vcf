@@ -1,0 +1,100 @@
+##fileFormat=PGCsumstatsVCFv1.0
+##CAVEAT EMPTOR: ALWAYS CHECK FOR NEWER VERSION
+##fileDate="20201125"
+##preparedBy="Niamh Mullins (MSSM)"
+##manuscript=<ID=BIORXIV,REF="NA">
+##manuscript=<ID=PMID,REF="pending">
+##manuscript=<ID=PMCID,REF="pending">
+##DOI=<ID=BIORXIV,REF="NA">
+##DOI=<ID=JOURNAL,REF="pending">
+##sumstatsLINK=<ID=SUMSTATS,REF="https://www.dropbox.com/sh/xb9bmmjo0rb5pri/AAAoGexkyDuqHp4W3yTnhhu-a?dl=0">
+##genomeReference="GRCh37"
+##imputationReference="Haplotype Reference Consortium v1.0"
+##analysisProgram="PLINKv1.9"
+##metaAnalysisProgram="METAL"
+##shortName="pgc-bip2021-all-cases"
+##dependentVariable="bipolar disorder"
+##dependentVariableType="discrete"
+##model="dependentVariable=SNPi+PC1-PC5+PCi"
+##methodsParagraph="A GWAS meta-analysis was conducted of 57 BD cohorts collected in Europe, North America and Australia, totaling 41,917 BD cases and 371,549 controls of European descent (Effective N = 101,962). For 52 cohorts, individual-level genotype and phenotype data were shared with the PGC and cases met international consensus criteria (DSM-IV, ICD-9 or ICD-10) for lifetime BD, established using structured diagnostic interviews, clinician-administered checklists or medical record review. BD GWAS summary statistics were received for five external cohorts (iPSYCH, deCODE genetics, Estonian Biobank, Trøndelag Health Study (HUNT), and UK Biobank, in which most cases were ascertained using ICD codes. PGC cohorts were genotyped following local protocols, after which standardized quality control, imputation and statistical analyses were performed centrally using RICOPILI (Rapid Imputation for COnsortias PIpeLIne), separately for each cohort. Genotype imputation was performed using the pre-phasing/ imputation stepwise approach implemented in Eagle v2.3.5 and Minimac3 to the Haplotype Reference Consortium (HRC) reference panel v1.0. The five external cohorts were processed by the collaborating research teams using comparable procedures and imputed to the HRC or a custom reference panel as appropriate. For PGC cohorts, GWAS were conducted within each cohort using an additive logistic regression model in PLINK v1.90. Ancestry informant principal components (PCs) were calculated within each cohort and included as covariates, as required. Association analyses of the X chromosome were conducted in males and females separately using the same procedures, with males coded as 0 or 2 for 0 or 1 copies of the reference allele. Results from males and females were then meta-analyzed within each cohort. For external cohorts, GWAS were conducted by the collaborating research teams using comparable procedures. To control test statistic inflation at SNPs with low minor allele frequency (MAF) in small cohorts, SNPs were retained only if cohort MAF was > 1% and minor allele count was > 10 in either cases or controls (whichever had smaller N).  There was no evidence of stratification artifacts or uncontrolled inflation of test statistics in the results from any cohort (λGC 0.97-1.05). Meta-analysis of GWAS summary statistics was conducted using an inverse variance-weighted fixed effects model in METAL. Further details are provided in the Online Methods and Supplementary Note."
+##acknowledgments="We thank the participants who donated their time, life experiences and DNA to this research and the clinical and scientific teams that worked with them. We are deeply indebted to the investigators who comprise the PGC. The PGC has received major funding from the US National Institute of Mental Health (PGC3: U01 MH109528; PGC2: U01 MH094421; PGC1: U01 MH085520). Statistical analyses were carried out on the NL Genetic Cluster Computer (http://www.geneticcluster.org) hosted by SURFsara and the Mount Sinai high performance computing cluster (http://hpc.mssm.edu), which is supported by the Office of Research Infrastructure of the National Institutes of Health under award numbers S10OD018522 and S10OD026880. The content is solely the responsibility of the authors and does not necessarily represent the official views of the National Institutes of Health. Full acknowledgements are included in the Supplementary Note."
+##abstract="Bipolar disorder (BD) is a heritable mental illness with complex etiology. We performed a genome-wide association study (GWAS) of 41,917 BD cases and 371,549 controls of European ancestry, which identified 64 associated genomic loci. BD risk alleles were enriched in genes in synaptic signaling pathways and brain-expressed genes, particularly those with high specificity of expression in neurons of the prefrontal cortex and hippocampus. Significant signal enrichment was found in genes encoding targets of antipsychotics, calcium channel blockers, antiepileptics and anesthetics. Integrating eQTL data implicated 15 genes robustly linked to BD via gene expression, including druggable genes such as HTR6, MCHR1, DCLK3 and FURIN. This GWAS provides the best-powered BD polygenic scores to date, when applied in both European and diverse ancestry samples. Analyses of BD subtypes indicated high but imperfect genetic correlation between BD type I and II and identified additional associated loci. Together, these results advance our understanding of the biological etiology of BD, identify novel therapeutic leads and prioritize genes for functional follow-up studies."
+##termsOfUse="These data are provided *as is*, and without warranty, for scientific and educational use only. If you download these data, you acknowledge that these data will be used only for non-commercial research purposes; that the investigator is in compliance with all applicable state, local, and federal laws or regulations and institutional policies regarding human subjects and genetics research; that secondary distribution of the data without registration by secondary parties is prohibited; and that the investigator will cite the appropriate publications in any communications or publications arising directly or indirectly from these data."
+##contig=<ID=1,length=249250621>
+##contig=<ID=10,length=135534747>
+##contig=<ID=11,length=135006516>
+##contig=<ID=12,length=133851895>
+##contig=<ID=13,length=115169878>
+##contig=<ID=14,length=107349540>
+##contig=<ID=15,length=102531392>
+##contig=<ID=16,length=90354753>
+##contig=<ID=17,length=81195210>
+##contig=<ID=18,length=78077248>
+##contig=<ID=19,length=59128983>
+##contig=<ID=2,length=243199373>
+##contig=<ID=20,length=63025520>
+##contig=<ID=21,length=48129895>
+##contig=<ID=22,length=51304566>
+##contig=<ID=3,length=198022430>
+##contig=<ID=4,length=191154276>
+##contig=<ID=5,length=180915260>
+##contig=<ID=6,length=171115067>
+##contig=<ID=7,length=159138663>
+##contig=<ID=8,length=146364022>
+##contig=<ID=9,length=141213431>
+##contig=<ID=M,length=16571>
+##contig=<ID=X,length=155270560>
+##contig=<ID=Y,length=59373566>
+##nCase="41917"
+##nControl="371549"
+##nTrio="366"
+##nCohort="57"
+##cohortList="bmau,bmg2,bmg3,bmpo,bmsp,bonn,dub1,edi1,fat2,fran,gain,gsk1,hal2,icuk,jst5,may1,mich,pf1e,rom3,st2c,stp1,swa2,swei,top7,top8,ucl2,uclo,ume4,usc2,wtcc,butr,uktr,jea2,kfo4,tgco2,bdtrs,dutch,gawli,germ1,gpcw1,neuc1,spsp3,swed1,ukwa1,usaw4,usaw5,iPSYCH,deCODE,Estonian_Biobank,HUNT,UK_Biobank,bmrus,greek,norgs,noroe,graza,bmrom"
+##nCaseByCohort="329,181,489,410,253,669,150,275,722,451,706,706,410,2456,646,929,481,375,233,628,920,885,1278,416,148,726,427,565,1293,1644,236,130,372,247,1032,218,831,268,219,447,215,153,2909,2789,2956,1107,1758,1972,407,905,1454,522,186,101,313,144,225"
+##nControlByCohort="1810,478,880,689,291,1246,796,272,1027,1630,593,899,479,4069,643,759,399,346,198,1219,973,2252,3669,350,291,693,488,569,1156,1641,236,130,628,288,499,684,953,502,992,2092,750,2337,2844,2372,2930,1316,5937,192602,17209,41914,58113,460,87,315,4367,66,121"
+##nTrioByCohort="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,236,130,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"
+##SNPsPassPreImputeByCohort="505360,789442,456677,269263,329661,499494,660474,344775,458476,279572,677788,528201,566260,393607,778145,686229,509425,636804,587509,301704,331202,518940,579252,667707,667049,611804,344528,632614,598185,432682,656165,642154,283866,278155,563959,550070,492252,563220,543848,519089,483136,531767,551467,528723,459064,418454,NA,NA,NA,NA,NA,712684,706457,662144,590848,643279,603139"
+##SNPsPassPostImputeByCohort="8788121,8828657,8822556,8738827,9080401,8815644,8738457,8741390,8810547,8788131,8820815,8865281,8848628,8782916,8865667,8867637,8824077,8871581,8910532,8870833,8806378,8851756,8864628,8893695,8903589,8818598,8759834,8957108,8985803,8801812,8978378,8917717,8836512,8821066,8798152,8936626,8944441,8961252,8937802,9049936,9183525,9101509,9006810,8894375,9052056,8941781,NA,NA,NA,NA,NA,9034689,8961851,9022619,8887428,8847813,8944893"
+##ProcessedByCoreTeam="TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,Externalstudy,Externalstudy,Externalstudy,Externalstudy,Externalstudy,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE"
+##INFO=<ID=A1,Number=1,Type=Character,Description="SNP reference allele for freq, beta, or ln(OR)">
+##INFO=<ID=A2,Number=1,Type=Character,Description="SNP alternate allele">
+##INFO=<ID=BETA,Number=1,Type=Float,Description="beta or ln(OR) of A1">
+##INFO=<ID=SE,Number=1,Type=Float,Description="standard error">
+##INFO=<ID=PVAL,Number=1,Type=Float,Description="P-value">
+##INFO=<ID=NGT,Number=1,Type=Float,Description="number of cohorts genotyped">
+##INFO=<ID=FCAS,Number=1,Type=Float,Description="frequency of A1 in cases">
+##INFO=<ID=FCON,Number=1,Type=Float,Description="frequency of A1 in controls">
+##INFO=<ID=IMPINFO,Number=1,Type=Float,Description="imputation INFO score">
+##INFO=<ID=NEFFDIV2,Number=1,Type=Float,Description="half effective sample size total">
+##INFO=<ID=NCAS,Number=1,Type=Float,Description="effective sample size cases">
+##INFO=<ID=NCON,Number=1,Type=Float,Description="effective sample size controls">
+##INFO=<ID=DIRE,Number=1,Type=String,Description="direction of effects by cohort">
+##nVariants=7608183
+#CHROM	POS	ID	A1	A2	BETA	SE	PVAL	NGT	FCAS	FCON	IMPINFO	NEFFDIV2	NCAS	NCON	DIRE
+10	34258488	rs11009607	A	G	0.00939572164036218	0.0119	0.4278	25	0.797	0.798	0.941	50981.48	41917	371549	+----++--+++++++---++-+-+++--++++++--+--+--+----+++-++-++
+10	34144725	rs12217716	A	G	0.00570370291667803	0.0096	0.5568	1	0.596	0.572	0.971	50981.48	41917	371549	+--+-++++---+-+++---+--++--+--++-++-++-++++-+--+-+++-----
+10	38117570	rs9417264	A	G	0.013202462677756	0.0134	0.3269	1	0.86	0.847	0.99	50981.48	41917	371549	+++++--+--+-+-+++-+--+-+--+++----+-+-+++-+++-+-++-++++-++
+10	34459338	rs2008617	A	T	0.0154007965760229	0.0283	0.5853	1	0.971	0.967	0.986	49333.68	40499	366928	-?++++?++--+++++--+---+-?-+--++?--++-+--+?-++-+-+++-??-??
+10	34437906	rs2799453	G	A	-0.0078003437327339	0.0097	0.4213	6	0.381	0.369	0.977	50981.48	41917	371549	+-+-++-++-++++++---+++++-++----++-----+-+---+-+-+++-+-+++
+10	35471873	rs12762493	G	A	-0.0178992398878318	0.0098	0.06622	1	0.651	0.669	1	50981.48	41917	371549	+-+--+--++++-+-+--++------++++++-++--+++---++++++-+-+-++-
+10	37297852	rs2251821	G	A	0.00529595165918251	0.0094	0.5704	1	0.531	0.532	0.988	50981.48	41917	371549	++---+++++---++--+--+----++--+-+++-++-+++--+-+-+--+---++-
+10	38425634	rs74330008	G	T	0.0046989426564652	0.0202	0.8147	1	0.943	0.944	0.987	50828.52	41816	371234	-+--+-+---+--+++++--+-+++-+--+-0++--+-+++-----+-++++-?-+-
+10	30895905	rs76825267	C	T	0.00730326611012007	0.0206	0.7223	1	0.941	0.928	0.894	50772.41	41587	371396	-+-+-+++-++-++-+--+--++-----+--++-++-+++--++------++?+-?+
+10	37876702	rs1884928	T	C	-0.00369682484428976	0.0098	0.7073	1	0.337	0.328	1	50981.48	41917	371549	++-+----+----+-+-+---+-+++-++----+-----+-+--+++-+++-+--+-
+10	35455336	rs35847586	A	G	-0.0177974390305806	0.0097	0.06706	1	0.652	0.669	1	50981.48	41917	371549	++-++-++----+-+-++--++++++------+--++---+++------+-+-+--+
+10	32707274	rs2490479	C	T	0.00330453400830047	0.0094	0.7289	1	0.468	0.46	0.98	50981.48	41917	371549	-++++--+----++-+++-+++-++-+---+---++-+++-+-+-+++++-++++--
+10	31142480	rs11008286	G	A	0.000799680170564244	0.0095	0.9308	3	0.602	0.563	0.993	50981.48	41917	371549	--++++++++--+----+--++++++0--++----+-++++--++-++++++--+-+
+10	33504506	rs2300951	T	C	0.00239712459972145	0.0106	0.8223	1	0.714	0.72	0.994	50981.48	41917	371549	+-++----++--+-+--+----+--++++-++--+--++--++--+---+---+++-
+10	38391376	rs2504133	A	C	0.0080971295874548	0.0109	0.4565	1	0.758	0.758	0.994	50981.48	41917	371549	--+-++++--+-+++--++-+-++--+--++++-+----++-+--+++--++-++-+
+10	39117466	rs12571003	A	G	0.00939572164036218	0.012	0.4325	0	0.503	0.505	0.644	49240.53	40590	353367	--+-++-+--+-+-+--++-?-++--+-+++---++-+++-++++--+?-++-++++
+10	36511451	rs11010572	G	A	-0.00280392733273426	0.012	0.8146	38	0.812	0.81	0.988	50981.48	41917	371549	++-++---++---+-+-++-++--+-+-++++--+++--+++-+++++++----++-
+10	35004417	rs11593692	A	T	0.0270994698817177	0.0287	0.3443	1	0.968	0.973	0.895	48517.92	39709	366085	+?-+++?-++++++++++--?+--?-+--++++--+++-++?++-+-----+??-??
+10	38515334	rs1740741	C	T	0.0088011559530687	0.0097	0.3626	1	0.59	0.588	0.95	50981.48	41917	371549	++++--+-++-+-+-++-++-+--++-++--+++--++--+--++++-++--+-+--
+10	36940703	rs3006967	G	A	0.00819631822448586	0.01	0.4122	1	0.404	0.38	0.915	50981.48	41917	371549	++-+++--+-+--+---++++----+--+--+--+-+-++-++-++-+--++-+---
+10	38001299	rs16937566	C	T	-0.0286978729475453	0.041	0.4838	0	0.985	0.985	0.988	43627.07	36026	341683	??+??+??+--+----+??---+??+++++????-?+??+??--++--?+--??+??
+10	30190214	rs74130503	G	A	0.014504302202808	0.0403	0.7191	0	0.984	0.986	0.988	42264.4	35583	300132	??-??+??+-++-+-++-?----+?-+?-++???+?+??-??--++-+??-+??-??
+10	38726188	rs17595487	C	T	-0.00310481495347876	0.0207	0.8795	1	0.929	0.941	0.805	49945.21	40853	370510	++-+----++---++++-++?+-++---+--+++---++--+++++---+--+--?-
+10	31374166	rs12244754	C	A	0.00600195219563434	0.0117	0.6091	18	0.804	0.803	1	50981.48	41917	371549	-+-------+++++++-+-+----+-+++-++--+-+---++-+++--+-++++-+-
+10	32435188	rs4749711	C	A	0.0143958802837323	0.0106	0.172	18	0.739	0.73	0.998	50981.48	41917	371549	+-+----+-++-++---++-++-+-+++----+------+-+-++-+-+--+--+++
+10	35496441	rs75247344	C	T	0.00850374049122079	0.0124	0.4946	1	0.828	0.832	0.992	50981.48	41917	371549	--+--+-+++-----+-++----+-+--++++--+---++---+-+++++-+++---
+10	33264180	rs11009162	A	G	0.00330453400830047	0.0132	0.8015	30	0.85	0.85	0.99	50981.48	41917	371549	-++--+++----+++-++-+-+-++---+-----+-+++--+--++-++-+---++-
