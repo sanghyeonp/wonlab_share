@@ -98,14 +98,20 @@ def main(file, delim_in, in_compression,
 
     # Save SNPs that were not annotated
     if save_unannotated_snp:
-        df_out_no_annot[['chr_pos_ref_alt']].to_csv(os.path.join(outd, "unannotated_variant.list"), sep="\t", index=False, header=False)
+        with open(os.path.join(outd, "unannotated_variant.list"), 'w') as f:
+            rows = df_out_no_annot[['chr_pos_ref_alt']].values.tolist()
+            rows2write =["\t".join([str(v) for v in row]) + "\n" for row in rows]
+            f.writelines(rows2write)
 
     ## Flipped.
     if not df_out[df_out['flipped_annov'] == "1"].empty:
         log_list = logger(log_list, log="Number of SNPs flipped: {:,}".format(len(df_out[df_out['flipped_annov'] == "1"])))
 
         if save_flipped_snp:
-            df_out[df_out['flipped_annov'] == "1"][['chr_pos_ref_alt', 'chr_pos_ref_alt_new']].to_csv(os.path.join(outd, "flipped_variant.list"), sep="\t", index=False)
+            with open(os.path.join(outd, "flipped_variant.list"), 'w') as f:
+                rows = df_out[df_out['flipped_annov'] == "1"][['chr_pos_ref_alt', 'chr_pos_ref_alt_new']].values.tolist()
+                rows2write =["\t".join([str(v) for v in row]) + "\n" for row in rows]
+                f.writelines(rows2write)
     else:
         log_list = logger(log_list, log="Number of SNPs flipped: 0")
 
@@ -113,7 +119,11 @@ def main(file, delim_in, in_compression,
     if save_mapping_file:
         df_mapping = df_out[['chr_pos_ref_alt', 'chr_pos_ref_alt_new', 'rsID_annov', 'flipped_annov']]
         df_mapping.columns = ['chr_pos_ref_alt', 'chr_pos_ref_alt_new', 'rsid', 'flipped']
-        df_mapping.to_csv("mapping.file", sep="\t", index=False)
+        with open("mapping.file", 'w') as f:
+            rows = df_mapping.values.tolist()
+            col_list = df_mapping.columns.tolist()
+            rows2write = ["\t".join(col_list) + "\n"] + ["\t".join([str(v) for v in row]) + "\n" for row in rows]
+            f.writelines(rows2write)
 
     # Save output file with annotated input file
     if not do_not_save_annotated_input:

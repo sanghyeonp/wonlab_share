@@ -64,7 +64,14 @@ def make_annovar_input(input_df, file, chr_col, pos_col, ref_col, alt_col, outd)
 
     df.columns = ['CHR', 'BP1', 'BP2', 'A2', 'A1']
 
-    df.to_csv(os.path.join(outd, os.path.split(file)[-1]+".annovin"), sep="\t", index=False, header=False)
-    df[['CHR', 'BP1', 'BP2', 'A1', 'A2']].to_csv(os.path.join(outd, os.path.split(file)[-1]+".flip.annovin"), sep="\t", index=False, header=False)
+    with open(os.path.join(outd, os.path.split(file)[-1]+".annovin"), 'w') as f:
+        rows = df.values.tolist()
+        rows2write =["\t".join([str(v) for v in row]) + "\n" for row in rows]
+        f.writelines(rows2write)
+    
+    with open(os.path.join(outd, os.path.split(file)[-1]+".flip.annovin"), 'w') as f:
+        rows = df[['CHR', 'BP1', 'BP2', 'A1', 'A2']].values.tolist()
+        rows2write =["\t".join([str(v) for v in row]) + "\n" for row in rows]
+        f.writelines(rows2write)
 
     return os.path.split(file)[-1]+".annovin", os.path.split(file)[-1]+".flip.annovin"
