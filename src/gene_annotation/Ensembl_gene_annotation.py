@@ -52,10 +52,15 @@ def main(single_gene, ensembl_id, file, delim_in, compression_in, gene_id_col, g
         df_[gene_id_col] = df_[gene_id_col].astype(str)
         df_['gene_id_new'] = df_[gene_id_col].apply(lambda x: x.split(sep=".")[0] if "ENSG" in x and x != "nan" else x)
 
+
     ### Read gene annotation table
     df_gene_info = pd.read_csv(ENSEMBL_GENE_INFO[genome_build], sep="\t", index_col=False, compression="gzip")
     if gene_symbol_only:
         df_gene_info = df_gene_info[['ensembl_gene', 'gene_symbol']]
+
+    ### Drop TSS in annotation table if present in the input
+    if 'TSS' in list(df_.columns):
+        df_gene_info.drop(columns=['TSS'], inplace=True)
 
     ### Mapping
     if file == "NA" and single_gene:
