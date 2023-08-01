@@ -21,6 +21,7 @@ from datetime import datetime
 import csv
 import argparse
 from tqdm import tqdm
+tqdm.pandas(leave=False)
 import io
 import numpy as np
 import subprocess
