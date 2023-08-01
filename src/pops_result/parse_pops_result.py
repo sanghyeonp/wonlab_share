@@ -47,7 +47,7 @@ def main(dir_pops_out,
 
     ### Information on feature selection
     file_feature = [f for f in os.listdir(dir_pops_out) if ".marginals" in f][0]
-    df_feature = pd.read_csv(file_feature, sep="\t", index_col=False)
+    df_feature = pd.read_csv(os.path.join(dir_pops_out, file_feature), sep="\t", index_col=False)
 
     df_feature.columns = ['feature', 'beta', 'se', 'pval', 'r2', 'selected']
 
