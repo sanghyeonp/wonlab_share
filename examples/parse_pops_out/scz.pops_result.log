@@ -1,0 +1,7 @@
+:: Parsing PoPS result ::
+	PoPS result directory: ./data
+Number of lead SNPs: 54
+Number of lead SNP with no overlapping genes in the locus: 2
+All results from PoPS written at /data1/sanghyeon/wonlab_contribute/combined/examples/parse_pops_out/scz.pops_result_all.csv
+Number of lead SNP with prioritized genes: 51 (94.4%)
+Prioritized results from PoPS written at /data1/sanghyeon/wonlab_contribute/combined/examples/parse_pops_out/scz.pops_result_prioritized.csv
