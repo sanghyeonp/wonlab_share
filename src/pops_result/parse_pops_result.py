@@ -26,7 +26,7 @@ def parse_args():
                     help="Name of the chromosome column in the input lead SNP file. Default = 'chr'.")
     parser.add_argument('--pos-col', dest="pos_col", required=False, default="pos",
                     help="Name of the base position column in the input lead SNP file. Default = 'pos'.")
-    parser.add_argument('--window', required=False, default=500000,
+    parser.add_argument('--window', required=False, default=500000, type=int,
                     help="Window used to define a locus centered by the lead SNP. Default = 500000.")
     
     parser.add_argument('--out-prefix', dest="out_prefix", required=False, default="NA",
