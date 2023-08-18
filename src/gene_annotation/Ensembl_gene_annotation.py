@@ -20,7 +20,7 @@ def parse_args():
                         help='Path to the input file.')
     parser.add_argument('--gene-id-col', dest="gene_id_col", required=False, default="NA",
                         help='Column name of Ensembl gene ID in the input file.')
-    parser.add_argument('--genome-build', dest='genome_build', required=False, default=37,
+    parser.add_argument('--genome-build', dest='genome_build', required=False, default=37, type=int,
                         help='Specify genome build. Choices = [37, 38]. Default=37.')
     parser.add_argument('--delim-in', dest="delim_in", required=False, type=str, default="tab",
                         help='Delimiter of the input file. Default = "tab". Choices = ["tab", "comma", "whitespace", "formatted"].')
