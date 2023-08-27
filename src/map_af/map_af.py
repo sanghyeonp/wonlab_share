@@ -139,16 +139,19 @@ def main(file, delim_in, compression_in,
     print(":: Handling missing values ::")
     for col in col_retain:
         df[col] = df[col].fillna('-9')
+    
+    df['REF_1kG'] = df['REF_1kG'].fillna('NA')
+    df['ALT_1kG'] = df['ALT_1kG'].fillna('NA')
     print("Elapsed: {}".format(timedelta(seconds=timer() - start2)))
-
 
     ### Align allele frequency to a1 column
     start3 = timer()
     print(":: Aligning allele frequency to A1 column ::")
     def align(a1, alt, af):
-        if "," in af: # Multi-allelic인 경우, 따로 aligning 하지 않기.
-            return af
-        if a1 == alt:
+        if ("," in af) or (alt == "NA") or (a1 == alt): 
+            # Multi-allelic인 경우, 따로 aligning 하지 않기.
+            # Reference에 없는 SNP이면 -9로 return.
+            # Reference ALT랑 A1이 matching되면 AF 그대로 return.
             return af
         return str(1 - float(af))
 
