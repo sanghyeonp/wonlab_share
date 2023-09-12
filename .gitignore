@@ -37,3 +37,6 @@ software/
 # MAGMA gene-set files
 *.gmt*
 *.cov
+
+# GWAS summary statistics random 10k
+examples/gwas_plot/data/MDD_als2023.random10k.txt
