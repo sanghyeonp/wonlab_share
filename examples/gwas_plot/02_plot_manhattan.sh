@@ -10,4 +10,5 @@ Rscript ${script} --gwas ${gwas} \
                 --chr-col CHR \
                 --pos-col POS \
                 --p-col PVAL \
-                --outf Manhattan.MDD.1
+                --chr-select 1 2 3 \
+                --outf Manhattan.MDD.2

@@ -37,8 +37,8 @@ parser$add_argument("--color1", required=FALSE, default="grey50",
 parser$add_argument("--color2", required=FALSE, default="grey",
                     help="Specify the second color.")
 # Others
-parser$add_argument("--n-chr", dest="n_chr",  required=FALSE, default=22,
-                    help="Specify SE column name.")
+parser$add_argument("--chr-select", dest="chr_select", nargs = "*", default="NA",
+                    help="Specify chromosomes to plot.")
 # Save output
 parser$add_argument("--img-type", dest="img_type", required=FALSE, default="png",
                     help="Specify the type of image extension. Options = ['png', 'pdf']. Default = 'png'")
@@ -84,7 +84,7 @@ snps_to_annotate <- args$snps_to_annotate
 color_annotate <- args$color_annotate
 color1 <- args$color1
 color2 <- args$color2
-n_chr <- args$n_chr
+chr_select <- args$chr_select
 img_type <- args$img_type
 dpi <- args$dpi
 outf <- args$outf
@@ -96,8 +96,6 @@ if(snps_to_annotate != "NA"){
 } else{
     snpsOfInterest <- c("NA")
 }
-# n_chr
-n_chr <- as.numeric(n_chr)
 # dpi
 dpi <- as.numeric(dpi)
 # outf
@@ -133,6 +131,14 @@ if((beta_col != "NA") & (se_col != "NA")){
         )
 }
 
+### Filter chromosomes
+if (chr_select[1] != "NA"){
+    chr_select <- as.numeric(chr_select)
+    df <- df %>% 
+            filter(CHR %in% chr_select)
+}
+
+n_chr <- length(unique(df$CHR))
 
 #####################
 # # 여기 P-value를 새로 계산하고, given p-value랑 차이가 많이 나는지 확인하는 코드 작성하기.
