@@ -48,6 +48,12 @@ parser$add_argument("--outf", required=FALSE, default="NA",
                     help="Specify the name of the output file. Default = manhattan.<Input file name>")
 parser$add_argument("--outd", required=FALSE, default="NA",
                     help="Specify the output directory. Default = current working directory.")
+parser$add_argument("--width", required=FALSE, default=180,
+                    help="Specify the width of the plot. Default=180 mm")
+parser$add_argument("--height", required=FALSE, default=100,
+                    help="Specify the height of the plot. Default=180 mm")
+parser$add_argument("--units", required=FALSE, default="mm",
+                    help="Specify the units for the width and height of the plot. Default = 'mm'")
 
 
 ### Call packages
@@ -89,6 +95,9 @@ img_type <- args$img_type
 dpi <- args$dpi
 outf <- args$outf
 outd <- args$outd
+width <- args$width
+height <- args$height
+units <- args$units
 
 # Read annotation file if specified
 if(snps_to_annotate != "NA"){
@@ -96,8 +105,6 @@ if(snps_to_annotate != "NA"){
 } else{
     snpsOfInterest <- c("NA")
 }
-# dpi
-dpi <- as.numeric(dpi)
 # outf
 if (outf == "NA"){
     outf <- paste0("manhattan.", basename(gwas))
@@ -106,6 +113,11 @@ if (outf == "NA"){
 if (outd == "NA"){
     outd <- getwd()
 }
+# dpi, width, height
+dpi <- as.numeric(dpi)
+width <- as.numeric(width)
+height <- as.numeric(height)
+
 
 ### Read input file
 df <- fread(gwas)
@@ -237,13 +249,13 @@ p1 <- ggplot(df_plot, aes(x=BPcum, y=-log10(PVAL))) +
 if(img_type == "pdf"){
     ggsave(paste0(outf, ".", img_type), p1, 
     scale = 2, device = "pdf",
-    width = 180, height = 100,
-    units = "mm")
+    width = width, height = height,
+    units = units)
 } else{
     ggsave(paste0(outf, ".", img_type), p1, 
     scale = 2, dpi = dpi,
-    width = 180, height = 100,
-    units = "mm")
+    width = width, height = height,
+    units = units)
 }
 
 
