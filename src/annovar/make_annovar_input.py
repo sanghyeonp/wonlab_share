@@ -9,7 +9,7 @@ from packages import *
 
 
 def read_input(file, delim_in, file_compression,
-        infer_chr_pos_ref_alt, chr_col, pos_col, ref_col, alt_col,
+        infer_col, chr_col, pos_col, ref_col, alt_col,
         log_list=[]):
     # Read input file
     log_list = logger(log_list, log="## Reading the input file...")
@@ -17,22 +17,22 @@ def read_input(file, delim_in, file_compression,
     log_list = logger(log_list, log="Number of SNPs in the input file: {:,}".format(len(df_)))
 
     # Infer chromosome and position
-    if infer_chr_pos_ref_alt:
+    if infer_col:
         # 지금은 CHR:POS:REF/ALT:REF/ALT format이라고 생각하고 코딩한 것.
         # 하지만 CHR:POS 이런 식 일 수도 있음.
-        infer_col = infer_chr_pos_ref_alt[0]
-        data_format = infer_chr_pos_ref_alt[1]
-        separator = infer_chr_pos_ref_alt[2]
 
-        log_list = logger(log_list, log="## Inferring CHR and POS from the column '{}' with data structure '{}'...".format(infer_col, data_format))
+        infer_from_col = infer_col[0]
+        data_format = infer_col[1]
+        separator = infer_col[2]
+        col_to_take = infer_col[3].split(sep=",")
+
+        log_list = logger(log_list, log="## Inferring columns from the specified column '{}' with data structure '{}'...".format(infer_from_col, data_format))
 
         data_format = data_format.split(sep=separator)
-        idx = {v:data_format.index(v) for v in ['CHR', 'POS', 'REF', 'ALT']}
+        infercol_idx_map = {v:data_format.index(v) for v in col_to_take}
 
-        df_[chr_col] = df_[infer_col].apply(lambda x: x.split(sep=separator)[idx['CHR']])
-        df_[pos_col] = df_[infer_col].apply(lambda x: x.split(sep=separator)[idx['POS']])
-        df_[ref_col] = df_[infer_col].apply(lambda x: x.split(sep=separator)[idx['REF']])
-        df_[alt_col] = df_[infer_col].apply(lambda x: x.split(sep=separator)[idx['ALT']])
+        for inferring_col, idx in infercol_idx_map.items():
+            df_[inferring_col] = df_[infer_from_col].apply(lambda x: x.split(sep=separator)[idx])
 
     df_[chr_col] = df_[chr_col].astype(str)
     # Drop any inappropriate base position

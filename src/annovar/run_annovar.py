@@ -21,10 +21,11 @@ def parse_args():
     parser.add_argument('--delim-in', dest="delim_in", required=False, default="tab",
                     help="Delimiter used in the input file. Choices = ['tab', 'comma', 'whitespace']. Default = 'tab'.")
     
-    parser.add_argument('--infer-chr-pos-ref-alt', dest="infer_chr_pos_ref_alt", nargs='+', required=False,
-                        help="Specify column name, data format, and separator to infer chr and pos from specified column.\
+    parser.add_argument('--infer-col', dest="infer_col", nargs='+', required=False,
+                        help="Specify `column name`, `data format`, `separator`, and `columns to infer` to infer necessary columns from the specified column.\
                             For example, column named 'variant' have variant name '2:179816990:C:T' where chromosome and position can be inferred as 2 and 179816990, respectively.\
-                            Then, specify as follows: --infer-chr-pos-ref-alt variant CHR:POS:REF:ALT :")
+                            Then, specify as follows: --infer-col variant CHR:POS:REF:ALT : CHR,POS,REF,ALT\
+                            If `variant` column has `2:123423:SNP`, then specify as follows: --infer-col variant CHR:POS:X : CHR,POS")
     parser.add_argument('--chr-col', dest="chr_col", required=False, default="CHR",
                     help="Name of the chromosome column in the input file. Default = 'CHR'.")
     parser.add_argument('--pos-col', dest="pos_col", required=False, default="POS",
@@ -61,7 +62,7 @@ def parse_args():
 
 
 def main(file, delim_in, in_compression,
-        infer_chr_pos_ref_alt, chr_col, pos_col, ref_col, alt_col,
+        infer_col, chr_col, pos_col, ref_col, alt_col,
         outf, outd, delim_out, out_compression,
         save_unannotated_snp, save_flipped_snp, save_mapping_file, do_not_save_annotated_input,
         delete_intermediate_files,
@@ -70,7 +71,7 @@ def main(file, delim_in, in_compression,
     start_time = datetime.now()
 
     # Read input file
-    input_df_, log_list = read_input(file, delim_in, in_compression, infer_chr_pos_ref_alt, chr_col, pos_col, ref_col, alt_col, log_list)
+    input_df_, log_list = read_input(file, delim_in, in_compression, infer_col, chr_col, pos_col, ref_col, alt_col, log_list)
 
     # Make ANNOVAR input file
     annov_input1, annov_input2 = make_annovar_input(input_df_, file, chr_col, pos_col, ref_col, alt_col, outd)
@@ -167,7 +168,7 @@ if __name__ == "__main__":
     log_list = main(file=args.file, 
                     delim_in=map_delim(args.delim_in), 
                     in_compression=args.in_compression,
-                    infer_chr_pos_ref_alt=args.infer_chr_pos_ref_alt, 
+                    infer_col=args.infer_col, 
                     chr_col=args.chr_col, 
                     pos_col=args.pos_col, 
                     ref_col=args.ref_col, 
