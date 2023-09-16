@@ -28,7 +28,7 @@ source(fnc_file)
 
 tryCatch({
     ### Load packages from env_R.R
-    list.of.packages <- c("argparse", "data.table", "rstudioapi", "dplyr")
+    list.of.packages <- c("argparse", "data.table", "rstudioapi", "dplyr", "foreach", "doParallel")
     new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
     if(length(new.packages)) install.packages(new.packages, repos = "http://cran.us.r-project.org")
 
@@ -37,6 +37,8 @@ tryCatch({
     library(data.table)
     library(dplyr)
     library(TwoSampleMR)
+    library(foreach)
+    library(doParallel)
 
     #################################################################################################################################
     ###############################
@@ -107,43 +109,17 @@ tryCatch({
                         help="Specify the F-statistics threshold to filter IV. Default = 10.")
 
     ### Outcome
-    parser$add_argument("--op-gwas", dest="outcome_gwas", required=TRUE,
-                        help="Path to the outcome GWAS summary statistics.")
-    parser$add_argument("--op-delim", dest="outcome_delim", required=TRUE,
-                        help="Delimiter for the outcome GWAS. Options = ['tab', 'whitespace', 'comma'].")
-    parser$add_argument("--op-name", dest="outcome_name", required=TRUE,
-                        help="Name of the outcome.")
-    parser$add_argument("--op-cohort", dest="outcome_cohort", required=TRUE,
-                        help="Name of the outcome GWAS cohort.")
-    parser$add_argument("--op-type", dest="outcome_type", required=TRUE,
-                        help="Type of the outcome. Choices = ['binary', 'quantitative']")
-    parser$add_argument("--op-snp", dest="outcome_snp", required=TRUE,
-                        help="Column name for SNP.")
-    parser$add_argument("--op-chr", dest="outcome_chr", required=TRUE,
-                        help="Column name for the chromosome.")
-    parser$add_argument("--op-pos", dest="outcome_pos", required=TRUE,
-                        help="Column name for the base position.")
-    parser$add_argument("--op-ea", dest="outcome_ea", required=TRUE,
-                        help="Column name for the effect allele.")
-    parser$add_argument("--op-oa", dest="outcome_oa", required=TRUE,
-                        help="Column name for the other allele.")
-    parser$add_argument("--op-eaf", dest="outcome_eaf", required=TRUE,
-                        help="Column name for the effect allele frequency.")
-    parser$add_argument("--op-beta", dest="outcome_beta", required=TRUE,
-                        help="Column name for the beta.")
-    parser$add_argument("--op-se", dest="outcome_se", required=TRUE,
-                        help="Column name for the standard error.")
-    parser$add_argument("--op-p", dest="outcome_p", required=TRUE,
-                        help="Column name for the p-value.")
-    parser$add_argument("--op-ncase", dest="outcome_ncase", required=FALSE, default=0, type='integer',
-                        help="The number of case if outcome is binary. Default = 0.")
-    parser$add_argument("--op-ncontrol", dest="outcome_ncontrol", required=FALSE, default=0, type='integer',
-                        help="The number of control if outcome is binary. Default = 0.")
-    parser$add_argument("--op-n", dest="outcome_n", required=TRUE, type='integer',
-                        help="The total number of samples.")
+    parser$add_argument("--outcome-list-file", dest="outcome_list_file", required=TRUE, 
+                        help="Specify outcome list file path.")
+    parser$add_argument("--outcome-list-delim", dest="outcome_list_file_delim", required=TRUE, 
+                        help="Specify outcome list file delimiter.")
+
+    ### Parallelization
+    parser$add_argument("--n-cores", dest="n_cores", required=FALSE, default=1, type='integer',
+                        help="Specify the number of cores.")
 
     ### Others
-    parser$add_argument("--verbose", action="store_true",
+    parser$add_argument("--verbose", action="store_true", 
                         help="Print extra output.")
 
     ### Save option
@@ -185,23 +161,10 @@ tryCatch({
 
     F_thres <- args$F_thres
 
-    outcome_gwas <- args$outcome_gwas
-    outcome_delim <- args$outcome_delim
-    outcome_name <- args$outcome_name
-    outcome_cohort <- args$outcome_cohort
-    outcome_type <- args$outcome_type
-    outcome_snp <- args$outcome_snp
-    outcome_chr <- args$outcome_chr
-    outcome_pos <- args$outcome_pos
-    outcome_ea <- args$outcome_ea
-    outcome_oa <- args$outcome_oa
-    outcome_eaf <- args$outcome_eaf
-    outcome_beta <- args$outcome_beta
-    outcome_se <- args$outcome_se
-    outcome_p <- args$outcome_p
-    outcome_ncase <- args$outcome_ncase
-    outcome_ncontrol <- args$outcome_ncontrol
-    outcome_n <- args$outcome_n
+    outcome_list_file <- args$outcome_list_file
+    outcome_list_file_delim <- args$outcome_list_file_delim
+
+    n_cores <- args$n_cores
 
     verbose <- args$verbose
 
@@ -215,36 +178,121 @@ tryCatch({
     ## Delimiter setting
     delim_list <- list(tab = "\t", whitespace = " ", comma = ",")
     exposure_delim <- delim_list[[exposure_delim]]
-    outcome_delim <- delim_list[[outcome_delim]]
+    outcome_list_file_delim <- delim_list[[outcome_list_file_delim]]
 
     ## Output directory setting
     if (outd == "NA"){
         outd <- getwd()
-    } 
-    outd <- paste0(outd, "/", gsub(" ", "_", outcome_name), ".", gsub(" ", "_", outcome_cohort))
-    if (!dir.exists(outd)) {
-        dir.create(outd)
     }
 
     #################################################################################################################################
 
-    run_single_gene_target_tsmr(exposure_gwas, exposure_delim, 
-                                exposure_name, exposure_cohort, exposure_type, 
-                                exposure_snp, exposure_chr, exposure_pos, 
-                                exposure_ea, exposure_oa, exposure_eaf, 
-                                exposure_beta, exposure_se, exposure_p, 
-                                exposure_ncase, exposure_ncontrol, exposure_n, 
-                                outcome_gwas, outcome_delim, 
-                                outcome_name, outcome_cohort, outcome_type, 
-                                outcome_snp, outcome_chr, outcome_pos, 
-                                outcome_ea, outcome_oa, outcome_eaf, 
-                                outcome_beta, outcome_se, outcome_p, 
-                                outcome_ncase, outcome_ncontrol, outcome_n, 
-                                gene, gene_chr, gene_start, gene_end, gene_cis_window, 
-                                clump_r2, clump_window, clump_p, 
-                                F_thres, 
-                                verbose, 
-                                outd)
+    df_outcome_list <- fread(outcome_list_file, 
+                            sep=outcome_list_file_delim
+                            )
+    
+    df_outcome_list <- df_outcome_list %>%
+                    mutate(dir_name = paste0(outd, "/", gsub(" ", "_", trait), ".", gsub(" ", "_", cohort))) %>%
+                    mutate(prefix =  paste0(expsoure_name, ".", gsub(" ", "_", expsoure_cohort), ".", 
+                                            trait, ".", gsub(" ", "_", cohort), ".",
+                                            gene, "_GeneWindow", gene_cis_window, "kb")
+                            )
+
+    registerDoParallel(n_cores)
+
+    foreach (idx=1:nrow(df_outcome_list), .combine=c) %dopar% {
+        row <- df_outcome_list[idx, ]
+
+        print(paste0("Running TSMR between ", exposure_name, " and ", row$trait, "..."))
+
+        outcome_gwas <- row$gwas
+        outcome_delim <- delim_list[[row$delim]]
+        outcome_name <- row$trait
+        outcome_cohort <- row$cohort
+        outcome_type <- row$type
+        outcome_snp <- row$snp_col
+        outcome_chr <- row$chr_col
+        outcome_pos <- row$pos_col
+        outcome_ea <- row$ea_col
+        outcome_oa <- row$oa_col
+        outcome_eaf <- row$eaf_col
+        outcome_beta <- row$beta_col
+        outcome_se <- row$se_col
+        outcome_p <- row$p_col
+        outcome_ncase <- row$ncase
+        outcome_ncontrol <- row$ncontrol
+        outcome_n <- row$ntotal
+
+        outd1 <- paste0(outd, "/", gsub(" ", "_", outcome_name), ".", gsub(" ", "_", outcome_cohort))
+        
+        if (!dir.exists(outd1)) {
+            dir.create(outd1)
+        }
+
+        run_single_gene_target_tsmr(exposure_gwas, exposure_delim, 
+                            exposure_name, exposure_cohort, exposure_type, 
+                            exposure_snp, exposure_chr, exposure_pos, 
+                            exposure_ea, exposure_oa, exposure_eaf, 
+                            exposure_beta, exposure_se, exposure_p, 
+                            exposure_ncase, exposure_ncontrol, exposure_n, 
+                            outcome_gwas, outcome_delim, 
+                            outcome_name, outcome_cohort, outcome_type, 
+                            outcome_snp, outcome_chr, outcome_pos, 
+                            outcome_ea, outcome_oa, outcome_eaf, 
+                            outcome_beta, outcome_se, outcome_p, 
+                            outcome_ncase, outcome_ncontrol, outcome_n, 
+                            gene, gene_chr, gene_start, gene_end, gene_cis_window, 
+                            clump_r2, clump_window, clump_p, 
+                            F_thres, 
+                            verbose, 
+                            outd)
+    }
+
+    stopImplicitCluster()
+
+    df_tsmr_combined <- NULL
+    df_harmonized_combined <- NULL
+    df_steiger_combined <- NULL
+    df_mregger_intercept_combined <- NULL
+    df_hetero_combined <- NULL
+
+    for (idx in 1:nrow(df_outcome_list)){
+        row <- df_outcome_list[idx, ]
+
+        # Save TSMR results
+        file <- paste0(row$dir_name, "/", "tsmr.", row$prefix, ".csv")
+        if (file.exists(file)){
+            temp <- fread(file)
+            df_tsmr_combined <- rbind(df_tsmr_combined, temp)
+        }
+
+        # Save harmonized table
+        file <- paste0(row$dir_name, "/", "harmonized.", row$prefix, ".csv")
+        if (file.exists(file)){
+            temp <- fread(file)
+            df_harmonized_combined <- rbind(df_harmonized_combined, temp)
+        }
+
+        # Save Steiger test table
+        file <- paste0(row$dir_name, "/", "steiger_test.", row$prefix, ".csv")
+        if (file.exists(file)){
+            temp <- fread(file)
+            df_steiger_combined <- rbind(df_steiger_combined, temp)
+        }
+
+        # Save MR-Egger intercept test table
+        file <- paste0(row$dir_name, "/", "mr_egger_intercept_test.", row$prefix, ".csv")
+        if (file.exists(file)){
+            temp <- fread(file)
+            df_mregger_intercept_combined <- rbind(df_mregger_intercept_combined, temp)
+        }
+
+        # Save heterogeneity test table
+        file <- paste0(row$dir_name, "/", "heterogeniety_test.", row$prefix, ".csv")
+        if (file.exists(file)){
+            temp <- fread(file)
+            df_hetero_combined <- rbind(df_hetero_combined, temp)
+        }
 
 }, error = function(e){
     # Print the error message
