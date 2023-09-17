@@ -67,3 +67,10 @@ $ sudo chmod -R <8진수 모드> <directory path>
 ```
 $ sudo chown -R <user name:user group> <directory path>
 ```
+
+# Storage check
+
+## <Directory path> 의 storage를 사용량으로 sorting해서.
+```
+# du -d 1 -h <Directory path> | sort -rh > storage_20230917.txt
+```
