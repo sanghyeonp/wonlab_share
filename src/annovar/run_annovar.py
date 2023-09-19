@@ -128,8 +128,8 @@ def main(file, delim_in, in_compression,
 
     # Save output file with annotated input file
     if not do_not_save_annotated_input:
-        df_out.drop(columns=['chr_pos_ref_alt', chr_col, pos_col, ref_col, alt_col, 'flipped_annov'], inplace=True)
-        df_out[[chr_col, pos_col, 'REF', 'ALT']] = df_out.apply(lambda row: row['chr_pos_ref_alt_new'].split(sep=":"), axis=1, result_type='expand')
+        df_out.drop(columns=['chr_pos_ref_alt', chr_col, pos_col, 'flipped_annov'], inplace=True)
+        df_out[[chr_col, pos_col]] = df_out.apply(lambda row: row['chr_pos_ref_alt_new'].split(sep=":")[:2], axis=1, result_type='expand')
         df_out.drop(columns=['chr_pos_ref_alt_new'], inplace=True)
         df_out.to_csv(os.path.join(outd, outf), sep=delim_out, index=False, compression=out_compression)
 
