@@ -208,6 +208,7 @@ tryCatch({
                     gene, "_GeneWindow", gene_cis_window, "kb"
                     ))
 
+    print(df_combined)
 
     registerDoParallel(n_cores)
 
@@ -250,8 +251,6 @@ tryCatch({
         outcome_ncontrol <- row$op.ncontrol
         outcome_n <- row$op.ntotal
 
-        print(paste0("Running TSMR between ", exposure_name, " (", exposure_cohort, ") and ", outcome_name, " (", outcome_cohort,  ")..."))
-
         outd1 <- paste0(outd, "/", gsub(" ", "_", exposure_name), ".", gsub(" ", "_", exposure_cohort),
                             ".", gsub(" ", "_", outcome_name), ".", gsub(" ", "_", outcome_cohort)
                         )
@@ -293,37 +292,63 @@ tryCatch({
 
         # Save TSMR results
         file <- paste0(row$dir_name, "/", "tsmr.", row$prefix, ".csv")
+
         if (file.exists(file)){
-            temp <- fread(file)
-            df_tsmr_combined <- rbind(df_tsmr_combined, temp)
+            temp <- tryCatch({fread(file)
+                                }, error = function(e) {
+                                temp <- NULL
+                                })
+            if (!is.null(temp)){
+                df_tsmr_combined <- rbind(df_tsmr_combined, temp)
+            }
         }
 
         # Save harmonized table
         file <- paste0(row$dir_name, "/", "harmonized.", row$prefix, ".csv")
         if (file.exists(file)){
-            temp <- fread(file)
-            df_harmonized_combined <- rbind(df_harmonized_combined, temp)
+            temp <- tryCatch({fread(file)
+                                }, error = function(e) {
+                                temp <- NULL
+                                })
+            if (!is.null(temp)){
+                df_harmonized_combined <- rbind(df_harmonized_combined, temp)
+            }
         }
 
         # Save Steiger test table
         file <- paste0(row$dir_name, "/", "steiger_test.", row$prefix, ".csv")
         if (file.exists(file)){
-            temp <- fread(file)
-            df_steiger_combined <- rbind(df_steiger_combined, temp)
+            temp <- tryCatch({fread(file)
+                                }, error = function(e) {
+                                temp <- NULL
+                                })
+            if (!is.null(temp)){
+                df_steiger_combined <- rbind(df_steiger_combined, temp)
+            }
         }
 
         # Save MR-Egger intercept test table
         file <- paste0(row$dir_name, "/", "mr_egger_intercept_test.", row$prefix, ".csv")
         if (file.exists(file)){
-            temp <- fread(file)
-            df_mregger_intercept_combined <- rbind(df_mregger_intercept_combined, temp)
+            temp <- tryCatch({fread(file)
+                                }, error = function(e) {
+                                temp <- NULL
+                                })
+            if (!is.null(temp)){
+                df_mregger_intercept_combined <- rbind(df_mregger_intercept_combined, temp)
+            }
         }
 
         # Save heterogeneity test table
         file <- paste0(row$dir_name, "/", "heterogeniety_test.", row$prefix, ".csv")
         if (file.exists(file)){
-            temp <- fread(file)
-            df_hetero_combined <- rbind(df_hetero_combined, temp)
+            temp <- tryCatch({fread(file)
+                                }, error = function(e) {
+                                temp <- NULL
+                                })
+            if (!is.null(temp)){
+                df_hetero_combined <- rbind(df_hetero_combined, temp)
+            }
         }
 
     }

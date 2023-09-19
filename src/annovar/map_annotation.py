@@ -7,15 +7,32 @@ sys.path.append(parent)
 from util import *
 from packages import *
 
+import code
+# code.interact(local=dict(globals(), **locals()))
+
 
 def combine_annov_out(annov_input1, annov_input2, outd, log_list=[]):
     log_list = logger(log_list, log="## Merging multianno.txt and flipped multianno.txt...")
     df_annov1 = pd.read_csv(os.path.join(outd, annov_input1), sep="\t", index_col=False, dtype=str)
+
+
+
+    df_annov1.rename(columns={'Chr':'Chr_annov',
+                            'End':'Pos_annov',
+                            'Ref':'Ref_annov',
+                            'Alt':'Alt_annov'}, inplace=True)
+
+    # print("############################")
+    # print(os.path.join(outd, annov_input1))
+    # print(df_annov1.head(5))
+    # code.interact(local=dict(globals(), **locals()))
+
+
     df_annov1 = df_annov1.loc[df_annov1['avsnp150'] != '.', ]
     log_list = logger(log_list, log="Number of SNPs annotated with multianno.txt: {:,}".format(len(df_annov1)))
     
     if not df_annov1.empty:
-        df_annov1['chr_pos_ref_alt_new'] = df_annov1.apply(lambda row: "{}:{}:{}:{}".format(row['Chr'], row['End'], row['Ref'], row['Alt']), axis=1)
+        df_annov1['chr_pos_ref_alt_new'] = df_annov1.apply(lambda row: "{}:{}:{}:{}".format(row['Chr_annov'], row['Pos_annov'], row['Ref_annov'], row['Alt_annov']), axis=1)
 
     df_annov2 = pd.read_csv(os.path.join(outd, annov_input2), sep="\t", index_col=False, dtype=str)
     df_annov2 = df_annov2.loc[df_annov2['avsnp150'] != '.', ]
@@ -26,7 +43,13 @@ def combine_annov_out(annov_input1, annov_input2, outd, log_list=[]):
         df_annov2.columns = ['Chr', 'Start', 'End', 'Alt', 'Ref', 'Func.refGene', 'Gene.refGene',
                             'GeneDetail.refGene', 'ExonicFunc.refGene', 'AAChange.refGene',
                             'avsnp150']
-        df_annov2['chr_pos_ref_alt_new'] = df_annov2.apply(lambda row: "{}:{}:{}:{}".format(row['Chr'], row['End'], row['Ref'], row['Alt']), axis=1)
+        
+        df_annov2.rename(columns={'Chr':'Chr_annov',
+                        'End':'Pos_annov',
+                        'Ref':'Ref_annov',
+                        'Alt':'Alt_annov'}, inplace=True)
+
+        df_annov2['chr_pos_ref_alt_new'] = df_annov2.apply(lambda row: "{}:{}:{}:{}".format(row['Chr_annov'], row['Pos_annov'], row['Ref_annov'], row['Alt_annov']), axis=1)
         
         # Get annotated SNPs not in df_annov1.
         # If annotated SNP is present in df_annov2 after filtering the ones in df_annov1, it means this SNP has flipped allele. 

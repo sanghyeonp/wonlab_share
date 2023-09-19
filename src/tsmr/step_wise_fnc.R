@@ -291,6 +291,12 @@ run_single_gene_target_tsmr <- function(
     verbose, 
     outd
     ){
+    
+    cat(paste0(":: TSMR analysis ::\n",
+                "\tExposure: ", exposure_name, " (", exposure_cohort, ")\n",
+                "\tOutcome: ", outcome_name, " (", outcome_cohort, ")\n")
+        )
+    
     prefix <- paste0(exposure_name, ".", gsub(" ", "_", exposure_cohort), ".", 
                     outcome_name, ".", gsub(" ", "_", outcome_cohort), ".",
                     gene, "_GeneWindow", gene_cis_window, "kb"
@@ -300,7 +306,7 @@ run_single_gene_target_tsmr <- function(
         ##########################################
         # 1. Exposure data preparation
         ##########################################
-
+        cat(">>> Preparing exposure <<<\n")
         exp_dat <- exp_dat_prep(exposure_gwas, exposure_delim,
                                 exposure_snp, exposure_chr, exposure_pos, exposure_ea, exposure_oa, exposure_eaf, exposure_beta, exposure_se, exposure_p,
                                 gene_chr, gene_start, gene_cis_window, gene_end,
@@ -310,7 +316,7 @@ run_single_gene_target_tsmr <- function(
         ##########################################
         # 2. Exposure data clumping
         ##########################################
-
+        cat(">>> Clumping <<<\n")
         exp_iv_dat <- exp_iv_dat_prep(exp_dat,
                                     clump_p, clump_r2, clump_window,
                                     exposure_name, exposure_cohort, exposure_type, 
@@ -322,6 +328,7 @@ run_single_gene_target_tsmr <- function(
         ##########################################
         # 3. Outcome data preparation
         ##########################################
+        cat(">>> Preparing outcome <<<\n")
         out_dat <- outcome_dat_prep(exp_iv_dat,
                                     outcome_gwas, outcome_delim, 
                                     outcome_name, outcome_cohort, outcome_type,
@@ -333,7 +340,7 @@ run_single_gene_target_tsmr <- function(
         ##########################################
         # 4. Harmonization
         ##########################################
-
+        cat(">>> Running harmonization <<<\n")
         exp_h_out_dat <- harmonization(exp_iv_dat, out_dat,
                                         prefix, outd, verbose)
     }
@@ -344,6 +351,7 @@ run_single_gene_target_tsmr <- function(
     ##########################################
     # 5. Steiger test
     ##########################################
+    cat(">>> Running Steiger test <<<\n")
     out_steiger <- perform_steiger_test(exp_h_out_dat,
                                     exposure_type, outcome_type,
                                     prefix, outd, verbose)
@@ -352,11 +360,13 @@ run_single_gene_target_tsmr <- function(
     ##########################################
     # 6. TSMR
     ##########################################
+    cat(">>> Running two-sample MR <<<\n")
     out_tsmr <- perform_TSMR(exp_h_out_dat, prefix, outd, verbose)
 
     ##########################################
     # 7. Pleiotropy test
     ##########################################
+    cat(">>> Running pleiotropy test <<<\n")
     out_pleiotropy <- perform_pleiotropy_test(exp_h_out_dat,
                                             prefix, outd, verbose)
 
@@ -364,6 +374,7 @@ run_single_gene_target_tsmr <- function(
     ##########################################
     # 8. Heterogeneity test
     ##########################################
+    cat(">>> Running heterogeneity test <<<\n")
     out_heterogeneity <- perform_heterogneity_test(exp_h_out_dat, prefix, outd, verbose)
     
     return (out_tsmr)

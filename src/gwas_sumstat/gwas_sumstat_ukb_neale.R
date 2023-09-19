@@ -21,6 +21,9 @@ parser$add_argument("--retain-col", dest="retain_col", nargs = "*", default="NA"
 parser$add_argument("--rename-col", dest="rename_col", nargs = "*", default="NA",
                     help="Specify new column names specified in `--retain-col` with the same order.")
 
+parser$add_argument("--retain-chr", dest="retain_chr", nargs = "*", default="NA",
+                    help="Specify the chromosome(s) to retain.")
+
 parser$add_argument("--maf-filter", dest="maf_filter", required=FALSE, default=0,
                     help="Specify MAF filter threshold. Default=0.")
 
@@ -60,6 +63,7 @@ source(env_file)
 args <- parser$parse_args()
 gwas <- args$gwas
 retain_col <- args$retain_col
+retain_chr <- args$retain_chr
 
 maf_filter <- args$maf_filter
 keep_no_rsid <- args$keep_no_rsid
@@ -111,6 +115,13 @@ df <- df %>%
     separate(variant, c("CHR", "POS", "REF", "ALT"), sep = ":", convert = TRUE) %>%
     mutate(variant = paste0(CHR, ":", POS, ":", REF, ":", ALT)) %>%
     mutate(EAF = if_else(ALT == minor_allele, MAF, 1 - MAF)) 
+
+if (retain_chr[1] != "NA"){
+    retain_chr <- as.character(retain_chr)
+    df <- df %>% 
+            mutate(CHR = as.character(CHR)) %>%
+            filter(CHR %in% retain_chr)
+}
 
 ### Calculate Z-score
 if ("Z" %in% retain_col){
