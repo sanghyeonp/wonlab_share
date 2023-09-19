@@ -4,7 +4,6 @@ library(dplyr)
 
 exp_dat_prep <- function(exposure_gwas, exposure_delim,
                         exposure_snp, exposure_chr, exposure_pos, exposure_ea, exposure_oa, exposure_eaf, exposure_beta, exposure_se, exposure_p,
-                        gene_chr, gene_start, gene_cis_window, gene_end,
                         prefix, outd){
 
     df_exp <- fread(exposure_gwas, sep=exposure_delim)
@@ -22,12 +21,19 @@ exp_dat_prep <- function(exposure_gwas, exposure_delim,
             SE := all_of(exposure_se),
             PVAL := all_of(exposure_p)
             ) %>%
-        mutate(PVAL = as.numeric(PVAL)) %>%
-        filter((CHR == gene_chr) & (POS > gene_start - (gene_cis_window * 1000)) & (POS <= gene_end + (gene_cis_window * 1000)))
+        mutate(PVAL = as.numeric(PVAL))
 
+    return (exp_dat)
+}
+
+exp_dat_gene_region_prep <- function(exp_dat, 
+                                    gene_chr, gene_start, gene_cis_window, gene_end){
+    exp_dat <- exp_dat %>% 
+        filter((CHR == gene_chr) & (POS > gene_start - (gene_cis_window * 1000)) & (POS <= gene_end + (gene_cis_window * 1000)))
+    
     write.table(exp_dat, 
-                paste0(outd, "/", "exposure_gene_region.", prefix, ".tsv"),
-                sep="\t", row.names=FALSE, quote = FALSE
+            paste0(outd, "/", "exposure_gene_region.", prefix, ".tsv"),
+            sep="\t", row.names=FALSE, quote = FALSE
     )
 
     return (exp_dat)
@@ -272,6 +278,9 @@ perform_heterogneity_test <- function(exp_h_out_dat, prefix, outd, verbose){
 }
 
 
+##################################################################
+# Exposure의 gene body +- X kb 내에서 IV 추출.
+##################################################################
 run_single_gene_target_tsmr <- function(
     exposure_gwas, exposure_delim, 
     exposure_name, exposure_cohort, exposure_type, 
@@ -309,9 +318,12 @@ run_single_gene_target_tsmr <- function(
         cat(">>> Preparing exposure <<<\n")
         exp_dat <- exp_dat_prep(exposure_gwas, exposure_delim,
                                 exposure_snp, exposure_chr, exposure_pos, exposure_ea, exposure_oa, exposure_eaf, exposure_beta, exposure_se, exposure_p,
-                                gene_chr, gene_start, gene_cis_window, gene_end,
                                 prefix, outd
                                 )
+
+        exp_dat <- exp_dat_gene_region_prep(exp_dat, 
+                                            gene_chr, gene_start, gene_cis_window, gene_end
+                                            )
 
         ##########################################
         # 2. Exposure data clumping
@@ -324,6 +336,122 @@ run_single_gene_target_tsmr <- function(
                                     verbose,
                                     F_thres, perform_Fstat=TRUE
                                     )
+
+        ##########################################
+        # 3. Outcome data preparation
+        ##########################################
+        cat(">>> Preparing outcome <<<\n")
+        out_dat <- outcome_dat_prep(exp_iv_dat,
+                                    outcome_gwas, outcome_delim, 
+                                    outcome_name, outcome_cohort, outcome_type,
+                                    outcome_snp, outcome_beta, outcome_se, outcome_eaf, outcome_ea, outcome_oa, outcome_p, outcome_chr, outcome_pos,
+                                    outcome_ncase, outcome_ncontrol, outcome_n
+
+        )
+
+        ##########################################
+        # 4. Harmonization
+        ##########################################
+        cat(">>> Running harmonization <<<\n")
+        exp_h_out_dat <- harmonization(exp_iv_dat, out_dat,
+                                        prefix, outd, verbose)
+    }
+
+    ### Read in harmonized data if present
+    exp_h_out_dat <- readRDS(paste0(outd, "/", "harmonized.", prefix, ".RDS"))
+
+    ##########################################
+    # 5. Steiger test
+    ##########################################
+    cat(">>> Running Steiger test <<<\n")
+    out_steiger <- perform_steiger_test(exp_h_out_dat,
+                                    exposure_type, outcome_type,
+                                    prefix, outd, verbose)
+
+
+    ##########################################
+    # 6. TSMR
+    ##########################################
+    cat(">>> Running two-sample MR <<<\n")
+    out_tsmr <- perform_TSMR(exp_h_out_dat, prefix, outd, verbose)
+
+    ##########################################
+    # 7. Pleiotropy test
+    ##########################################
+    cat(">>> Running pleiotropy test <<<\n")
+    out_pleiotropy <- perform_pleiotropy_test(exp_h_out_dat,
+                                            prefix, outd, verbose)
+
+
+    ##########################################
+    # 8. Heterogeneity test
+    ##########################################
+    cat(">>> Running heterogeneity test <<<\n")
+    out_heterogeneity <- perform_heterogneity_test(exp_h_out_dat, prefix, outd, verbose)
+    
+    return (out_tsmr)
+}
+
+
+##################################################################
+# :: IV list에서 다로 추출. ::
+##################################################################
+
+run_iv_specified_tsmr <- function(
+    exposure_gwas, exposure_delim, 
+    exposure_name, exposure_cohort, exposure_type, 
+    exposure_snp, exposure_chr, exposure_pos, 
+    exposure_ea, exposure_oa, exposure_eaf, 
+    exposure_beta, exposure_se, exposure_p, 
+    exposure_ncase, exposure_ncontrol, exposure_n,
+    iv_list_path, 
+    outcome_gwas, outcome_delim, 
+    outcome_name, outcome_cohort, outcome_type, 
+    outcome_snp, outcome_chr, outcome_pos, 
+    outcome_ea, outcome_oa, outcome_eaf, 
+    outcome_beta, outcome_se, outcome_p, 
+    outcome_ncase, outcome_ncontrol, outcome_n, 
+    gene, gene_chr, gene_start, gene_end, gene_cis_window, 
+    clump_r2, clump_window, clump_p, 
+    F_thres, 
+    verbose, 
+    outd
+    ){
+    
+    cat(paste0(":: TSMR analysis ::\n",
+                "\tExposure: ", exposure_name, " (", exposure_cohort, ")\n",
+                "\tOutcome: ", outcome_name, " (", outcome_cohort, ")\n")
+        )
+    
+    prefix <- paste0(exposure_name, ".", gsub(" ", "_", exposure_cohort), ".", 
+                    outcome_name, ".", gsub(" ", "_", outcome_cohort), ".",
+                    gene, "_GeneWindow", gene_cis_window, "kb"
+                    )
+
+    if (!file.exists(paste0(outd, "/", "harmonized.", prefix, ".RDS"))){
+        ##########################################
+        # 1. Exposure data preparation
+        ##########################################
+        cat(">>> Preparing exposure <<<\n")
+        exp_dat <- exp_dat_prep(exposure_gwas, exposure_delim,
+                                exposure_snp, exposure_chr, exposure_pos, exposure_ea, exposure_oa, exposure_eaf, exposure_beta, exposure_se, exposure_p,
+                                prefix, outd
+                                )
+        
+        # Read IV list file
+        iv_list <- fread(iv_list_path, header=FALSE)[[1]]
+        exp_dat <- exp_dat %>%
+                        filter(SNP %in% iv_list)
+        
+        if (length(iv_list) != nrow(exp_dat)){
+            iv_missing <- setdiff(iv_list, exp_dat$SNP)
+            n_iv_missing <- length(iv_missing)
+
+            write.table(data.frame(iv_missing), 
+                        paste0(outd, "/", "missing_iv_list.", prefix, ".txt"),
+                        sep=" ", row.names=FALSE, col.names=FALSE, quote=FALSE
+            )
+        }
 
         ##########################################
         # 3. Outcome data preparation
