@@ -27,7 +27,8 @@ exp_dat_prep <- function(exposure_gwas, exposure_delim,
 }
 
 exp_dat_gene_region_prep <- function(exp_dat, 
-                                    gene_chr, gene_start, gene_cis_window, gene_end){
+                                    gene_chr, gene_start, gene_cis_window, gene_end,
+                                    prefix, outd){
     exp_dat <- exp_dat %>% 
         filter((CHR == gene_chr) & (POS > gene_start - (gene_cis_window * 1000)) & (POS <= gene_end + (gene_cis_window * 1000)))
     
@@ -220,7 +221,6 @@ perform_steiger_test <- function(exp_h_out_dat,
                 paste0(outd, "/", "steiger_test.", prefix, ".csv"),
                 sep=",", row.names=FALSE, quote=FALSE)
     return (out_steiger)
-
 }
 
 perform_TSMR <- function(exp_h_out_dat, prefix, outd, verbose){
@@ -322,7 +322,8 @@ run_single_gene_target_tsmr <- function(
                                 )
 
         exp_dat <- exp_dat_gene_region_prep(exp_dat, 
-                                            gene_chr, gene_start, gene_cis_window, gene_end
+                                            gene_chr, gene_start, gene_cis_window, gene_end,
+                                            prefix, outd
                                             )
 
         ##########################################
@@ -404,15 +405,13 @@ run_iv_specified_tsmr <- function(
     exposure_ea, exposure_oa, exposure_eaf, 
     exposure_beta, exposure_se, exposure_p, 
     exposure_ncase, exposure_ncontrol, exposure_n,
-    iv_list_path, 
+    iv_list_path, iv_exp_p_thres,
     outcome_gwas, outcome_delim, 
     outcome_name, outcome_cohort, outcome_type, 
     outcome_snp, outcome_chr, outcome_pos, 
     outcome_ea, outcome_oa, outcome_eaf, 
     outcome_beta, outcome_se, outcome_p, 
     outcome_ncase, outcome_ncontrol, outcome_n, 
-    gene, gene_chr, gene_start, gene_end, gene_cis_window, 
-    clump_r2, clump_window, clump_p, 
     F_thres, 
     verbose, 
     outd
@@ -424,8 +423,7 @@ run_iv_specified_tsmr <- function(
         )
     
     prefix <- paste0(exposure_name, ".", gsub(" ", "_", exposure_cohort), ".", 
-                    outcome_name, ".", gsub(" ", "_", outcome_cohort), ".",
-                    gene, "_GeneWindow", gene_cis_window, "kb"
+                    outcome_name, ".", gsub(" ", "_", outcome_cohort), "."
                     )
 
     if (!file.exists(paste0(outd, "/", "harmonized.", prefix, ".RDS"))){
@@ -443,15 +441,67 @@ run_iv_specified_tsmr <- function(
         exp_dat <- exp_dat %>%
                         filter(SNP %in% iv_list)
         
+        df_iv_exclude_list <- NULL
+        df_iv_missing <- NULL
+        df_iv_p <- NULL
+
         if (length(iv_list) != nrow(exp_dat)){
             iv_missing <- setdiff(iv_list, exp_dat$SNP)
             n_iv_missing <- length(iv_missing)
-
-            write.table(data.frame(iv_missing), 
-                        paste0(outd, "/", "missing_iv_list.", prefix, ".txt"),
-                        sep=" ", row.names=FALSE, col.names=FALSE, quote=FALSE
-            )
+            df_iv_missing <- data.frame(SNP = iv_missing,
+                                        Exclusion = rep("Missing", n_iv_missing))
+            df_iv_exclude_list <- bind_rows(df_iv_exclude_list, df_iv_missing)
         }
+
+        if (nrow(exp_dat[exp_dat$PVAL > iv_exp_p_thres, ]) > 0){
+            df_iv_p <- exp_dat[exp_dat$PVAL > iv_exp_p_thres, ]
+            df_iv_p$Exclusion <- paste0("P-value > ", iv_exp_p_thres)
+            df_iv_exclude_list <- bind_rows(df_iv_exclude_list, df_iv_p)
+
+            exp_dat <- exp_dat[exp_dat$PVAL <= iv_exp_p_thres, ]
+        }
+
+        if (!is.null(df_iv_exclude_list)){
+            df_iv_exclude_list <- df_iv_exclude_list %>%
+                                    mutate(CHR = coalesce(CHR, -9),
+                                            POS = coalesce(POS, -9),
+                                            A1 = coalesce(A1, 'NA'),
+                                            A2 = coalesce(A2, 'NA'),
+                                            EAF = coalesce(EAF, -9),
+                                            BETA = coalesce(BETA, -9),
+                                            SE = coalesce(SE, -9),
+                                            PVAL = coalesce(PVAL, -9)
+                                            )
+            write.table(df_iv_exclude_list, 
+                        paste0(outd, "/", "iv_excluded.", prefix, ".txt"),
+                        sep=" ", row.names=FALSE, quote=FALSE
+                        )
+        }
+
+        if (nrow(exp_dat) == 0){
+            stop()
+        }
+
+        exp_iv_dat <- format_data(dat=exp_dat,
+                                type = "exposure",
+                                header = TRUE,
+                                snp_col = "SNP",
+                                beta_col = "BETA",
+                                se_col = "SE",
+                                effect_allele_col = "A1",
+                                other_allele_col = "A2",
+                                eaf_col = "EAF",
+                                pval_col = "PVAL",
+                                chr_col = "CHR",
+                                pos_col = "POS")
+
+    exp_iv_dat$exposure <-paste0(exposure_name, "(", exposure_cohort, ")")
+    if (exposure_type == "binary"){
+        exp_iv_dat$ncase.exposure <- exposure_ncase
+        exp_iv_dat$ncontrol.exposure <- exposure_ncontrol
+    } else{
+        exp_iv_dat$samplesize.exposure <- exposure_n
+    }
 
         ##########################################
         # 3. Outcome data preparation
