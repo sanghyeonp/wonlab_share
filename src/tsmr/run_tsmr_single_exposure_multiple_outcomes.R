@@ -108,6 +108,11 @@ tryCatch({
     parser$add_argument("--F-thres", dest="F_thres", required=FALSE, type='double', default=10,
                         help="Specify the F-statistics threshold to filter IV. Default = 10.")
 
+    ### Causal effect reverse-code
+    parser$add_argument("--reverse-effect", dest="reverse_effect", action="store_true",
+                        help="Specify to reverse-code the result of TSMR.")
+
+
     ### Outcome
     parser$add_argument("--outcome-list-file", dest="outcome_list_file", required=TRUE, 
                         help="Specify outcome list file path.")
@@ -160,6 +165,8 @@ tryCatch({
     clump_p <- args$clump_p
 
     F_thres <- args$F_thres
+
+    reverse_effect <- args$reverse_effect
 
     outcome_list_file <- args$outcome_list_file
     outcome_list_file_delim <- args$outcome_list_file_delim
@@ -244,6 +251,7 @@ tryCatch({
                             gene, gene_chr, gene_start, gene_end, gene_cis_window, 
                             clump_r2, clump_window, clump_p, 
                             F_thres, 
+                            reverse_effect,
                             verbose, 
                             outd)
     }
@@ -293,6 +301,9 @@ tryCatch({
             temp <- fread(file)
             df_hetero_combined <- rbind(df_hetero_combined, temp)
         }
+    
+    
+    combine_results(save_ivw_mregger_only=TRUE)
 
 }, error = function(e){
     # Print the error message

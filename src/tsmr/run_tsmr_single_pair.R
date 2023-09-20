@@ -106,6 +106,10 @@ tryCatch({
     parser$add_argument("--F-thres", dest="F_thres", required=FALSE, type='double', default=10,
                         help="Specify the F-statistics threshold to filter IV. Default = 10.")
 
+    ### Causal effect reverse-code
+    parser$add_argument("--reverse-effect", dest="reverse_effect", action="store_true",
+                        help="Specify to reverse-code the result of TSMR.")
+
     ### Outcome
     parser$add_argument("--op-gwas", dest="outcome_gwas", required=TRUE,
                         help="Path to the outcome GWAS summary statistics.")
@@ -185,6 +189,8 @@ tryCatch({
 
     F_thres <- args$F_thres
 
+    reverse_effect <- args$reverse_effect
+
     outcome_gwas <- args$outcome_gwas
     outcome_delim <- args$outcome_delim
     outcome_name <- args$outcome_name
@@ -243,6 +249,7 @@ tryCatch({
                                 gene, gene_chr, gene_start, gene_end, gene_cis_window, 
                                 clump_r2, clump_window, clump_p, 
                                 F_thres, 
+                                reverse_effect,
                                 verbose, 
                                 outd)
 

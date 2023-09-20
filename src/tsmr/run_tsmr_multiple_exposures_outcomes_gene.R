@@ -84,6 +84,10 @@ tryCatch({
     parser$add_argument("--F-thres", dest="F_thres", required=FALSE, type='double', default=10,
                         help="Specify the F-statistics threshold to filter IV. Default = 10.")
 
+    ### Causal effect reverse-code
+    parser$add_argument("--reverse-effect", dest="reverse_effect", action="store_true",
+                        help="Specify to reverse-code the result of TSMR.")
+
     ### Parallelization
     parser$add_argument("--n-cores", dest="n_cores", required=FALSE, default=1, type='integer',
                         help="Specify the number of cores.")
@@ -118,6 +122,8 @@ tryCatch({
 
     outcome_list_file <- args$outcome_list_file
     outcome_list_file_delim <- args$outcome_list_file_delim
+
+    reverse_effect <- args$reverse_effect
 
     n_cores <- args$n_cores
 
@@ -274,6 +280,7 @@ tryCatch({
                                 gene, gene_chr, gene_start, gene_end, gene_cis_window, 
                                 clump_r2, clump_window, clump_p, 
                                 F_thres, 
+                                reverse_effect,
                                 verbose, 
                                 outd1)
 
@@ -377,6 +384,8 @@ tryCatch({
             paste0(outd, "/", "heterogeneity.combined.csv"),
             sep=",", row.names=FALSE, quote=FALSE
             )
+
+    combine_results(save_ivw_mregger_only=TRUE)
 
 }, error = function(e){
     # Print the error message

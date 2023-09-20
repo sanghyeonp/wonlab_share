@@ -149,7 +149,6 @@ outcome_dat_prep <- function(exp_iv_dat,
                                 pos_col = outcome_pos
                                 )
 
-
     out_dat$outcome <- paste0(outcome_name, "(", outcome_cohort, ")")
 
     if (outcome_type == "binary"){
@@ -223,13 +222,19 @@ perform_steiger_test <- function(exp_h_out_dat,
     return (out_steiger)
 }
 
-perform_TSMR <- function(exp_h_out_dat, prefix, outd, verbose){
+perform_TSMR <- function(exp_h_out_dat, 
+                        prefix, outd, verbose,
+                        reverse_effect=FALSE){
     res <- try(mr(exp_h_out_dat , method_list = c('mr_ivw',
                                             'mr_wald_ratio', 
                                             'mr_egger_regression',
                                             'mr_weighted_median',
                                             'mr_weighted_mode'
                 ))) 
+
+    if (reverse_effect){
+        res$b <- res$b * -1
+    }
 
     res <- generate_odds_ratios(res)
 
@@ -278,6 +283,56 @@ perform_heterogneity_test <- function(exp_h_out_dat, prefix, outd, verbose){
 }
 
 
+########################################################################################################
+### Result combining
+combine_results <- function(save_ivw_mregger_only=FALSE){
+    tsmr_file <- "tsmr.combined.csv"
+    egger_intercept_file <- "mr_egger_intercept_test.combined.csv"
+    heterogeneity_file <- "heterogeneity.combined.csv"
+
+    
+    ### TSMR combined result 불러오기
+    df <- fread(tsmr_file, sep=",")
+
+    ### MR-Egger intercept test 결과 불러오기
+    df_temp <- fread(egger_intercept_file, sep=",")
+    df_temp <- df_temp %>% 
+    select(-exposure, -outcome) %>%
+    rename(egger_intercept_se = se,
+            egger_intercept_pval = pval) %>%
+    mutate(method = "MR Egger")
+
+
+    df <- merge(df, df_temp, by = c("id.exposure", "id.outcome", "method"), all = TRUE)
+
+    ### Heterogeneity 결과 불러오기
+    df_temp <- fread(heterogeneity_file, sep=",")
+    df_temp <- df_temp %>%
+    select(-exposure, -outcome)
+
+    df <- merge(df, df_temp, by = c("id.exposure", "id.outcome", "method"), all = TRUE)
+
+    ### Fill NA
+    df[is.na(df)] <- "."
+
+    ### Save
+    write.table(df, "tsmr.analysis.table.csv",
+                sep=",", row.names=FALSE, quote=FALSE
+    )
+
+    if (save_ivw_mregger_only){
+        write.table(df %>% filter(method %in% c("Inverse variance weighted", "MR Egger")), 
+                    "tsmr.analysis.table.IVWandMREgger.csv",
+                    sep=",", row.names=FALSE, quote=FALSE
+        )
+    }
+
+
+}
+
+
+########################################################################################################
+
 ##################################################################
 # Exposure의 gene body +- X kb 내에서 IV 추출.
 ##################################################################
@@ -297,6 +352,7 @@ run_single_gene_target_tsmr <- function(
     gene, gene_chr, gene_start, gene_end, gene_cis_window, 
     clump_r2, clump_window, clump_p, 
     F_thres, 
+    reverse_effect,
     verbose, 
     outd
     ){
@@ -342,6 +398,7 @@ run_single_gene_target_tsmr <- function(
         # 3. Outcome data preparation
         ##########################################
         cat(">>> Preparing outcome <<<\n")
+
         out_dat <- outcome_dat_prep(exp_iv_dat,
                                     outcome_gwas, outcome_delim, 
                                     outcome_name, outcome_cohort, outcome_type,
@@ -374,7 +431,7 @@ run_single_gene_target_tsmr <- function(
     # 6. TSMR
     ##########################################
     cat(">>> Running two-sample MR <<<\n")
-    out_tsmr <- perform_TSMR(exp_h_out_dat, prefix, outd, verbose)
+    out_tsmr <- perform_TSMR(exp_h_out_dat, prefix, outd, verbose, reverse_effect)
 
     ##########################################
     # 7. Pleiotropy test
@@ -413,6 +470,7 @@ run_iv_specified_tsmr <- function(
     outcome_beta, outcome_se, outcome_p, 
     outcome_ncase, outcome_ncontrol, outcome_n, 
     F_thres, 
+    reverse_effect,
     verbose, 
     outd
     ){
@@ -507,12 +565,12 @@ run_iv_specified_tsmr <- function(
         # 3. Outcome data preparation
         ##########################################
         cat(">>> Preparing outcome <<<\n")
+
         out_dat <- outcome_dat_prep(exp_iv_dat,
                                     outcome_gwas, outcome_delim, 
                                     outcome_name, outcome_cohort, outcome_type,
                                     outcome_snp, outcome_beta, outcome_se, outcome_eaf, outcome_ea, outcome_oa, outcome_p, outcome_chr, outcome_pos,
                                     outcome_ncase, outcome_ncontrol, outcome_n
-
         )
 
         ##########################################
@@ -539,7 +597,7 @@ run_iv_specified_tsmr <- function(
     # 6. TSMR
     ##########################################
     cat(">>> Running two-sample MR <<<\n")
-    out_tsmr <- perform_TSMR(exp_h_out_dat, prefix, outd, verbose)
+    out_tsmr <- perform_TSMR(exp_h_out_dat, prefix, outd, verbose, reverse_effect)
 
     ##########################################
     # 7. Pleiotropy test
