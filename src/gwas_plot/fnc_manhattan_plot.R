@@ -127,7 +127,7 @@ plot_manhattan <- function(gwas,
         
         # custom X axis:
         scale_x_continuous(label = axisdf$CHR, breaks= axisdf$center ) +
-        scale_y_continuous(limits = c(0, -log10(min(df_plot$PVAL))), expand = c(0, 0) ) +     # remove space between plot area and x axis
+        # scale_y_continuous(limits = c(0, -log10(min(df_plot$PVAL))), expand = c(0, 0) ) +     # remove space between plot area and x axis
         
         # Add highlighted points
         geom_point(data=subset(df_plot, is_highlight=="yes"), color=color_annotate, size=1.5) +
