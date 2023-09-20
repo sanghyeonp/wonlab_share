@@ -8,7 +8,8 @@ plot_manhattan <- function(gwas,
                         chr_select=c('NA'),
                         img_type='png', dpi=300,
                         outf='NA', outd='NA',
-                        width=180, height=100, units='mm'){
+                        width=180, height=100, units='mm',
+                        scale=1){
 
     if (outf == "NA"){
         outf <- paste0("manhattan.", basename(gwas))
@@ -150,12 +151,12 @@ plot_manhattan <- function(gwas,
 
     if(img_type == "pdf"){
         ggsave(paste0(outf, ".", img_type), p1, 
-        scale = 2, device = "pdf",
+        scale = scale, device = "pdf",
         width = width, height = height,
         units = units)
     } else{
         ggsave(paste0(outf, ".", img_type), p1, 
-        scale = 2, dpi = dpi,
+        scale = scale, dpi = dpi,
         width = width, height = height,
         units = units)
     }
