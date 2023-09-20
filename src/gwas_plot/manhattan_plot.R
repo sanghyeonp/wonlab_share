@@ -48,15 +48,19 @@ parser$add_argument("--chr-select", dest="chr_select", nargs = "*", default="NA"
 # Save output
 parser$add_argument("--img-type", dest="img_type", required=FALSE, default="png",
                     help="Specify the type of image extension. Options = ['png', 'pdf']. Default = 'png'")
-parser$add_argument("--dpi", required=FALSE, default=300,
+parser$add_argument("--dpi", required=FALSE, default=300, type="integer",
                     help="Specify DPI for png image.")
 parser$add_argument("--outf", required=FALSE, default="NA",
                     help="Specify the name of the output file. Default = manhattan.<Input file name>")
 parser$add_argument("--outd", required=FALSE, default="NA",
                     help="Specify the output directory. Default = current working directory.")
-parser$add_argument("--width", required=FALSE, default=180,
+
+parser$add_argument("--scale", required=FALSE, default=1, type="double",
+                    help="Specify the scale of the plot. Default=1")
+
+parser$add_argument("--width", required=FALSE, default=180, type="double",
                     help="Specify the width of the plot. Default=180 mm")
-parser$add_argument("--height", required=FALSE, default=100,
+parser$add_argument("--height", required=FALSE, default=100, type="double",
                     help="Specify the height of the plot. Default=100 mm")
 parser$add_argument("--units", required=FALSE, default="mm",
                     help="Specify the units for the width and height of the plot. Default = 'mm'")
@@ -101,6 +105,9 @@ img_type <- args$img_type
 dpi <- args$dpi
 outf <- args$outf
 outd <- args$outd
+
+scale <- args$scale
+
 width <- args$width
 height <- args$height
 units <- args$units
@@ -119,10 +126,6 @@ if (outf == "NA"){
 if (outd == "NA"){
     outd <- getwd()
 }
-# dpi, width, height
-dpi <- as.numeric(dpi)
-width <- as.numeric(width)
-height <- as.numeric(height)
 
 
 plot_manhattan(gwas=gwas, 
@@ -133,6 +136,7 @@ plot_manhattan(gwas=gwas,
             chr_select=chr_select,
             img_type=img_type, dpi=dpi,
             outf=outf, outd=outd,
-            width=width, height=height, units=units
+            width=width, height=height, units=units,
+            scale=scale
             )
 

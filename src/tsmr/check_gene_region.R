@@ -80,6 +80,10 @@ parser$add_argument("--height", required=FALSE, default=100, type='double',
 parser$add_argument("--units", required=FALSE, default="mm",
                     help="Specify the units for the width and height of the plot. Default = 'mm'")
 
+parser$add_argument("--scale", required=FALSE, default=1, type="double",
+                    help="Specify the scale of the plot. Default=1")
+
+
 ### Save option
 parser$add_argument("--outf", required=TRUE, 
                     help="Specify the name of the output files.")
@@ -114,6 +118,7 @@ dpi <- args$dpi
 width <- args$width
 height <- args$height
 units <- args$units
+scale <- args$scale
 
 outf <- args$outf
 outd <- args$outd
@@ -182,5 +187,6 @@ plot_manhattan(gwas=gwas_gene_region_file,
             chr_select=chr_select,
             img_type=img_type, dpi=dpi,
             outf=paste0("manhattan.", outf), outd=outd,
-            width=width, height=height, units=units
+            width=width, height=height, units=units,
+            scale=scale
             )
