@@ -285,7 +285,7 @@ perform_heterogneity_test <- function(exp_h_out_dat, prefix, outd, verbose){
 
 ########################################################################################################
 ### Result combining
-combine_results <- function(save_ivw_mregger_only=FALSE){
+combine_results <- function(save_ivw_mregger_only=FALSE, save_wr_only=FALSE){
     tsmr_file <- "tsmr.combined.csv"
     egger_intercept_file <- "mr_egger_intercept_test.combined.csv"
     heterogeneity_file <- "heterogeneity.combined.csv"
@@ -325,6 +325,13 @@ combine_results <- function(save_ivw_mregger_only=FALSE){
                     "tsmr.analysis.table.IVWandMREgger.csv",
                     sep=",", row.names=FALSE, quote=FALSE
         )
+    }
+    if (save_wr_only){
+        write.table(df %>% filter(method %in% c("Wald ratio")), 
+                    "tsmr.analysis.table.Waldratio.csv",
+                    sep=",", row.names=FALSE, quote=FALSE
+        )
+
     }
 
 

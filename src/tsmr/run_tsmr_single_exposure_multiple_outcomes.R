@@ -303,7 +303,8 @@ tryCatch({
         }
     
     
-    combine_results(save_ivw_mregger_only=TRUE)
+    combine_results(save_ivw_mregger_only=TRUE,
+                    save_wr_only=TRUE)
 
 }, error = function(e){
     # Print the error message
