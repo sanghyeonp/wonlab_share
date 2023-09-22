@@ -1,9 +1,3 @@
-##################################################################################################################
-# Sanghyeon Park
-# 2023.09.22
-##################################################################################################################
-
-
 ### Call packages
 library(tidyverse)
 getCurrentFileLocation <-  function()
@@ -22,6 +16,15 @@ getCurrentFileLocation <-  function()
 fnc_file <- paste(getCurrentFileLocation(), "step_wise_fnc.R", sep="/")
 source(fnc_file)
 
+##################################################################################################################
+# Two-sample Mendelian randomization analysis for a target gene
+# - Exposure: Drug-targeting gene region within the biomarker (endophenotype) GWAS
+#   - Drug가 target 하는 유전자 영역을 exposure GWAS에서 filter 후, clumping 진행하여 instrument variables 추출.
+# - Outcome: Any quantitative or binary trait
+
+# Sanghyeon Park
+# 2023.09.15
+##################################################################################################################
 
 tryCatch({
     ### Load packages from env_R.R
@@ -39,7 +42,7 @@ tryCatch({
     ###############################
     ### Define parser arguments ###
     ###############################
-    parser <- argparse::ArgumentParser(description=":: Run two-sample Mendelian randomization ::", 
+    parser <- argparse::ArgumentParser(description=":: Run two-sample Mendelian randomization for a target gene ::", 
                                     formatter_class="argparse.ArgumentDefaultsHelpFormatter")
 
     ### Exposure 
@@ -77,6 +80,19 @@ tryCatch({
                         help="The number of control if exposure is binary. Default = 0.")
     parser$add_argument("--exp-n", dest="exposure_n", required=TRUE, type='integer',
                         help="The total number of samples.")
+
+    ### Exposure filter
+    ## Filter by gene region
+    parser$add_argument("--gene", dest="gene", required=TRUE,
+                        help="Name of the gene of interest.")
+    parser$add_argument("--gene-chr", dest="gene_chr", required=TRUE, type='integer',
+                        help="Chromosome number of the specified gene.")
+    parser$add_argument("--gene-start", dest="gene_start", required=TRUE, type='integer',
+                        help="Specify the gene start position.")
+    parser$add_argument("--gene-end", dest="gene_end", required=TRUE, type='integer',
+                        help="Specify the gene end position.")
+    parser$add_argument("--gene-cis-window", dest="gene_cis_window", required=TRUE, type='integer',
+                        help="Specify the cis-window around the gene body in kb. For example, `--gene-cis-window 500` means 500 kb around the gene body.")
 
     ### Clumping
     parser$add_argument("--clump-r2", dest="clump_r2", required=TRUE, type='double',
@@ -162,6 +178,11 @@ tryCatch({
     exposure_ncontrol <- args$exposure_ncontrol
     exposure_n <- args$exposure_n
 
+    gene <- args$gene
+    gene_chr <- args$gene_chr
+    gene_start <- args$gene_start
+    gene_end <- args$gene_end
+    gene_cis_window <- args$gene_cis_window
     clump_r2 <- args$clump_r2
     clump_window <- args$clump_window
     clump_p <- args$clump_p
@@ -213,23 +234,24 @@ tryCatch({
 
     #################################################################################################################################
 
-    run_genome_wide_tsmr(exposure_gwas, exposure_delim, 
-                        exposure_name, exposure_cohort, exposure_type, 
-                        exposure_snp, exposure_chr, exposure_pos, 
-                        exposure_ea, exposure_oa, exposure_eaf, 
-                        exposure_beta, exposure_se, exposure_p, 
-                        exposure_ncase, exposure_ncontrol, exposure_n, 
-                        outcome_gwas, outcome_delim, 
-                        outcome_name, outcome_cohort, outcome_type, 
-                        outcome_snp, outcome_chr, outcome_pos, 
-                        outcome_ea, outcome_oa, outcome_eaf, 
-                        outcome_beta, outcome_se, outcome_p, 
-                        outcome_ncase, outcome_ncontrol, outcome_n, 
-                        clump_r2, clump_window, clump_p, 
-                        F_thres, 
-                        reverse_effect,
-                        verbose, 
-                        outd)
+    run_single_gene_target_tsmr(exposure_gwas, exposure_delim, 
+                                exposure_name, exposure_cohort, exposure_type, 
+                                exposure_snp, exposure_chr, exposure_pos, 
+                                exposure_ea, exposure_oa, exposure_eaf, 
+                                exposure_beta, exposure_se, exposure_p, 
+                                exposure_ncase, exposure_ncontrol, exposure_n, 
+                                outcome_gwas, outcome_delim, 
+                                outcome_name, outcome_cohort, outcome_type, 
+                                outcome_snp, outcome_chr, outcome_pos, 
+                                outcome_ea, outcome_oa, outcome_eaf, 
+                                outcome_beta, outcome_se, outcome_p, 
+                                outcome_ncase, outcome_ncontrol, outcome_n, 
+                                gene, gene_chr, gene_start, gene_end, gene_cis_window, 
+                                clump_r2, clump_window, clump_p, 
+                                F_thres, 
+                                reverse_effect,
+                                verbose, 
+                                outd)
 
 }, error = function(e){
     # Print the error message

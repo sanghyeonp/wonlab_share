@@ -622,3 +622,115 @@ run_iv_specified_tsmr <- function(
     
     return (out_tsmr)
 }
+
+
+##################################################################
+# :: Genome-wide Two-sample MR ::
+##################################################################
+
+run_genome_wide_tsmr <- function(
+    exposure_gwas, exposure_delim, 
+    exposure_name, exposure_cohort, exposure_type, 
+    exposure_snp, exposure_chr, exposure_pos, 
+    exposure_ea, exposure_oa, exposure_eaf, 
+    exposure_beta, exposure_se, exposure_p, 
+    exposure_ncase, exposure_ncontrol, exposure_n, 
+    outcome_gwas, outcome_delim, 
+    outcome_name, outcome_cohort, outcome_type, 
+    outcome_snp, outcome_chr, outcome_pos, 
+    outcome_ea, outcome_oa, outcome_eaf, 
+    outcome_beta, outcome_se, outcome_p, 
+    outcome_ncase, outcome_ncontrol, outcome_n, 
+    clump_r2, clump_window, clump_p, 
+    F_thres, 
+    reverse_effect,
+    verbose, 
+    outd
+    ){
+    
+    cat(paste0(":: TSMR analysis ::\n",
+                "\tExposure: ", exposure_name, " (", exposure_cohort, ")\n",
+                "\tOutcome: ", outcome_name, " (", outcome_cohort, ")\n")
+        )
+    
+    prefix <- paste0(exposure_name, ".", gsub(" ", "_", exposure_cohort), ".", 
+                    outcome_name, ".", gsub(" ", "_", outcome_cohort), "."
+                    )
+
+    if (!file.exists(paste0(outd, "/", "harmonized.", prefix, ".RDS"))){
+        ##########################################
+        # 1. Exposure data preparation
+        ##########################################
+        cat(">>> Preparing exposure <<<\n")
+        exp_dat <- exp_dat_prep(exposure_gwas, exposure_delim,
+                                exposure_snp, exposure_chr, exposure_pos, exposure_ea, exposure_oa, exposure_eaf, exposure_beta, exposure_se, exposure_p,
+                                prefix, outd
+                                )
+        
+        ##########################################
+        # 2. Exposure data clumping
+        ##########################################
+        cat(">>> Clumping <<<\n")
+        exp_iv_dat <- exp_iv_dat_prep(exp_dat,
+                                    clump_p, clump_r2, clump_window,
+                                    exposure_name, exposure_cohort, exposure_type, 
+                                    exposure_ncase, exposure_ncontrol, exposure_n,
+                                    verbose,
+                                    F_thres, perform_Fstat=TRUE
+                                    )
+
+        ##########################################
+        # 3. Outcome data preparation
+        ##########################################
+        cat(">>> Preparing outcome <<<\n")
+
+        out_dat <- outcome_dat_prep(exp_iv_dat,
+                                    outcome_gwas, outcome_delim, 
+                                    outcome_name, outcome_cohort, outcome_type,
+                                    outcome_snp, outcome_beta, outcome_se, outcome_eaf, outcome_ea, outcome_oa, outcome_p, outcome_chr, outcome_pos,
+                                    outcome_ncase, outcome_ncontrol, outcome_n
+
+        )
+
+        ##########################################
+        # 4. Harmonization
+        ##########################################
+        cat(">>> Running harmonization <<<\n")
+        exp_h_out_dat <- harmonization(exp_iv_dat, out_dat,
+                                        prefix, outd, verbose)
+    }
+
+    ### Read in harmonized data if present
+    exp_h_out_dat <- readRDS(paste0(outd, "/", "harmonized.", prefix, ".RDS"))
+
+    ##########################################
+    # 5. Steiger test
+    ##########################################
+    cat(">>> Running Steiger test <<<\n")
+    out_steiger <- perform_steiger_test(exp_h_out_dat,
+                                    exposure_type, outcome_type,
+                                    prefix, outd, verbose)
+
+
+    ##########################################
+    # 6. TSMR
+    ##########################################
+    cat(">>> Running two-sample MR <<<\n")
+    out_tsmr <- perform_TSMR(exp_h_out_dat, prefix, outd, verbose, reverse_effect)
+
+    ##########################################
+    # 7. Pleiotropy test
+    ##########################################
+    cat(">>> Running pleiotropy test <<<\n")
+    out_pleiotropy <- perform_pleiotropy_test(exp_h_out_dat,
+                                            prefix, outd, verbose)
+
+
+    ##########################################
+    # 8. Heterogeneity test
+    ##########################################
+    cat(">>> Running heterogeneity test <<<\n")
+    out_heterogeneity <- perform_heterogneity_test(exp_h_out_dat, prefix, outd, verbose)
+    
+    return (out_tsmr)
+}
