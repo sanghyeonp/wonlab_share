@@ -13,7 +13,6 @@ issues/
 *.gz
 
 # PLINK files
-*.bed
 *.bim
 *.fam
 

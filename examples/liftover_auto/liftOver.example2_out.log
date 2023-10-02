@@ -1,0 +1,17 @@
+:: liftOver INPUT ::
+    Input: ./data/finngen_R8_T2D.autosome.10k.subset.infer
+    Genome build from: GRCh38
+    Genome build to: GRCh37
+    --do-not-save-unlifted: True
+    --save-mapping-file: True
+    --rm-intermediate-file: True
+    --do-not-save-lifted-gwas: False
+    --drop-pos-build-before: True
+:: liftOver RESULT ::
+	Number of SNPs initially: 10,000
+	Number of SNPs lifted: 9,956
+	Number of SNPs unlifted: 44
+:: liftOver OUTPUT ::
+	Mapping file: /data1/sanghyeon/wonlab_contribute/combined/examples/liftover_auto/update/mapping.example2_out
+	Lifted GWAS file: /data1/sanghyeon/wonlab_contribute/combined/examples/liftover_auto/update/lifted_b37.example2_out
+

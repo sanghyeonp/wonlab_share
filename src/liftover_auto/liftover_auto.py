@@ -2,11 +2,17 @@ import sys
 import os
 current = os.path.dirname(os.path.realpath(__file__))
 parent = os.path.dirname(current)
-sys.path.append(parent)
+# sys.path.append(parent)
+
+## 아래는 지우기.
+sys.path.append(os.path.dirname(parent))
 
 from packages import *
-from util import logger, save_log, map_delim
-from fnc import *
+from util import logger, save_log, map_delim, run_bash
+from make_bed import make_bed
+from run_liftover import run_liftover, liftOver_log, reformat_unlifted
+from merge_lifted import merge_lifted
+
 
 
 def parse_args():
@@ -19,87 +25,171 @@ def parse_args():
                         help="Specify compression type from the following ['zip', 'gzip', 'bz2', 'zstd', 'tar']. Default='infer'.")
     parser.add_argument('--delim', required=False, default="tab",
                     help="Delimiter used in the input file. Choices = ['tab', 'comma', 'whitespace']. Default = 'tab'.")
-    parser.add_argument('--infer-chr-pos', dest="infer_chr_pos", nargs='+', required=False,
-                        help="Specify column name, data format, and separator to infer chr and pos from specified column.\
-                            For example, column named 'variant' have variant name '2:179816990:C:T' where chromosome and position can be inferred as 2 and 179816990, respectively.\
-                            Then, specify as follows: --infer-chr-pos variant CHR:POS :")
-    parser.add_argument('--snp-col', dest="snp_col", required=False, default="SNP",
+
+    # Column information
+    parser.add_argument('--snp-col', dest="snp_col", required=False, default="NA",
                     help="Name of the SNP column in the input file. Default = 'SNP'.")
     parser.add_argument('--chr-col', dest="chr_col", required=False, default="CHR",
                     help="Name of the chromosome column in the input file. Default = 'CHR'.")
     parser.add_argument('--pos-col', dest="pos_col", required=False, default="POS",
                     help="Name of the base position column in the input file. Default = 'POS'.")
 
-    # New column names
-    parser.add_argument('--chr-col-new', dest="chr_col_new", required=False, default="NA",
-                    help="New column name for chromosome in the lifted file. Default = 'NA'.")
-    parser.add_argument('--pos-col-new', dest="pos_col_new", required=False, default="NA",
-                    help="New column name for base position in the lifted file. Default = 'NA'.")
+    # Infer column information
+    parser.add_argument('--infer-col', dest="infer_col", nargs='+', required=False,
+                        help="Specify `column name`, `data format`, `separator`, and `columns to infer` to infer necessary columns from the specified column.\
+                            For example, column named 'variant' have variant name '2:179816990:C:T' where chromosome and position can be inferred as 2 and 179816990, respectively.\
+                            Then, specify as follows: --infer-col variant CHR:POS:REF:ALT : CHR,POS,REF,ALT\
+                            If `variant` column has `2:123423:SNP`, then specify as follows: --infer-col variant CHR:POS:X : CHR,POS")
 
-    # Liftover options.
+    # New column names after litfOver
+    parser.add_argument('--chr-col-new', dest="chr_col_new", required=False, default="CHR_lifted",
+                    help="New column name for chromosome in the lifted file. Default = 'CHR_lifted'.")
+    parser.add_argument('--pos-col-new', dest="pos_col_new", required=False, default="POS_lifted",
+                    help="New column name for base position in the lifted file. Default = 'POS_lifted'.")
+
+    # liftOver options.
     parser.add_argument('--build-from', dest="build_from", required=True, type=int,
-                    help="Genome build number initial. Choices = [18, 37, 38].")
+                    help="Genome build number initial. Choices = [36, 37, 38].")
     parser.add_argument('--build-to', dest="build_to", required=True, type=int,
-                    help="Genome build number after performing liftover. Choices = [19, 37, 38].")
+                    help="Genome build number after performing liftover. Choices = [36, 37, 38].")
     
-    # Merging lifted result options.
-    parser.add_argument('--keep-initial-pos', dest="keep_initial_pos", action='store_true',
-                help='Specify to save both previous and lifted Chr and Pos columns. Default = False.')
-    parser.add_argument('--keep-unlifted', dest="keep_unlifted", action='store_true',
-                help='Specify to retain unlifted SNPs with their base position value as -9. Default = False.')
-    parser.add_argument('--keep-intermediate', dest="keep_intermediate", action='store_true',
-                help='Specify to keep the intermediate files generated; <>.bed, <>.liftover.lifted, and <>.liftover.unlifted. Default = False.')
-    parser.add_argument('--unlifted-snplist', dest="unlifted_snplist", action='store_true',
-                help='Specify to save the SNP list that has been unlifed. <>.unlifted.snplist. Default = False.')
-
     # Output options.
     parser.add_argument('--outf', required=False, default="NA",
                         help="Specify the name of the output file. Default = 'lifted.<file>'.")
     parser.add_argument('--outd', required=False, default="NA",
                         help="Specify the path to output directory. Default = Current working directory.")
-    parser.add_argument('--out-compression', dest="out_compression", required=False, default=None,
-                        help="Specify compression type from the following ['zip', 'gzip', 'bz2', 'zstd', 'tar']. Default='infer'.")
 
     # Other optional.
     parser.add_argument('--verbose', action='store_true',
                 help='Specify see the summary in the terminal. Default = False')
+    parser.add_argument('--do-not-save-unlifted', action='store_true',
+                help='Specify to avoid saving unlifted SNPs and corresponding errors. Default = False')
+    parser.add_argument('--save-mapping-file', action='store_true',
+                help='Specify to save mapping file that can be used to map genomic positions of GWAS from the identical provider. Default = False')
+    parser.add_argument('--rm-intermediate-file', action='store_true',
+                help='Specify to delete all the intermediate files (i.e., bed file, lifted, and unlifted files). Default = False')
+    parser.add_argument('--do-not-save-lifted-gwas', action='store_true',
+                help='Specify to avoid saving a new GWAS with the lifted result. Default = False')
+    parser.add_argument('--drop-pos-build-before', action='store_true',
+                help='Specify to drop the initial build genomic position in the new GWAS summary statistics. Default = False')
 
     args = parser.parse_args()
     return args
 
 
-def main(file, in_compression, delim, snp_col, infer_chr_pos, chr_col, pos_col, 
+def main(file, in_compression, delim,
+        snp_col, chr_col, pos_col,
+        infer_col,
         chr_col_new, pos_col_new,
-        build_from, build_to, 
-        keep_initial_pos, keep_unlifted, keep_intermediate, unlifted_snplist, 
-        outf, outd, out_compression,
-        verbose):
+        build_from, build_to,
+        outf, outd,
+        verbose,
+        do_not_save_unlifted,
+        save_mapping_file,
+        rm_intermediate_file,
+        do_not_save_lifted_gwas,
+        drop_pos_build_before):
     
-    logs_ = []
-    log_ = "Performing liftover for:\n\t{}\n\tGenome build from GRCh{} to GRCh{}".format(file, build_from, build_to); logger(logs_, log_, verbose)
+    ### Initialize the logger
+    log_list = []
+    log_ = ":: liftOver INPUT ::\n\
+    Input: {}\n\
+    Genome build from: GRCh{}\n\
+    Genome build to: GRCh{}\n\
+    --do-not-save-unlifted: {}\n\
+    --save-mapping-file: {}\n\
+    --rm-intermediate-file: {}\n\
+    --do-not-save-lifted-gwas: {}\n\
+    --drop-pos-build-before: {}".format(file, build_from, build_to, 
+                                            do_not_save_unlifted, save_mapping_file,
+                                            rm_intermediate_file, do_not_save_lifted_gwas,
+                                            drop_pos_build_before); log_list = logger(log_list, log_, verbose = verbose)
 
-    # 1. Make bed file
-    _, filename = os.path.split(file)
+    ### Make bed format liftOver input file
+    input_bed_file, df_input_file, \
+        snp_col, chr_col, pos_col = make_bed(file=file, 
+                                            file_compression=in_compression, 
+                                            delim=delim, 
+                                            outd=outd,
+                                            snp_col=snp_col, 
+                                            chr_col=chr_col, 
+                                            pos_col=pos_col,
+                                            infer_col=infer_col
+                                            )
+
+    ### Run liftOver.
+    lifted_file, unlifted_file = run_liftover(input_bed_file=input_bed_file, 
+                                            build_from=build_from, 
+                                            build_to=build_to, 
+                                            outd=outd
+                                            )
     
-    ## << 수정하기 (1) 
-    """
-    script를 다시 돌리는 건 bed 파일이 잘못 만들어진게 있는데, 다시 안 만들면 계속 liftover 결과 잘못된걸 테니까. 
-    """
-    # bed_file_exists = os.path.exists(os.path.join(outd, filename+".liftover.bed"))
-    ## >> 수정하기 (1)
-    input_bed = make_bed(file, in_compression, delim, snp_col, infer_chr_pos, chr_col, pos_col, outd, bed_file_exists=False)
+    log_ = liftOver_log(input_bed_file=input_bed_file, 
+                                lifted_file=lifted_file, 
+                                unlifted_file=unlifted_file
+                                ); log_list = logger(log_list, log_, verbose = verbose)
 
-    # 2. Perform liftover
-    if not os.path.exists(os.path.join(outd, filename+".lifted")):
-        run_liftover(input_bed, build_from, build_to, outd)
+    ### Merge liftOver output.
+    df_merged = merge_lifted(lifted_file=lifted_file,
+                            df_input_gwas=df_input_file, 
+                            snp_col=snp_col
+                            )
 
-    # 3. Merge the result
-    logs = merge_lifted(file, delim, snp_col, chr_col, pos_col, chr_col_new, pos_col_new,
-                unlifted_snplist, keep_initial_pos, keep_unlifted, keep_intermediate,
-                outf, outd, out_compression, verbose); logs_ += logs
+    ### Additional manipulation and save the file.
+    log_saved_file = []
 
-    # 4. Save the log
-    save_log(logs_, os.path.join(outd, outf+".liftover.log"))
+    # Save unlifted SNPs
+    if not do_not_save_unlifted:
+        unlifted_rows = reformat_unlifted(unlifted_file=unlifted_file)
+        unlifted_reformat_file = os.path.join(outd, "unlifted_reformat.{}".format(outf)); log_saved_file.append("Unlifted reformat file: {}".format(unlifted_reformat_file))
+        with open(unlifted_reformat_file, 'w') as f:
+            f.writelines(['\t'.join(['CHR', 'POS', 'SNP', 'ERROR']) + '\n'] + ['\t'.join(row) + '\n' for row in unlifted_rows])
+
+    # Save the mapping file
+    if save_mapping_file:
+        df_temp = df_merged[[snp_col, chr_col, pos_col, 'CHR_lifted', 'POS_lifted']]
+        df_temp.rename(columns={chr_col:"{}_b{}".format(chr_col, build_from),
+                            pos_col:"{}_b{}".format(pos_col, build_from),
+                            'CHR_lifted':'CHR_b{}'.format(build_to),
+                            'POS_lifted':'POS_b{}'.format(build_to)
+                            }, inplace=True
+                        )
+        mapping_file = os.path.join(outd, "mapping.{}".format(outf)); log_saved_file.append("Mapping file: {}".format(mapping_file))
+        with open(mapping_file, 'w') as f:
+            row_list = df_temp.values.tolist()
+            col_list = df_temp.columns.tolist()
+            rows2write = ['\t'.join(col_list) + "\n"] + ['\t'.join([str(v) for v in row]) + "\n" for row in row_list]
+            f.writelines(rows2write)
+    
+    # Delete all the intermediate files: input bed, lifted, unlifted
+    if rm_intermediate_file:
+        run_bash(bash_cmd="rm {}".format(lifted_file))
+        run_bash(bash_cmd="rm {}".format(unlifted_file))
+        run_bash(bash_cmd="rm {}".format(input_bed_file))
+
+    # Save the lifted GWAS summary statistics
+    if not do_not_save_lifted_gwas:
+        df_merged.rename(columns={"CHR_lifted":chr_col_new,
+                                "POS_lifted":pos_col_new}, inplace=True)
+
+        if drop_pos_build_before:
+            df_merged.drop(columns=[chr_col, pos_col], inplace=True)
+
+        merged_file = os.path.join(outd, "lifted_b{}.{}".format(build_to, outf)); log_saved_file.append("Lifted GWAS file: {}".format(merged_file))
+        with open(merged_file, 'w') as f:
+            row_list = df_merged.values.tolist()
+            col_list = df_merged.columns.tolist()
+            rows2write = [delim.join(col_list) + "\n"] + [delim.join([str(v) for v in row]) + "\n" for row in row_list]
+            f.writelines(rows2write)
+
+    # Log where the files have been saved.
+    log_ = ":: liftOver OUTPUT ::\n" + "".join(["\t" + l + "\n" for l in log_saved_file]); log_list = logger(log_list, log_, verbose = verbose)
+
+    # Save the log.
+    log_file = os.path.join(outd, "liftOver.{}.log".format(outf))
+    save_log(log_list=log_list,
+            out=log_file
+            )
 
 
 if __name__ == "__main__":
@@ -109,24 +199,24 @@ if __name__ == "__main__":
         args.outf = os.path.split(args.file)[1]
     if args.outd == "NA":
         args.outd = os.getcwd()
-
-    main(file=args.file,
-        in_compression=args.in_compression,
+    
+    main(file=args.file, 
+        in_compression=args.in_compression, 
         delim=map_delim(args.delim),
-        snp_col=args.snp_col,
-        infer_chr_pos=args.infer_chr_pos,
-        chr_col=args.chr_col,
+        snp_col=args.snp_col, 
+        chr_col=args.chr_col, 
         pos_col=args.pos_col,
+        infer_col=args.infer_col,
         chr_col_new=args.chr_col_new,
         pos_col_new=args.pos_col_new,
-        build_from=args.build_from,
+        build_from=args.build_from, 
         build_to=args.build_to,
-        keep_initial_pos=args.keep_initial_pos, 
-        keep_unlifted=args.keep_unlifted,
-        keep_intermediate=args.keep_intermediate, 
-        unlifted_snplist=args.unlifted_snplist,
-        outf=args.outf,
+        outf=args.outf, 
         outd=args.outd,
-        out_compression=args.out_compression,
-        verbose=args.verbose
+        verbose=args.verbose,
+        do_not_save_unlifted=args.do_not_save_unlifted,
+        save_mapping_file=args.save_mapping_file,
+        rm_intermediate_file=args.rm_intermediate_file,
+        do_not_save_lifted_gwas=args.do_not_save_lifted_gwas,
+        drop_pos_build_before=args.drop_pos_build_before
         )
