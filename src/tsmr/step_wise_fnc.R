@@ -479,7 +479,11 @@ run_iv_specified_tsmr <- function(
     F_thres, 
     reverse_effect,
     verbose, 
-    outd
+    outd,
+    lifted_file='NA', 
+    lifted_snp_col='NA',
+    lifted_chr_col='NA',
+    lifted_pos_col='NA'
     ){
     
     cat(paste0(":: TSMR analysis ::\n",
@@ -572,13 +576,27 @@ run_iv_specified_tsmr <- function(
         # 3. Outcome data preparation
         ##########################################
         cat(">>> Preparing outcome <<<\n")
-
         out_dat <- outcome_dat_prep(exp_iv_dat,
-                                    outcome_gwas, outcome_delim, 
-                                    outcome_name, outcome_cohort, outcome_type,
-                                    outcome_snp, outcome_beta, outcome_se, outcome_eaf, outcome_ea, outcome_oa, outcome_p, outcome_chr, outcome_pos,
-                                    outcome_ncase, outcome_ncontrol, outcome_n
-        )
+                        outcome_gwas, outcome_delim, 
+                        outcome_name, outcome_cohort, outcome_type,
+                        outcome_snp, outcome_beta, outcome_se, outcome_eaf, outcome_ea, outcome_oa, outcome_p, outcome_chr, outcome_pos,
+                        outcome_ncase, outcome_ncontrol, outcome_n
+                    )
+        
+        if (lifted_file != 'NA'){
+            df_lifted <- fread(lifted_file)
+            df_lifted <- df_lifted %>% 
+                select(lifted_snp_col, lifted_chr_col, lifted_pos_col) %>%
+                rename(chr.outcome := all_of(lifted_chr_col),
+                        pos.outcome := all_of(lifted_pos_col))
+            
+            out_dat <- out_dat %>% select(-chr.outcome, -pos.outcome)
+
+            out_dat <- merge(out_dat, df_lifted, by.x = 'SNP', by.y = lifted_snp_col, all.x = TRUE)
+        } 
+        
+
+
 
         ##########################################
         # 4. Harmonization

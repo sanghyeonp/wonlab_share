@@ -14,8 +14,11 @@ def run_bash(bash_cmd):
     return str(stdout, 'utf-8').strip().split('\n')
 
 
-def logger(log_list, log, verbose=True):
-    log_list.append(log)
+def logger(log_list, log, verbose=False):
+    if isinstance(log, str):
+        log_list.append(log)
+    else:
+        log_list += log
     if verbose:
         print(log)
     return log_list
