@@ -2,10 +2,7 @@ import sys
 import os
 current = os.path.dirname(os.path.realpath(__file__))
 parent = os.path.dirname(current)
-# sys.path.append(parent)
-
-## 아래 지우기
-sys.path.append(os.path.dirname(parent))
+sys.path.append(parent)
 
 from packages import *
 from util import run_bash
