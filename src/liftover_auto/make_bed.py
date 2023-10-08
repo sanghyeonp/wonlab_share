@@ -6,6 +6,14 @@ sys.path.append(parent)
 
 from packages import *
 
+def convert_to_int(x):
+    try:
+        x = int(float(x))
+        return x
+    except:
+        return x
+
+
 def make_bed(file, file_compression, delim, 
             outd,
             snp_col='NA', chr_col='CHR', pos_col='POS',
@@ -60,10 +68,13 @@ def make_bed(file, file_compression, delim,
         df_.drop_duplicates(subset=[snp_col], keep=False, inplace=True)
 
     ### Add chr to chromosome column.
-    df_['CHR_new'] = df_[chr_col].apply(lambda x: "chr{}".format(x))
+    df_['CHR_new'] = df_[chr_col].apply(lambda x: "chr{}".format(convert_to_int(x)))
+
+    ### Convert to integer
+    df_[pos_col] = df_[pos_col].apply(lambda x: convert_to_int(x))
 
     ### Add POS-1 column.
-    df_['POS-1'] = df_[pos_col].apply(lambda x: int(x) - 1)
+    df_['POS-1'] = df_[pos_col].apply(lambda x: convert_to_int(int(x) - 1))
 
     ### Retain only CHR, POS-1, POS, SNP columns
     df = df_[['CHR_new', 'POS-1', pos_col, snp_col]]

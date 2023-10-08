@@ -6,7 +6,7 @@ sys.path.append(parent)
 
 from packages import *
 from util import logger, save_log, map_delim, run_bash
-from make_bed import make_bed
+from make_bed import make_bed, convert_to_int
 from run_liftover import run_liftover, liftOver_log, reformat_unlifted
 from merge_lifted import merge_lifted
 
@@ -131,6 +131,8 @@ def main(file, in_compression, delim,
                             df_input_gwas=df_input_file, 
                             snp_col=snp_col
                             )
+    df_merged[chr_col] = df_merged[chr_col].apply(lambda x: convert_to_int(x))
+    df_merged[pos_col] = df_merged[pos_col].apply(lambda x: convert_to_int(x))
 
     ### Additional manipulation and save the file.
     log_saved_file = []
@@ -151,6 +153,8 @@ def main(file, in_compression, delim,
                             'POS_lifted':'POS_b{}'.format(build_to)
                             }, inplace=True
                         )
+
+
         mapping_file = os.path.join(outd, "mapping.{}".format(outf)); log_saved_file.append("Mapping file: {}".format(mapping_file))
         with open(mapping_file, 'w') as f:
             row_list = df_temp.values.tolist()

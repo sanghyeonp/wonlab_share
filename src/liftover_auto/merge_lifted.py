@@ -8,6 +8,14 @@ from packages import *
 from util import run_bash, logger
 
 
+def convert_to_int(x):
+    try:
+        x = int(float(x))
+        return x
+    except:
+        return x
+
+
 def merge_lifted(lifted_file,
                 df_input_gwas, snp_col
                 ):
@@ -23,12 +31,17 @@ def merge_lifted(lifted_file,
                                 names=['CHR_lifted', 'BP-1', 'POS_lifted', 'SNP'])
     df_lifted.drop(columns=['BP-1'], inplace=True)
     df_lifted['CHR_lifted'] = df_lifted['CHR_lifted'].apply(lambda x: x.replace("chr", ""))
-        
+
     ### Merge lifted.
     df_infile_merged = pd.merge(df_input_gwas, df_lifted, how="left", left_on=snp_col, right_on='SNP')
     if snp_col != 'SNP':
         df_infile_merged.drop(columns=['SNP'], inplace=True)
+    
+    ### Fill NA.
+    df_infile_merged.fillna({'CHR_lifted':-9, 'POS_lifted':-9}, inplace=True)
 
-    df_infile_merged['POS_lifted'] = df_infile_merged['POS_lifted'].astype('Int64')
+    ### Convert to integer.
+    df_infile_merged['CHR_lifted'] = df_infile_merged['CHR_lifted'].apply(lambda x: convert_to_int(x))
+    df_infile_merged['POS_lifted'] = df_infile_merged['POS_lifted'].apply(lambda x: convert_to_int(x))
 
     return df_infile_merged
