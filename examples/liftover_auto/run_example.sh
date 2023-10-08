@@ -1,11 +1,11 @@
 #!/bin/bash
-# script=/data1/sanghyeon/wonlab_contribute/combined/src/liftover_auto/liftover_auto.py
+script=/data1/sanghyeon/wonlab_contribute/combined/src/liftover_auto/liftover_auto.py
 
 #####################
 # Example 1
 #####################
 ### Chromosome, position, SNP column이 따로 있는 경우.
-python3 /data1/sanghyeon/wonlab_contribute/combined/src/liftover_auto/update/liftover_auto.py \
+python3 ${script} \
     --file ./data/finngen_R8_T2D.autosome.10k.subset \
     --delim tab \
     --snp-col rsids \
@@ -25,7 +25,7 @@ python3 /data1/sanghyeon/wonlab_contribute/combined/src/liftover_auto/update/lif
 # --save-mapping-file: mapping file 따로 저장.
 # --rm-intermediate-file: intermediate file 다 지우기.
 # --drop-pos-build-before: 이전 build 정보들 다 새로운 GWAS에서 지우기.
-python3 /data1/sanghyeon/wonlab_contribute/combined/src/liftover_auto/update/liftover_auto.py \
+python3 ${script} \
     --file ./data/finngen_R8_T2D.autosome.10k.subset.infer \
     --delim tab \
     --infer-col variant CHR:POS:X1:X2 : CHR,POS \
