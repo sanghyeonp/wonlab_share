@@ -47,6 +47,7 @@ def make_bed(file, file_compression, delim,
         chr_col = 'CHR'; pos_col; 'POS'
 
     ### Double check chromosome column.
+    df_copy = df_.copy(deep=True)
     df_[chr_col] = df_[chr_col].astype(str)
     df_[chr_col] = df_[chr_col].apply(lambda x: x.upper())
 
@@ -59,13 +60,19 @@ def make_bed(file, file_compression, delim,
     df_[snp_col].fillna("NA", inplace=True)
     df_[snp_col] = df_.apply(lambda row: "{}:{}".format(row[chr_col], row[pos_col]) if row[snp_col] == 'NA' else row[snp_col], axis=1)
 
+    ### Drop NA
+    # CHR nad POS가 'NAN'인 경우. => Line51에서 string으로 변경하였었음.
+    # df_na = df_[(df_[chr_col] == "NAN") | (df_[pos_col].isna())]
+    df_ = df_[~(df_[chr_col] == "NAN") | ~(df_[pos_col].isna())]
+
     ### Handle duplicates.
     # Check if duplicates are present.
     duplicates = df_[snp_col].duplicated()
     has_dup = sum(duplicates) > 0
     if has_dup:
-        df_dropped_duplicates = df_[df_[snp_col].duplicated(keep=False)]
-        df_.drop_duplicates(subset=[snp_col], keep=False, inplace=True)
+        # df_dropped_duplicates = df_[df_[snp_col].duplicated(keep='first')]
+        df_.drop_duplicates(subset=[snp_col], keep="first", inplace=True)
+
 
     ### Add chr to chromosome column.
     df_['CHR_new'] = df_[chr_col].apply(lambda x: "chr{}".format(convert_to_int(x)))
@@ -79,15 +86,6 @@ def make_bed(file, file_compression, delim,
     ### Retain only CHR, POS-1, POS, SNP columns
     df = df_[['CHR_new', 'POS-1', pos_col, snp_col]]
 
-    ### Save dropped duplicates.
-    if has_dup:
-        dup_list = os.path.join(outd, "{}.dup_list".format(filename))
-        with open(dup_list, 'w') as f:
-            row_list = df_dropped_duplicates.values.tolist()
-            col_name_list = df_dropped_duplicates.columns.tolist()
-            rows2write = ["\t".join(col_name_list) + "\n"] + ["\t".join([str(v) for v in row]) + "\n" for row in row_list]
-            f.writelines(rows2write)
-
     ### Save bed format liftOver input file.
     bed_input = os.path.join(outd, "{}.bed".format(filename))
     with open(bed_input, 'w') as f:
@@ -96,4 +94,4 @@ def make_bed(file, file_compression, delim,
         f.writelines(rows2write)
     
     ### Return bed format liftOver input file path.
-    return bed_input, df_.drop(columns=['CHR_new', 'POS-1']), snp_col, chr_col, pos_col
+    return bed_input, df_copy, snp_col, chr_col, pos_col
