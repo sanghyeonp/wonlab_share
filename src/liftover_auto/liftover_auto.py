@@ -153,7 +153,7 @@ def main(file, in_compression, delim,
                             'POS_lifted':'POS_b{}'.format(build_to)
                             }, inplace=True
                         )
-
+        df_temp.drop_duplicates(subset=[snp_col], keep="first", inplace=True)
 
         mapping_file = os.path.join(outd, "mapping.{}".format(outf)); log_saved_file.append("Mapping file: {}".format(mapping_file))
         with open(mapping_file, 'w') as f:
