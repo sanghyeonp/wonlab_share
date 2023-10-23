@@ -1,4 +1,5 @@
 #!/bin/bash
+# script=/data1/sanghyeon/wonlab_contribute/combined/src/ukb/ukb_field_extract.R
 
 Rscript ../../src/ukb/ukb_field_extract.R --field 129 130 \
                                         --retain-all-instances \
