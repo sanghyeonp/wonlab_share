@@ -1,10 +1,17 @@
+list.of.packages <- c("argparse", "tidyverse", "readr", "dplyr", "tidyr", "rstudioapi")
 
-### Load packages from env_R.R
-list.of.packages <- c("argparse", "tidyverse", "rstudioapi")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages, repos = "http://cran.us.r-project.org")
 
-require(argparse)
+suppressPackageStartupMessages({
+    library(readr)
+    library(dplyr)
+    library(tidyr)
+    library(rstudioapi)
+    library(tidyverse)
+    require(argparse)
+})
+
 
 ### Common files
 variant_file <- "/data1/sanghyeon/wonlab_contribute/combined/data_common/variants.tsv.bgz"
@@ -41,23 +48,6 @@ parser$add_argument("--delim-out", dest="delim_out", required=FALSE, default="ta
 parser$add_argument("--outd", required=FALSE, default="NA",
                     help="Specify the output directory. Default = current working directory.")
 
-### Call packages
-library(tidyverse)
-getCurrentFileLocation <-  function()
-{
-    this_file <- commandArgs() %>% 
-    tibble::enframe(name = NULL) %>%
-    tidyr::separate(col=value, into=c("key", "value"), sep="=", fill='right') %>%
-    dplyr::filter(key == "--file") %>%
-    dplyr::pull(value)
-    if (length(this_file)==0){
-        this_file <- rstudioapi::getSourceEditorContext()$path
-    }
-    return(dirname(this_file))
-}
-
-env_file <- paste(getCurrentFileLocation(), "env_R.R", sep="/")
-source(env_file)
 
 ### Get parser arguments
 args <- parser$parse_args()
@@ -77,6 +67,7 @@ outd <- args$outd
 if (outf == "NA"){
     outf <- paste0("reformat.", basename(gwas))
 }
+
 if (outd == "NA"){
     outd <- getwd()
 }
