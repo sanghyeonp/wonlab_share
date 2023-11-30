@@ -20,3 +20,16 @@ dff_sub$ln_p_cal <- log(dff_sub$p_cal)
 head(dff_sub, 20)
 
 ```
+
+```
+# P-value from beta and se
+2*pnorm(abs(beta/se), lower.tail=F
+
+pchisq((beta / se)^2, df = 1, lower = F)
+```
+
+```
+# New SE from beta and P-value
+abs(beta)/qnorm(`P-value`/2, lower.tail=F)
+```
+
