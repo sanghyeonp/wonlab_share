@@ -13,7 +13,7 @@ from merge_lifted import merge_lifted
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description=":: Make a neat summarized results of FUMA and MAGMA ::")
+    parser = argparse.ArgumentParser(description=":: liftOver automation ::")
 
     # Input
     parser.add_argument('--file', required=True,
@@ -147,8 +147,7 @@ def main(file, in_compression, delim,
     # Save the mapping file
     if save_mapping_file:
         df_temp = df_merged[[snp_col, chr_col, pos_col, 'CHR_lifted', 'POS_lifted']]
-        df_temp.rename(columns={chr_col:"{}_b{}".format(chr_col, build_from),
-                            pos_col:"{}_b{}".format(pos_col, build_from),
+        df_temp.rename(columns={
                             'CHR_lifted':'CHR_b{}'.format(build_to),
                             'POS_lifted':'POS_b{}'.format(build_to)
                             }, inplace=True
