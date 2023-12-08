@@ -139,7 +139,7 @@ extract_gene_region <- function(gwas, delim,
                                 snp_col, chr_col, pos_col, beta_col, se_col, p_col,
                                 gene_chr, gene_start, gene_end, gene_cis_window,
                                 outf, outd='NA', save_table=FALSE){
-    df <- fread(gwas, 
+    df <- fread(gwas, fill=TRUE,
                 sep=delim)
 
     df_filter <- df %>% 
