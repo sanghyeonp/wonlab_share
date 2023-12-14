@@ -45,3 +45,7 @@ src/tsmr/example_run_tsmr_multiple_exposure_outcomes/
 src/tsmr/example_run_tsmr_single_exposure_multiple_outcomes/
 src/tsmr/example_run_tsmr_multiple_pairs_GW/
 src/tsmr/example_run_tsmr_single_pair_GW
+
+
+#
+examples/annovar/deprecated/
