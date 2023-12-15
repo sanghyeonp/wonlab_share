@@ -33,3 +33,16 @@ pchisq((beta / se)^2, df = 1, lower = F)
 abs(beta)/qnorm(`P-value`/2, lower.tail=F)
 ```
 
+```
+# beta and se calculation from z-score
+Beta = z / sqrt(2p(1− p)(n + z^2)) and
+SE =1 / sqrt(2p(1− p)(n + z^2))
+
+## Notation
+# p: minor allele frequency
+# n: sample size
+
+## Reference
+# https://www.biostars.org/p/319584/
+# https://www.nature.com/articles/ng.3538 (SMR 논문 supplementary text에 설명 있음)
+```
