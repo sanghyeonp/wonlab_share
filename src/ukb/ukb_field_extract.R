@@ -26,7 +26,7 @@ parser$add_argument("--delim-out", dest="delim_out", required=FALSE, default="ta
                     help="Specify the delimiter for the output file. Options = [tab, comma, whitespace]. Default = tab.")
 parser$add_argument("--outd", required=FALSE, default="NA",
                     help="Specify the output directory. Default = current working directory.")
-parser$add_argument("--n-cores", dest="n_cores", required=FALSE, default=1,
+parser$add_argument("--n-cores", dest="n_cores", required=FALSE, default=1, type="integer",
                     help="Specify the number of cores to use. Default = 1.")
 ################################################
 ### Get parser arguments
