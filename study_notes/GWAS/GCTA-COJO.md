@@ -19,6 +19,8 @@
 - Basically, all SNPs in `*.cma.cojo` will be the SNPs that did not PASS conditional analysis, hence considered as SNPs that are not independent. We have to proceed with further analysis with the SNPs in `*.jma.cojo` as these SNPs are significant after conditional analysis, thus can be considered as independent SNPs.
 - It can be observed by looking at the `pC` and `pJ` columns in `*.cma.cojo` and `*.jma.cojo` files respectively, which represents the P-value of SNP after conditional analysis.
 
+- Another tip for running the analysis is that when choosing the reference panel for LD computation, the number of samples in the reference panel MUST BE larger than the number of lead SNPs being analyzed. So, 1kG reference panel may not be large enough for its use as the reference panel in GCTA-COJO.
+
 # Reference
 - Result from Clumping vs COJO  
 https://cnsgenomics.com/data/teaching/GNGWS23/module1/9_independentLociPrac.html
