@@ -125,21 +125,27 @@ compute_snp_ld <- function(snp1, snp2, plink_exe, file_reference, chr){
                              " --bfile ", file_reference, chr, 
                              " --ld ", snp1, " ", snp2),
                       intern = TRUE,
-                      wait = TRUE)
+                      wait = TRUE,
+                      ignore.stderr = TRUE)
   ld_result <- grep("R-sq", plink_out, value = TRUE)
   
-  if(nchar(ld_result) != 0){
-    ld_result_query <- regmatches(ld_result, regexpr("R-sq\\s+=\\s+([0-9.]+([eE][-+]?[0-9]+)?)", ld_result))
-    
-    r2 <- as.numeric(strsplit(ld_result_query, " ")[[1]][length(strsplit(ld_result_query, " ")[[1]])])
-    
+  if (identical(ld_result, character(0))){
+    r2 <- "NA"
   } else{
-    r2 <- NA
+    ld_result <- ld_result[1] # Refer to important note 1
+    if (nchar(ld_result) != 0){
+      ld_result_query <- regmatches(ld_result, regexpr("R-sq\\s+=\\s+([0-9.]+([eE][-+]?[0-9]+)?)", ld_result))
+
+      r2 <- as.character(as.numeric(strsplit(ld_result_query, " ")[[1]][length(strsplit(ld_result_query, " ")[[1]])]))
+      
+    } else{
+      r2 <- "NA"
+    }
   }
-  
+
   return (data.frame(ref_snp = snp1,
-                     other_snp = snp2,
-                     R2 = r2))
+                    other_snp = snp2,
+                    R2 = r2))
 }
 
 #######################
@@ -147,12 +153,12 @@ compute_snp_ld <- function(snp1, snp2, plink_exe, file_reference, chr){
 #######################
 
 df_gwas2 <- fread(file_gwas2, 
-                  sep = delim_mapper[delim_gwas2],
+                  sep = delim_mapper[[delim_gwas2]],
                   data.table = F,
                   nThread = n_thread,
                   showProgress = F)
 df_gwas1_snplist <- fread(file_gwas1_snplist, 
-                          sep = delim_mapper[delim_gwas1_snplist],
+                          sep = delim_mapper[[delim_gwas1_snplist]],
                           data.table = F,
                           nThread = n_thread,
                           showProgress = F)
@@ -168,11 +174,12 @@ df_gwas2.sub <- df_gwas2 %>%
 # LD
 #######################
 
-file_reference_panel <- reference_panel_list[reference_panel]
+file_reference_panel <- reference_panel_list[[reference_panel]]
 
 df_ld_result <- NULL
 
 for (chr in 1:22){
+  print(paste0("Processing chromosome ", chr, "..."))
   df_gwas1_snplist.chr <- filter(df_gwas1_snplist, !!as.name(chr_gwas1_snplist) == chr)
   df_gwas2.chr <- filter(df_gwas2.sub, !!as.name(chr_gwas2) == chr)
   
@@ -185,16 +192,18 @@ for (chr in 1:22){
     # SNP_gwas2_in_LD, SNP_gwas2_in_LD_pval, SNP_gwas2_in_LD_R2
     df_ld_per_chr <- NULL
     for (idx in 1:nrow(df_gwas1_snplist.chr)){
+
       row.df_gwas1_snplist.chr <- df_gwas1_snplist.chr[idx, ]
       ref_snp <- row.df_gwas1_snplist.chr[[snp_gwas1_snplist]]
       ref_snp.pos <- row.df_gwas1_snplist.chr[[pos_gwas1_snplist]]
       
+
       df_gwas2.chr.filter <- filter(df_gwas2.chr, (!!as.name(pos_gwas2) >= ref_snp.pos - (window * 1000)) &
                                                   (!!as.name(pos_gwas2) < ref_snp.pos + (window * 1000)) &
                                                   (!!as.name(p_gwas2) < p_threshold)
-                                    
                                     )
       
+
       if(nrow(df_gwas2.chr.filter) != 0){
         other_snplist <- df_gwas2.chr.filter[[snp_gwas2]]
         
@@ -215,13 +224,12 @@ for (chr in 1:22){
                                 .packages = c("dplyr", "data.table"),
                                 .combine = 'bind_rows') %dopar% {
                             compute_snp_ld(snp1 = ref_snp, 
-                                           snp2 = other_snp, 
-                                           plink_exe = plink_exe, 
-                                           file_reference = file_reference_panel, 
-                                           chr = chr)
+                                          snp2 = other_snp, 
+                                          plink_exe = plink_exe, 
+                                          file_reference = file_reference_panel, 
+                                          chr = chr)
                           }
         stopCluster(cl)
-        
         
         snp_gwas2_tested <- plink_ld_result$other_snp
         df_tmp <- df_gwas2.chr.filter %>%
@@ -230,8 +238,11 @@ for (chr in 1:22){
         df_tmp[[snp_gwas2]] <- factor(df_tmp[[snp_gwas2]], levels = snp_gwas2_tested)
         snp_gwas2_tested_pval <- df_tmp[[p_gwas2]]
         snp_gwas2_tested_r2 <- plink_ld_result$R2
-      
+
+        
         idx_in_ld <- which(snp_gwas2_tested_r2 > r2_threshold)
+
+        
         if (identical(which(idx_in_ld > r2_threshold), integer(0))){ # No SNPs from GWAS2 in LD with SNP from GWAS1
           is_in_LD <- FALSE
         } else{
@@ -240,6 +251,7 @@ for (chr in 1:22){
           snp_gwas2_in_ld_pval <- paste(snp_gwas2_tested_pval[idx_in_ld], collapse = ", ")
           snp_gwas2_in_ld_r2 <- paste(snp_gwas2_tested_r2[idx_in_ld], collapse = ", ")
         }
+        
         
         snp_gwas2_tested <- paste(snp_gwas2_tested, collapse = ", ")
         snp_gwas2_tested_pval <- paste(snp_gwas2_tested_pval, collapse = ", ")
