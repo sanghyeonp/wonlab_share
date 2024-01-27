@@ -203,6 +203,8 @@ for (chr in 1:22){
                                                   (!!as.name(p_gwas2) < p_threshold)
                                     )
       
+      df_gwas2.chr.filter <- df_gwas2.chr.filter %>%
+                              distinct(!!as.name(snp_gwas2), .keep_all = TRUE) # Important note 2
 
       if(nrow(df_gwas2.chr.filter) != 0){
         other_snplist <- df_gwas2.chr.filter[[snp_gwas2]]
