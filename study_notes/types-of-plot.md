@@ -1,3 +1,6 @@
+가끔 데이터를 어떻게 표현할지 잘 모르겠거나, 어떤 그림인지는 아는데 이름을 모를 경우를 대비해서 신기한 plot이 보일 때 마다 따로 저장을 해두고 있습니다!
+
+
 # Volcano plot
 
 <img src="../img/plot_volcano.png" width=50% height=50%>
