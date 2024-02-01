@@ -1,3 +1,13 @@
+# Heterogeneity upset plot
+
+<img src="../img/plot_heretogeneity_upset.webp" width=50% height=50%>
+
+- Project:
+
+- Reference:
+  - https://www.nature.com/articles/s41588-023-01584-8/figures/3
+
+
 # Forest plot
 
 <img src="../img/plot_forest.png" width=50% height=50%>
@@ -8,8 +18,6 @@
 - Reference: 
   - R package: `forestploter`
   - https://cran.r-project.org/web/packages/forestploter/vignettes/forestploter-intro.html
-
-
 
 # Locuszoom plot
 
