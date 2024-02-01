@@ -1,6 +1,6 @@
 # Volcano plot
 
-<img src="../img/plot_volcano.png" width=70% height=70%>
+<img src="../img/plot_volcano.png" width=50% height=50%>
 
 - Project:
 
@@ -11,7 +11,7 @@
 
 # Violin plot
 
-<img src="../img/plot_violin.png" width=70% height=70%>
+<img src="../img/plot_violin.png" width=50% height=50%>
 
 - Project:
 
