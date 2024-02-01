@@ -11,11 +11,3 @@ p1 +
   scale_x_continuous(limits = symmetric_limits) +
   scale_y_continuous(limits = symmetric_limits)
 ```
-
-# Types of plot
-- Dumbbell plot  
-References:
-  - https://r-graph-gallery.com/web-extended-dumbbell-plot-ggplot2.html
-<img src="../../img/plot_dumbbell_segment.png" width=40% height=40%>
-
-
