@@ -23,7 +23,7 @@ head(dff_sub, 20)
 
 ```
 # P-value from beta and se
-2*pnorm(abs(beta/se), lower.tail=F
+2*pnorm(abs(beta/se), lower.tail=F)
 
 pchisq((beta / se)^2, df = 1, lower = F)
 ```
