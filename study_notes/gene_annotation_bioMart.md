@@ -30,7 +30,7 @@ mapping <- mapping %>%
     dplyr::filter(nchar(band) != 0)
 ```
 
-# bioMart: GRCh38
+# bioMart: GRCh37
 ```
 library(dplyr)
 httr::set_config(httr::config(ssl_verifypeer = FALSE))
