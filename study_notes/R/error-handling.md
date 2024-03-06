@@ -1,0 +1,4 @@
+# Traceback
+```
+options(error = traceback)
+```
