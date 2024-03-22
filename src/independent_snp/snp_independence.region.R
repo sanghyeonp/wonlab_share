@@ -245,7 +245,7 @@ for (chr in 1:22){
         idx_in_ld <- which(snp_gwas2_tested_r2 > r2_threshold)
 
         
-        if (identical(which(idx_in_ld > r2_threshold), integer(0))){ # No SNPs from GWAS2 in LD with SNP from GWAS1
+        if (identical(idx_in_ld, integer(0))){ # No SNPs from GWAS2 in LD with SNP from GWAS1
           is_in_LD <- FALSE
         } else{
           is_in_LD <- TRUE

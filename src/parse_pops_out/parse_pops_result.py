@@ -7,7 +7,7 @@ sys.path.append(parent)
 from util import *
 from packages import *
 
-FILE_GENE_ANNOT = "/data1/sanghyeon/tutorials/PoPs_tut/pops/example/data/utils/gene_annot_jun10.txt"
+FILE_GENE_ANNOT = "/data1/sanghyeon/wonlab_contribute/combined/tutorial/PoPs_tut/pops/example/data/utils/gene_annot_jun10.txt"
 
 def parse_args():
     parser = argparse.ArgumentParser(description=":: Parse PoPS result ::")

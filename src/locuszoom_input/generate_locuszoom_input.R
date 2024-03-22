@@ -46,12 +46,16 @@ delim_map <- c("whitespace" = " ",
                 "comma" = ",")
 
 ### 1. Read GWAS
-df <- fread(file.gwas, sep=delim_map[delim], data.table = F, nThread = n_thread)
+df <- fread(file_in, sep=delim_map[delim], data.table = F, nThread = n_thread)
+
+head(df, 5)
 
 ### 2. Read 1000 Genome bim file
-df.bim <- fread("/data1/sanghyeon/wonlab_contribute/combined/data_common/reference_panel/OpenGWAS/EUR.bim", 
+df.bim <- fread("/data1/sanghyeon/wonlab_contribute/combined/data_common/reference_panel/1kGp3/EUR/reference.1kG.EUR.bim", 
                 sep = "\t", data.table = F, header = F, nThread = n_thread, col.names = c("CHR", "SNP", "CM", "BP", "ALT", "REF")) %>%
     dplyr::select(SNP, ALT, REF)
+
+head(df.bim, 5)
 
 ### 2. Sort by chromosome, position
 df <- df %>%
@@ -60,6 +64,9 @@ df <- df %>%
                   !!as.name(a1_col), !!as.name(a2_col), !!as.name(pval_col))
 # A1, A2를 1000 Genome을 기반으로 reference, alternative 구분해주고.
 df1 <- merge(df, df.bim, by.x = snp_col, by.y = "SNP", all.x = T)
+
+head(df1, 5)
+
 # 추가 manipulation
 df1 <- df1 %>%
     # Reference, alternative allele 이 없는 경우, GWAS의 A1이 alternative, A2가 reference로
@@ -74,11 +81,13 @@ df1 <- df1 %>%
                 "Pos" = !!as.name(pos_col),
                 "P" = !!as.name(pval_col))
 
+head(df1, 5)
+
 ### 3. Save sorted summary statistics
 write.table(df1,
             paste0(file_prefix, ".tsv"),
             sep="\t", row.names = F, quote = F)
-system(paste0("bgzip -c ./", file_prefix, ".tsv > ./", file_prefix, ".tsv.bgz"))
+system(paste0("/data1/sanghyeon/wonlab_contribute/combined/software/htslib/bin/bgzip -c ./", file_prefix, ".tsv > ./", file_prefix, ".tsv.bgz"))
 
 ### 4. tabix파일 만들기
 exe_tabix <- "/data1/sanghyeon/wonlab_contribute/combined/software/htslib/bin/tabix"
