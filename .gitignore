@@ -5,6 +5,9 @@ dask-worker-space
 data_common/
 issues/
 
+# Ignore tutorial directory
+tutorial/
+
 # Ignore troubleshoot
 issues/
 
