@@ -1,3 +1,8 @@
+# :: LiftOver automated ::
+# - Sanghyeon Park
+# - 2024.02.17
+# - First in-use project: 
+
 options(scipen = 999) # No scientific number
 library(data.table)
 library(dplyr)

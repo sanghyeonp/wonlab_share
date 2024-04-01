@@ -1,3 +1,8 @@
+# :: Independent signal determination ::
+# - Sanghyeon Park
+# - 2024.03.30
+# - First in-use project: Metabolic syndrome revision
+
 library(data.table)
 library(dplyr)
 library(tidyr)
@@ -152,7 +157,7 @@ plink_exe <- "/data1/sanghyeon/wonlab_contribute/combined/software/plink/plink"
 
 ### Reference panel for LD computation
 # Reference panel splitted into chromosomes
-reference_panel_list <- c("1kG" = "/data1/sanghyeon/wonlab_contribute/combined/data_common/reference_panel/OpenGWAS/EUR_CHR/EUR_chr",
+reference_panel_list <- c("1kG" = "/data1/sanghyeon/wonlab_contribute/combined/data_common/reference_panel/1kGp3/EUR/CHR/reference.1kG.EUR.maf_0.005.geno_0.02.chr",
                           "UKB_random_10K" = "/data1/sanghyeon/wonlab_contribute/combined/data_common/reference_panel/UKB_random10k_noQC/CHR/UKB_random10k_noqc_chr"
 )
 
@@ -269,6 +274,8 @@ df_gwas1 <- df_gwas1 %>%
            P = !!as.name(p_gwas1))
 
 df_gwas1_snplist <- merge(df_gwas1_snplist, df_gwas1, by.x = "secondarySNP", by.y = snp_gwas1, all.x = T)
+df_gwas1_snplist <- df_gwas1_snplist %>%
+  filter(P < 5e-8)
 
 df_gwas1_leadsnplist <- df_gwas1_snplist %>%
     dplyr::select(leadSNP) %>%
@@ -308,6 +315,8 @@ df_gwas2 <- df_gwas2 %>%
            P = !!as.name(p_gwas2))
 
 df_gwas2_snplist <- merge(df_gwas2_snplist, df_gwas2, by.x = "secondarySNP", by.y = snp_gwas2, all.x = T)
+df_gwas2_snplist <- df_gwas2_snplist %>%
+  filter(P < 5e-8)
 
 df_gwas2_leadsnplist <- df_gwas2_snplist %>%
     dplyr::select(leadSNP) %>%
@@ -432,7 +441,7 @@ for (chr in 1:22){
                             SNP_gwas2_in_LD = snp_gwas2_in_ld,
                             SNP_gwas2_in_LD_pval = snp_gwas2_in_ld_pval,
                             SNP_gwas2_in_LD_R2 = snp_gwas2_in_ld_r2,
-                            snp_gwas2_in_ld_leadsnp = snp_gwas2_in_ld_leadsnp)
+                            LeadSNP_gwas2_in_ld = snp_gwas2_in_ld_leadsnp)
                       )
       } else{
         df_ld_per_chr <- rbind(df_ld_per_chr,
@@ -444,7 +453,7 @@ for (chr in 1:22){
                             SNP_gwas2_in_LD = "NA",
                             SNP_gwas2_in_LD_pval = "NA",
                             SNP_gwas2_in_LD_R2 = "NA",
-                            snp_gwas2_in_ld_leadsnp = "NA")
+                            LeadSNP_gwas2_in_ld = "NA")
                       )
       }
     }

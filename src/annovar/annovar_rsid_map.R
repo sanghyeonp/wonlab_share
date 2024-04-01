@@ -1,3 +1,8 @@
+# :: SNP annotation using ANNOVAR ::
+# - Sanghyeon Park
+# - 2023.12.14
+# - First in-use project: 
+
 source("/data1/sanghyeon/wonlab_contribute/combined/src/annovar/make_annovar_input.R")
 source("/data1/sanghyeon/wonlab_contribute/combined/src/annovar/run_annovar.R")
 source("/data1/sanghyeon/wonlab_contribute/combined/src/annovar/merge_annovar_out.R")

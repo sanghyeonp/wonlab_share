@@ -1,3 +1,8 @@
+# :: Multiple test correction for MAGMA from FUMA ::
+# - Sanghyeon Park
+# - 2024.03.23
+# - First in-use project: GWAS-by-subtraction SCZ
+
 options(scipen=999, error=traceback) # No scientific number
 library(data.table)
 library(dplyr)

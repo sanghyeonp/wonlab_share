@@ -1,3 +1,8 @@
+# :: Parse output of PoPS ::
+# - Sanghyeon Park
+# - 2024.03.21
+# - First in-use project: GWAS-by-subtraction SCZ
+
 import sys
 import os
 current = os.path.dirname(os.path.realpath(__file__))
