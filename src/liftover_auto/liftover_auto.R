@@ -11,9 +11,9 @@ library(argparse)
 # Parse command line arguments
 parser <- ArgumentParser()
 parser$add_argument("--file-in", dest="file_in", type = "character", required = TRUE,
-                    help="Input file")
+                    help="Input file path.")
 parser$add_argument("--delim", type = "character", required = TRUE,
-                    help="Input file")
+                    help="Delimiter of the input file. Choices = tab, whitespace, comma.")
 
 parser$add_argument("--snp-col", dest = "snp_col", type = "character", required = TRUE,
                     help="Input file")
