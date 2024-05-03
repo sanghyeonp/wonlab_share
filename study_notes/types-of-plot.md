@@ -36,7 +36,7 @@
 
 <img src="../img/plot_dendogram.png" width=50% height=50%>
 
-- Chromosome에서 어떤 independent signal이 있고, independent signal이 어떤 유전자와 맵핑이 되고, 이 유전자가 어떤 methods로 mapping 되었는지.
+- Chromosome에서 어떤 independent signal이 있고, independent signal이 어떤 유전자와 맵핑이 되고, 이 유전자가 어떤 methods로 mapping 되었는지.
 
 - Project:
 
