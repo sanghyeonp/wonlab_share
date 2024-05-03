@@ -32,6 +32,16 @@
 - Reference:
   - https://www.nature.com/articles/s41590-023-01588-w
 
+# Dendogram
+
+<img src="../img/plot_dendogram.webp" width=50% height=50%>
+
+- Chromosome에서 어떤 independent signal이 있고, independent signal이 어떤 유전자와 맵핑이 되고, 이 유전자가 어떤 methods로 mapping 되었는지.
+
+- Project:
+
+- Reference:
+  - https://www.nature.com/articles/s41588-022-01165-1 
 
 
 # Heterogeneity upset plot
