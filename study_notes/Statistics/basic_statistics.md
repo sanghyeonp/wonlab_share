@@ -41,8 +41,11 @@ Reference:
 ## SE from Beta and P-value
 ```
 # In R
-SE <- abs(beta)/qnorm(P/2, lower.tail=F)
+tail <- 2 # 1 for one tailed and 2 for two tailed
+se <- abs(beta/ qnorm(P/tail))
 ```
+Reference:
+- https://www.biostars.org/p/431875/
 
 ## Beta and SE from Z-score
 ```
