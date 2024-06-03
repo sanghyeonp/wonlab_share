@@ -68,7 +68,7 @@ beta <- log(OR)
 OR_up <- OR + (OR.se * 1.96)
 OR_lo <- OR - (OR.se * 1.96)
 
-beta_up <- exp(OR_up)
+beta_up <- log(OR_up)
 
 # Since, beta_up = beta + (beta.se * 1.96)
 beta.se <- (beta_up - beta) / 1.96
