@@ -32,7 +32,7 @@ Z <- beta/se
 ```
 # In R
 p <- pchisq(Z^2, df=1, lower=F)
-p <- 2*pnorm(abs(Z), lower.tail=F)
+p <- 2*pnorm(abs(Z), lower.tail=F) # From Genomic SEM Wiki
 ```
 
 Reference:
