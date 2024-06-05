@@ -24,7 +24,7 @@
 library(dplyr)
 
 ### UTILITY
-map_delim <- c("txt" = "\t", "tsv" = "\t", "csv" = ",")
+map_delim <- c("txt" = " ", "tsv" = "\t", "csv" = ",")
 
 ###
 basic_GWAS_filter_criteria <- function(df_gwas, 
