@@ -1,0 +1,2 @@
+Initial,Missing CHR,Missing POS,Missing A1,Missing A2,Missing AF,Missing Effect,Missing SE,Missing INFO,Missing Combined,Invalid A1,Invalid A2,Invalid AF,Invalid Effect,Invalid SE,Invalid INFO,Invalid Combined,Duplicates,Multi-allelic,INDEL,Monomorphic,Non-autosome,AF<0.01,INFO<0.9,inv_var_het_p<=0.05,is_diff_AF_gnomAD!="no",All (unique),Final
+26885840,0,0,0,0,0,0,0,NA,0,0,0,0,0,0,NA,0,2,0,1903041,29,777163,16933674,NA,1152929,64943,18488453,8397387
