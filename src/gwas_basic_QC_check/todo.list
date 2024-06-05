@@ -1,0 +1,2 @@
+- Additional criteria를 넣었다 하더라도 새로운 column은 필요 없을 수도 있음. 
+지금은 새로운 column이랑 additional crtierion 이랑 1-to-1 mapping이 되고 있으니, 이를 수정하기.
