@@ -305,23 +305,25 @@ basic_GWAS_filter_criteria <- function(df_gwas,
     cat(paste0("\t[N SNP] INFO <", threshold.INFO, ": ", prettyNum(nsnp.INFO_below_thres, big.mark = ",", scientific = FALSE), "\n"))
 
     ################################################################################
-    ### CHECK: Additional user-specified criteria
-    cat("\n:: CHECK Additional user-specified criteria ::\n")
+    if (!is.na(additional_criteria)){
+        ### CHECK: Additional user-specified criteria
+        cat("\n:: CHECK Additional user-specified criteria ::\n")
 
-    split_criteria <- strsplit(additional_criteria, ";")[[1]]
-    cat(paste0("\tNumber of user-specified criteria: ", length(split_criteria), "\n\n"))
+        split_criteria <- strsplit(additional_criteria, ";")[[1]]
+        cat(paste0("\tNumber of user-specified criteria: ", length(split_criteria), "\n\n"))
 
-    list.nsnp.addtional_criteria <- list(); row.additional_criteria <- list(); list.df.additional_criteria <- list()
-    for (i in 1:length(split_criteria)){
-        cat(paste0("\t[Additional criteria ", i, "]: ", split_criteria[i], "\n"))
-        cat(paste0("\t[Column being used]: ", get(paste0("additional_col", i)), "\n"))
+        list.nsnp.addtional_criteria <- list(); row.additional_criteria <- list(); list.df.additional_criteria <- list()
+        for (i in 1:length(split_criteria)){
+            cat(paste0("\t[Additional criteria ", i, "]: ", split_criteria[i], "\n"))
+            cat(paste0("\t[Column being used]: ", get(paste0("additional_col", i)), "\n"))
 
-        df.tmp <- filter(df, eval(parse(text = split_criteria[i])))
-        list.nsnp.addtional_criteria[[i]] <- nrow(df.tmp); row.additional_criteria[[i]] <- df.tmp$row_index
-        list.df.additional_criteria[[i]] <- data.frame(row_index = row.additional_criteria[[i]],
-                                                    criteria = rep(split_criteria[i], nrow(df.tmp)))
+            df.tmp <- filter(df, eval(parse(text = split_criteria[i])))
+            list.nsnp.addtional_criteria[[i]] <- nrow(df.tmp); row.additional_criteria[[i]] <- df.tmp$row_index
+            list.df.additional_criteria[[i]] <- data.frame(row_index = row.additional_criteria[[i]],
+                                                        criteria = rep(split_criteria[i], nrow(df.tmp)))
 
-        cat(paste0("\t[N SNP] Additional criteria ", i, ": ", prettyNum(nrow(df.tmp), big.mark = ",", scientific = FALSE), "\n\n"))
+            cat(paste0("\t[N SNP] Additional criteria ", i, ": ", prettyNum(nrow(df.tmp), big.mark = ",", scientific = FALSE), "\n\n"))
+        }
     }
 
     ################################################################################
