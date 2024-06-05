@@ -1,0 +1,6 @@
+# 2024.04.20
+src: locuszoom_plot.snploc.2plots.20240420.R
+- snploc 파일에 직접 pos+flanking region, pos-flanking region을 만들어야하는데,
+이게 귀찮으니, flanking region을 parameter로 주고 알아서 계산할 수 있게 변경.
+- snploc 파일은 이제 snp, chr, pos만 주면 됨.
+- loc object 저장가능하게. (나중에 loc object만 불러와서 여러 plot 그리고 그럴 수 있게.)
