@@ -1,3 +1,8 @@
+# :: Web-based LocusZoom input generator ::
+# - Sanghyeon Park
+# - 2024.03.15
+# - First in-use project: Systemic sclerosis drug repurposing
+
 library(data.table)
 library(dplyr)
 library(argparse)
