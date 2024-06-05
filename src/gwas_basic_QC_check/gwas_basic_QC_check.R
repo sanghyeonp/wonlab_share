@@ -21,7 +21,7 @@
 # v2: Allow input of addtional criteria by the users
 ####
 
-source("/data1/sanghyeon/Projects/atherosclerosis_gwas/data/gwas/AAA/test/fnc.gwas_basic_QC_check.R")
+source("/data1/sanghyeon/wonlab_contribute/combined/src/gwas_basic_QC_check/fnc.gwas_basic_QC_check.R")
 library(data.table)
 library(dplyr)
 library(argparse)
@@ -47,6 +47,8 @@ parser$add_argument("--af-col", dest="af_col", type="character", required=FALSE,
 parser$add_argument("--effect-col", dest="effect_col", type="character", required=FALSE, default="",
                     help="")
 parser$add_argument("--se-col", dest="se_col", type="character", required=FALSE, default="",
+                    help="")
+parser$add_argument("--p-col", dest="p_col", type="character", required=FALSE, default="",
                     help="")
 parser$add_argument("--info-col", dest="info_col", type="character", required=FALSE, default="",
                     help="")
@@ -89,6 +91,7 @@ args$a2_col <- empty_to_NA(args$a2_col)
 args$af_col <- empty_to_NA(args$af_col)
 args$effect_col <- empty_to_NA(args$effect_col)
 args$se_col <- empty_to_NA(args$se_col)
+args$p_col <- empty_to_NA(args$p_col)
 args$info_col <- empty_to_NA(args$info_col)
 
 args$additional_col <- empty_to_NA(args$additional_col)
@@ -102,7 +105,7 @@ df.gwas <- fread(args$file_gwas, data.table=F, nThread=args$n_thread)
 basic_GWAS_filter_criteria(df_gwas=df.gwas, 
                         snp_col=args$snp_col, chr_col=args$chr_col, pos_col=args$pos_col, 
                         a1_col=args$a1_col, a2_col=args$a2_col, af_col=args$af_col, 
-                        effect_col=args$effect_col, se_col=args$se_col, info_col=args$info_col,
+                        effect_col=args$effect_col, se_col=args$se_col, p_col=args$p_col, info_col=args$info_col,
                         threshold.AF=args$threshold_AF, threshold.INFO=args$threshold_INFO, 
                         additional_criteria=args$additional_criteria, additional_columns=args$additional_col,
                         prefix=args$prefix, 

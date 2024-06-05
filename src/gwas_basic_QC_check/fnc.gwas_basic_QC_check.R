@@ -16,9 +16,12 @@
 # 11. Check SNP INFO < threshold
 # 12. Additional criteria given
 
-#### Version control (Current version = 2)
+#### Version control (Current version = 3)
 # v1: Initial version
 # v2: Allow input of addtional criteria by the users
+# v3: 
+#   - Determine and consider whether Effect is in beta or odds ratio
+#   - Add p_col parameter to check whether SE is for beta or odds ratio
 ####
 
 library(dplyr)
@@ -29,14 +32,14 @@ map_delim <- c("txt" = " ", "tsv" = "\t", "csv" = ",")
 ###
 basic_GWAS_filter_criteria <- function(df_gwas, 
                                     snp_col=NA, chr_col=NA, pos_col=NA, a1_col=NA, a2_col=NA, af_col=NA, 
-                                    effect_col=NA, se_col=NA, info_col=NA,
+                                    effect_col=NA, se_col=NA, p_col=NA, info_col=NA,
                                     threshold.AF=0.01, threshold.INFO=0.9, prefix="", 
                                     save.snp_count=NA, save.snp_list=NA,
                                     additional_columns=NA, additional_criteria=NA){
     ### Subset specified columns
     cat(":: Subset specified columns ::\n")
 
-    potential_col <- c(snp_col, chr_col, pos_col, a1_col, a2_col, af_col, effect_col, se_col)
+    potential_col <- c(snp_col, chr_col, pos_col, a1_col, a2_col, af_col, effect_col, se_col, p_col)
 
     if (!is.na(additional_columns)) {
         split_cols <- strsplit(additional_columns, ";")[[1]]
@@ -85,6 +88,8 @@ basic_GWAS_filter_criteria <- function(df_gwas,
         df.missing.chr <- data.frame(row_index = row.missing.chr,
                                     criteria = rep("Missing CHR", nsnp.missing.chr))
     }
+    cat(paste0("\t[N SNP] Missing CHR: ", prettyNum(nsnp.missing.chr, big.mark = ",", scientific = FALSE), "\n"))
+
     # missing Position
     if(!is.na(pos_col)){
         df.tmp <- dplyr::filter(df, is.na(!!as.name(pos_col)))
@@ -92,6 +97,8 @@ basic_GWAS_filter_criteria <- function(df_gwas,
         df.missing.pos <- data.frame(row_index = row.missing.pos,
                                     criteria = rep("Missing POS", nsnp.missing.pos))
     }
+    cat(paste0("\t[N SNP] Missing POS: ", prettyNum(nsnp.missing.pos, big.mark = ",", scientific = FALSE), "\n"))
+
     # missing Allele1
     if(!is.na(a1_col)){
         df.tmp <- dplyr::filter(df, is.na(!!as.name(a1_col)))
@@ -99,6 +106,8 @@ basic_GWAS_filter_criteria <- function(df_gwas,
         df.missing.a1 <- data.frame(row_index = row.missing.a1,
                                     criteria = rep("Missing A1", nsnp.missing.a1))
     }
+    cat(paste0("\t[N SNP] Missing A1: ", prettyNum(nsnp.missing.a1, big.mark = ",", scientific = FALSE), "\n"))
+
     # missing Allele1
     if(!is.na(a2_col)){
         df.tmp <- dplyr::filter(df, is.na(!!as.name(a2_col)))
@@ -106,6 +115,8 @@ basic_GWAS_filter_criteria <- function(df_gwas,
         df.missing.a2 <- data.frame(row_index = row.missing.a2,
                                     criteria = rep("Missing A2", nsnp.missing.a2))
     }
+    cat(paste0("\t[N SNP] Missing A2: ", prettyNum(nsnp.missing.a2, big.mark = ",", scientific = FALSE), "\n"))
+
     # missing Allele frequency
     if(!is.na(af_col)){
         df.tmp <- dplyr::filter(df, is.na(!!as.name(af_col)))
@@ -113,6 +124,8 @@ basic_GWAS_filter_criteria <- function(df_gwas,
         df.missing.af <- data.frame(row_index = row.missing.af,
                                     criteria = rep("Missing AF", nsnp.missing.af))
     }
+    cat(paste0("\t[N SNP] Missing AF: ", prettyNum(nsnp.missing.af, big.mark = ",", scientific = FALSE), "\n"))
+
     # missing Effect
     if(!is.na(effect_col)){
         df.tmp <- dplyr::filter(df, is.na(!!as.name(effect_col)))
@@ -120,6 +133,8 @@ basic_GWAS_filter_criteria <- function(df_gwas,
         df.missing.effect <- data.frame(row_index = row.missing.effect,
                                     criteria = rep("Missing Effect", nsnp.missing.effect))
     }
+    cat(paste0("\t[N SNP] Missing Effect: ", prettyNum(nsnp.missing.effect, big.mark = ",", scientific = FALSE), "\n"))
+
     # missing SE
     if(!is.na(se_col)){
         df.tmp <- dplyr::filter(df, is.na(!!as.name(se_col)))
@@ -127,6 +142,8 @@ basic_GWAS_filter_criteria <- function(df_gwas,
         df.missing.se <- data.frame(row_index = row.missing.se,
                                         criteria = rep("Missing SE", nsnp.missing.se))
     }
+    cat(paste0("\t[N SNP] Missing SE: ", prettyNum(nsnp.missing.se, big.mark = ",", scientific = FALSE), "\n"))
+
     # missing INFO
     if(!is.na(info_col)){
         df.tmp <- dplyr::filter(df, is.na(!!as.name(info_col)))
@@ -134,6 +151,7 @@ basic_GWAS_filter_criteria <- function(df_gwas,
         df.missing.info <- data.frame(row_index = row.missing.info,
                                         criteria = rep("Missing INFO", nsnp.missing.info))
     }
+    cat(paste0("\t[N SNP] Missing INFO: ", prettyNum(nsnp.missing.info, big.mark = ",", scientific = FALSE), "\n"))
 
     nsnp.missing.combined <- sum(c(nsnp.missing.chr, nsnp.missing.pos, nsnp.missing.a1, nsnp.missing.a2,
                                 nsnp.missing.af, nsnp.missing.effect, nsnp.missing.se, nsnp.missing.info), na.rm=T)
@@ -146,14 +164,6 @@ basic_GWAS_filter_criteria <- function(df_gwas,
         summarise(criteria = paste(criteria, collapse = ";")) %>%
         arrange(row_index))
 
-    cat(paste0("\t[N SNP] Missing CHR: ", prettyNum(nsnp.missing.chr, big.mark = ",", scientific = FALSE), "\n"))
-    cat(paste0("\t[N SNP] Missing POS: ", prettyNum(nsnp.missing.pos, big.mark = ",", scientific = FALSE), "\n"))
-    cat(paste0("\t[N SNP] Missing A1: ", prettyNum(nsnp.missing.a1, big.mark = ",", scientific = FALSE), "\n"))
-    cat(paste0("\t[N SNP] Missing A2: ", prettyNum(nsnp.missing.a2, big.mark = ",", scientific = FALSE), "\n"))
-    cat(paste0("\t[N SNP] Missing AF: ", prettyNum(nsnp.missing.af, big.mark = ",", scientific = FALSE), "\n"))
-    cat(paste0("\t[N SNP] Missing Effect: ", prettyNum(nsnp.missing.effect, big.mark = ",", scientific = FALSE), "\n"))
-    cat(paste0("\t[N SNP] Missing SE: ", prettyNum(nsnp.missing.se, big.mark = ",", scientific = FALSE), "\n"))
-    cat(paste0("\t[N SNP] Missing INFO: ", prettyNum(nsnp.missing.info, big.mark = ",", scientific = FALSE), "\n"))
     cat(paste0("\t[N SNP] Missing Combined: ", prettyNum(nsnp.missing.combined, big.mark = ",", scientific = FALSE), "\n"))
 
     ### CHECK: invalid values
@@ -166,42 +176,74 @@ basic_GWAS_filter_criteria <- function(df_gwas,
     nsnp.invalid.info <- NA; row.invalid.info <- c(); df.invalid.info <- data.frame()
     nsnp.invalid.combined <- NA; row.invalid.combined <- c(); df.invalid.combined <- data.frame()
 
+    if(!is.na(effect_col)){
+        effect_type <- "beta"
+        if (round(median(df[[effect_col]], na.rm=T)) == 1) effect_type <- "odds ratio"
+    }
+
     if(!is.na(a1_col)){
         df.tmp <- filter(df, grepl("[^ATCGatcg]", !!as.name(a1_col)))
         nsnp.invalid.a1 <- nrow(df.tmp); row.invalid.a1 <- df.tmp$row_index
         df.invalid.a1 <- data.frame(row_index = row.invalid.a1,
                                     criteria = rep("Invalid A1", nsnp.invalid.a1))
     }
+    cat(paste0("\t[N SNP] Invalid A1: ", prettyNum(nsnp.invalid.a1, big.mark = ",", scientific = FALSE), "\n"))
+
     if(!is.na(a2_col)){
         df.tmp <- filter(df, grepl("[^ATCGatcg]", !!as.name(a2_col)))
         nsnp.invalid.a2 <- nrow(df.tmp); row.invalid.a2 <- df.tmp$row_index
         df.invalid.a2 <- data.frame(row_index = row.invalid.a2,
                                     criteria = rep("Invalid A2", nsnp.invalid.a2))
     }
+    cat(paste0("\t[N SNP] Invalid A2: ", prettyNum(nsnp.invalid.a2, big.mark = ",", scientific = FALSE), "\n"))
+
     if(!is.na(af_col)){
         df.tmp <- filter(df, !!as.name(af_col) <0 | !!as.name(af_col) >1)
         nsnp.invalid.af <- nrow(df.tmp); row.invalid.af <- df.tmp$row_index
         df.invalid.af <- data.frame(row_index = row.invalid.af,
                                     criteria = rep("Invalid AF", nsnp.invalid.af))
     }
+    cat(paste0("\t[N SNP] Invalid AF: ", prettyNum(nsnp.invalid.af, big.mark = ",", scientific = FALSE), "\n"))
+
     if(!is.na(effect_col)){
-        df.tmp <- filter(df, abs(!!as.name(effect_col)) == Inf)
+        cat(paste0("\t[Effect type]: ", effect_type, "\n"))
+
+        if (effect_type == "beta"){
+            df.tmp <- filter(df, abs(!!as.name(effect_col)) == Inf)
+        } else{
+            df.tmp <- filter(df, !!as.name(effect_col) <=0 | !!as.name(effect_col) == Inf)
+        }
         nsnp.invalid.effect <- nrow(df.tmp); row.invalid.effect <- df.tmp$row_index
         df.invalid.effect <- data.frame(row_index = row.invalid.effect,
                                     criteria = rep("Invalid Effect", nsnp.invalid.effect))
     }
+    cat(paste0("\t[N SNP] Invalid Effect: ", prettyNum(nsnp.invalid.effect, big.mark = ",", scientific = FALSE), "\n"))
+
     if(!is.na(se_col)){
+        if (effect_type == "odds ratio" & !is.na(p_col)) {
+            df.tmp <- df %>%
+                mutate(P.tmp = 2*pnorm(abs(!!as.name(effect_col))/!!as.name(se_col), lower.tail=F),
+                    P.check = round(P.tmp, 2) != round(!!as.name(p_col), 2))
+            if (sum(df.tmp$P.check, na.rm=T) >0){
+                cat("\t[SE could be for the odds ratio, not log(OR)] \n")
+            } else{
+                cat("\t[SE seems to be for the log(OR)]")
+            }
+        }
         df.tmp <- filter(df, !!as.name(se_col) <=0 | !!as.name(se_col) == Inf)
         nsnp.invalid.se <- nrow(df.tmp); row.invalid.se <- df.tmp$row_index
         df.invalid.se <- data.frame(row_index = row.invalid.se,
                                     criteria = rep("Invalid SE", nsnp.invalid.se))
     }
+    cat(paste0("\t[N SNP] Invalid SE: ", prettyNum(nsnp.invalid.se, big.mark = ",", scientific = FALSE), "\n"))
+
     if(!is.na(info_col)){
         df.tmp <- filter(df, !!as.name(info_col) <0 | !!as.name(info_col) >1)
         nsnp.invalid.info <- nrow(df.tmp); row.invalid.info <- df.tmp$row_index
         df.invalid.info <- data.frame(row_index = row.invalid.info,
                                     criteria = rep("Invalid INFO", nsnp.invalid.info))
     }
+    cat(paste0("\t[N SNP] Invalid INFO: ", prettyNum(nsnp.invalid.info, big.mark = ",", scientific = FALSE), "\n"))
 
     nsnp.invalid.combined <- sum(c(nsnp.invalid.a1, nsnp.invalid.a2, nsnp.invalid.af,
                                 nsnp.invalid.effect, nsnp.invalid.se, nsnp.invalid.info), na.rm=T)
@@ -213,12 +255,6 @@ basic_GWAS_filter_criteria <- function(df_gwas,
                                             summarise(criteria = paste(criteria, collapse = ";")) %>%
                                             arrange(row_index))
 
-    cat(paste0("\t[N SNP] Invalid A1: ", prettyNum(nsnp.invalid.a1, big.mark = ",", scientific = FALSE), "\n"))
-    cat(paste0("\t[N SNP] Invalid A2: ", prettyNum(nsnp.invalid.a2, big.mark = ",", scientific = FALSE), "\n"))
-    cat(paste0("\t[N SNP] Invalid AF: ", prettyNum(nsnp.invalid.af, big.mark = ",", scientific = FALSE), "\n"))
-    cat(paste0("\t[N SNP] Invalid Effect: ", prettyNum(nsnp.invalid.effect, big.mark = ",", scientific = FALSE), "\n"))
-    cat(paste0("\t[N SNP] Invalid SE: ", prettyNum(nsnp.invalid.se, big.mark = ",", scientific = FALSE), "\n"))
-    cat(paste0("\t[N SNP] Invalid INFO: ", prettyNum(nsnp.invalid.info, big.mark = ",", scientific = FALSE), "\n"))
     cat(paste0("\t[N SNP] Invalid Combined: ", prettyNum(nsnp.invalid.combined, big.mark = ",", scientific = FALSE), "\n"))
 
     ### CHECK: SNP duplicates
