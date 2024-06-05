@@ -206,29 +206,29 @@ compute_snp_ld <- function(snp1, snp2, plink_exe, file_reference, chr){
 
 
 ##### << delete
-# file_gwas1_snplist <- "/data1/jaeyoung/GWAS/2301_Income/2_analysis/indepdence_check/FUMA_out/Income_Hill2019/leadSNPs.txt"
+# file_gwas1_snplist <- "/data1/sanghyeon/Projects/MetabolicSyndrome/MetS_2022_08/nat_genet.revision_1/reviewer_2/R2Q1/SNP_independence.snp_based.secondary_sig/02_query_cojo_from_clumping/MetS/MetS.clumped.cojo_snp_query"
 # delim_gwas1_snplist <- "tab"
-# snp_gwas1_snplist <- "rsID"
-# secondary_snp_gwas1_snplist <- "IndSigSNPs"
-# 
-# file_gwas2_snplist <- "/data1/jaeyoung/GWAS/2301_Income/2_analysis/indepdence_check/FUMA_out/Income_Hill2019/leadSNPs.txt"
+# snp_gwas1_snplist <- "SNP"
+# secondary_snp_gwas1 <- "clumped_SNP"
+
+# file_gwas2_snplist <- "/data1/sanghyeon/Projects/MetabolicSyndrome/MetS_2022_08/nat_genet.revision_1/reviewer_2/R2Q1/SNP_independence.snp_based.secondary_sig/02_query_cojo_from_clumping/FG/FG.clumped.cojo_snp_query"
 # delim_gwas2_snplist <- "tab"
-# snp_gwas2_snplist <- "rsID"
-# secondary_snp_gwas2 <- "IndSigSNPs"
-# 
-# file_gwas1 <- "/data1/jaeyoung/GWAS/2301_Income/2_analysis/3_METAL/manhattan/POLMM_MA_EAS_EUR_all.tab"
-# delim_gwas1 <- "tab"
-# snp_gwas1 <- "rsID"
+# snp_gwas2_snplist <- "SNP"
+# secondary_snp_gwas2 <- "clumped_SNP"
+
+# file_gwas1 <- "/data1/sanghyeon/Projects/MetabolicSyndrome/MetS_2022_08/results/8_GWAS/MetS12/QC.MetS12_GWAS_MetS.withQsnp.csv"
+# delim_gwas1 <- "comma"
+# snp_gwas1 <- "SNP"
 # chr_gwas1 <- "CHR"
-# pos_gwas1 <- "POS"
-# p_gwas1 <- "P"
-# 
-# file_gwas2 <- "/data1/jaeyoung/GWAS/2301_Income/1_data/HillWD_sumstat/HillWD_31844048_household_Income.snpID"
+# pos_gwas1 <- "BP"
+# p_gwas1 <- "Pval_Estimate"
+
+# file_gwas2 <- "/data1/sanghyeon/Projects/MetabolicSyndrome/GWASsumstat/QC_final/CLEANED.FG_MAGIC.txt"
 # delim_gwas2 <- "tab"
 # snp_gwas2 <- "SNP"
-# chr_gwas2 <- "Chr"
-# pos_gwas2 <- "BPos"
-# p_gwas2 <- "P"
+# chr_gwas2 <- "CHR"
+# pos_gwas2 <- "POS"
+# p_gwas2 <- "Pval"
 
 # reference_panel <- "1kG"
 # genome_build <- 37
@@ -269,7 +269,7 @@ df_gwas1 <- fread(file_gwas1,
                   showProgress = F)
 df_gwas1 <- df_gwas1 %>%
     # Drop any SNP without rsID
-    # filter(!grepl("^rs", !!as.name(snp_gwas1))) %>%
+    filter(!grepl("^rs", !!as.name(snp_gwas1))) %>%
     dplyr::select(!!as.name(snp_gwas1), !!as.name(chr_gwas1), !!as.name(pos_gwas1), !!as.name(p_gwas1)) %>%
     rename(CHR = !!as.name(chr_gwas1),
            POS = !!as.name(pos_gwas1),
@@ -312,7 +312,7 @@ df_gwas2 <- fread(file_gwas2,
                   showProgress = F)
 df_gwas2 <- df_gwas2 %>%
     # Drop any SNP without rsID
-    # filter(!grepl("^rs", !!as.name(snp_gwas2))) %>%
+    filter(!grepl("^rs", !!as.name(snp_gwas2))) %>%
     dplyr::select(!!as.name(snp_gwas2), !!as.name(chr_gwas2), !!as.name(pos_gwas2), !!as.name(p_gwas2)) %>%
     rename(CHR = !!as.name(chr_gwas2),
            POS = !!as.name(pos_gwas2),
@@ -351,10 +351,10 @@ if (substr(dir_out, nchar(dir_out), nchar(dir_out)) != "/") {
 # LD - GWAS1 lead SNP
 #######################
 
-# print(head(df_gwas1_snplist)) ## delete
-# print(head(df_gwas2_snplist)) ## delete
-# print(head(df_gwas1_leadsnplist)) ## delete
-# print(head(df_gwas2_leadsnplist)) ## delete
+print(head(df_gwas1_snplist)) ## delete
+print(head(df_gwas2_snplist)) ## delete
+print(head(df_gwas1_leadsnplist)) ## delete
+print(head(df_gwas2_leadsnplist)) ## delete
 
 df_ld_result.gwas1 <- NULL
 
