@@ -16,9 +16,12 @@
 # 11. Check SNP INFO < threshold
 # 12. Additional criteria given
 
-#### Version control (Current version = 2)
+#### Version control (Current version = 3)
 # v1: Initial version
 # v2: Allow input of addtional criteria by the users
+# v3: 
+#   - Determine and consider whether Effect is in beta or odds ratio
+#   - Add p_col parameter to check whether SE is for beta or odds ratio
 ####
 
 source("/data1/sanghyeon/wonlab_contribute/combined/src/gwas_basic_QC_check/fnc.gwas_basic_QC_check.R")
