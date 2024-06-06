@@ -26,8 +26,8 @@ parse_univariate_ldsc <- function(log_file, trait=NA){
         if (grepl("Lambda GC:", line)) {
             lambda_gc <- gsub("Lambda GC: ", "", line)
         }
-        if (grepl("Mean Chi^2:", line)) {
-            mean_chi_sq <- gsub("Mean Chi^2: ", "", line)
+        if (grepl("Mean Chi\\^2:", line)) {
+            mean_chi_sq <- gsub("Mean Chi\\^2: ", "", line)
         }
         if (grepl("Intercept:", line)) {
             query1 <- gsub("Intercept: ", "", line)
