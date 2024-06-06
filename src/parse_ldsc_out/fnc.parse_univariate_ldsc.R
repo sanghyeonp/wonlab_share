@@ -1,6 +1,8 @@
 # Sanghyeon Park
 # 2024.06.05
 
+library(stringr)
+
 parse_univariate_ldsc <- function(log_file, trait=NA){
     log_content <- readLines(log_file)
 
