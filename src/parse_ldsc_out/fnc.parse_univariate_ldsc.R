@@ -6,11 +6,15 @@ library(stringr)
 parse_univariate_ldsc <- function(log_file, trait=NA){
     log_content <- readLines(log_file)
 
-    observed_h2 <- NA; observed_h2_se <- NA; liability_h2 <- NA; liability_h2_se <- NA
+    nsnp <- NA; observed_h2 <- NA; observed_h2_se <- NA; liability_h2 <- NA; liability_h2_se <- NA
     lambda_gc <- NA; mean_chi_sq <- NA; intercept <- NA; intercept_se <- NA
     ratio <- NA; ratio_se <- NA
 
     for (line in log_content) {
+        if (grepl("After merging with regression SNP LD,", line)){
+            query1 <- gsub("After merging with regression SNP LD, ", "", line)
+            nsnp <- gsub(" SNPs remain.", "", query1)
+        }
         if (grepl("Total Observed scale h2:", line)) {
             # Extract Genetic Correlation
             query1 <- gsub("Total Observed scale h2: ", "", line)
@@ -45,13 +49,13 @@ parse_univariate_ldsc <- function(log_file, trait=NA){
         }
     }
     if (is.na(trait)) {
-        return(data.frame(`Observed-scale h2`=observed_h2, `Observed-scale h2 SE`=observed_h2_se,
+        return(data.frame(`N SNP`=nsnp, `Observed-scale h2`=observed_h2, `Observed-scale h2 SE`=observed_h2_se,
                         `Liability-scale h2`=liability_h2, `Liability-scale h2 SE`=liability_h2_se,
                         `Lambda GC`=lambda_gc, `Mean Chi^2`=mean_chi_sq, 
                         `Intercept`=intercept, `Intercept SE`=intercept_se,
                         `Ratio`=ratio, `Ratio SE`=ratio_se))
     } 
-    return(data.frame(trait=trait, `Observed-scale h2`=observed_h2, `Observed-scale h2 SE`=observed_h2_se,
+    return(data.frame(trait=trait, `N SNP`=nsnp, `Observed-scale h2`=observed_h2, `Observed-scale h2 SE`=observed_h2_se,
                 `Liability-scale h2`=liability_h2, `Liability-scale h2 SE`=liability_h2_se,
                 `Lambda GC`=lambda_gc, `Mean Chi^2`=mean_chi_sq, 
                 `Intercept`=intercept, `Intercept SE`=intercept_se,
