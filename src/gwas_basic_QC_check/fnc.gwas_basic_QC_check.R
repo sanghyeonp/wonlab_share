@@ -70,6 +70,12 @@ basic_GWAS_filter_criteria <- function(df_gwas,
                                                     pmax(!!as.name(a1_col), !!as.name(a2_col)), sep=":")))
     }
 
+    # Deal with chr in chromosome
+    if (!is.na(chr_col)){
+        df <- df %>%
+            mutate(!!as.name(chr_col) := gsub("CHR", "", toupper(as.character(!!as.name(chr_col)))))
+    }
+
     ### CHECK: missing values
     cat("\n:: CHECK missing value ::\n")
     nsnp.missing.chr <- NA; row.missing.chr <- c(); df.missing.chr <- data.frame()
