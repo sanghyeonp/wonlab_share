@@ -154,6 +154,8 @@ parser$add_argument("--save-rds", dest="save_rds", action="store_true", default=
                     help="Specify to save RDS of plot object. Default=FALSE.")
 
 # Output
+parser$add_argument("--suffix", required=F, default="NA", type="character",
+                    help="Specify the suffix for the output file.")
 parser$add_argument("--out-dir", dest="dir_out", required=F, default=".", type="character",
                     help="Specify output directory. Default=current working directory.")
 
@@ -207,6 +209,7 @@ ylab2 <- args$ylab2; ylab2 <- str_na_to_null(ylab2)
 save_rds <- args$save_rds
 
 dir_out <- args$dir_out; dir_out <- add_trailing_slash(dir_out); dir.create(dir_out, showWarnings=F)
+suffix <- args$suffix
 
 #######
 # trait.gwas1 <- "eQTL"
@@ -406,16 +409,16 @@ for (idx in 1:nrow(df.geneloc)){
     }
 
     ## Save RDS
+    filename <- paste0(dir_out, "locuszoom.trait1_", trait.gwas1, ".trait2_", trait.gwas2,
+                        ".gene_", gene, ".chr", chr, ".snp1_", snp1, ".snp2_", snp2)
+    if (suffix != "NA") filename <- paste0(filename, ".", suffix)
     if (save_rds){
-        saveRDS(loc1, paste0(dir_out, "locuszoom.trait1_", trait.gwas1, ".trait2_", trait.gwas2,
-                             ".chr", chr, ".snp1_", snp1, ".snp2_", snp2, ".loc1.rds"))
-        saveRDS(loc2, paste0(dir_out, "locuszoom.trait1_", trait.gwas1, ".trait2_", trait.gwas2,
-                             ".chr", chr, ".snp1_", snp1, ".snp2_", snp2, ".loc2.rds"))
+        saveRDS(loc1, paste0(filename, ".loc1.rds"))
+        saveRDS(loc2, paste0(filename, ".loc2.rds"))
     }    
 
     ## 
-    pdf(paste0(dir_out, "locuszoom.trait1_", trait.gwas1, ".trait2_", trait.gwas2,
-               ".chr", chr, ".snp1_", snp1, ".snp2_", snp2, ".pdf"), 
+    pdf(paste0(filename, ".pdf"), 
         width=6, height=8)
     order_partition <- set_layers(2)
     
