@@ -53,7 +53,7 @@ query_date_ICD10 <- function(code, simplify=TRUE){
     #            otherwise return f.eid, index, quried ICD-10 code, quried date of diagnosis, and the earliest date of diagnosis
 
     # Read the data
-    df.data <- readRDS("/data1/sanghyeon/Projects/mr_drug_repurposing/src/PRS/PRS_calculation/phenotype_and_covariate/v2/UKBB.41270_41280.ICD10_code_and_date_merged.rds")
+    df.data <- readRDS("/data1/sanghyeon/wonlab_contribute/combined/src/UKBB_phenotype/UKBB.41270_41280.ICD10_code_and_date_merged.rds")
 
     # Make the search pattern of given ICD-10 codes
     code <- as.character(code)
@@ -105,7 +105,7 @@ query_date_ICD9 <- function(code, simplify=TRUE){
     #            otherwise return f.eid, index, quried ICD-9 code, quried date of diagnosis, and the earliest date of diagnosis
 
     # Read the data
-    df.data <- readRDS("/data1/sanghyeon/Projects/mr_drug_repurposing/src/PRS/PRS_calculation/phenotype_and_covariate/v2/UKBB.41271_41281.ICD9_code_and_date_merged.rds")
+    df.data <- readRDS("/data1/sanghyeon/wonlab_contribute/combined/src/UKBB_phenotype/UKBB.41271_41281.ICD9_code_and_date_merged.rds")
 
     # Make the search pattern of given ICD-9 codes
     code <- as.character(code)
@@ -157,7 +157,7 @@ query_date_OPCS4 <- function(code, simplify=TRUE){
     #            otherwise return f.eid, index, quried OPCS4 code, quried date of diagnosis, and the earliest date of diagnosis
 
     # Read the data
-    df.data <- readRDS("/data1/sanghyeon/Projects/mr_drug_repurposing/src/PRS/PRS_calculation/phenotype_and_covariate/v2/UKBB.41272_41282.OPCS4_code_and_date_merged.rds")
+    df.data <- readRDS("/data1/sanghyeon/wonlab_contribute/combined/src/UKBB_phenotype/UKBB.41272_41282.OPCS4_code_and_date_merged.rds")
 
     # Make the search pattern of given OPCS4 codes
     code <- as.character(code)
@@ -213,7 +213,7 @@ query_date_Self_report <- function(code, self_report_instance=0, simplify=TRUE){
     #    -1 represents "Time uncertain/unknown"
 
     # Read the data
-    df.data <- readRDS("/data1/sanghyeon/Projects/mr_drug_repurposing/src/PRS/PRS_calculation/phenotype_and_covariate/v2/UKBB.20002_87.Selfreport_code_and_age_year_merged.rds")
+    df.data <- readRDS("/data1/sanghyeon/wonlab_contribute/combined/src/UKBB_phenotype/UKBB.20002_87.Selfreport_code_and_age_year_merged.rds")
 
     # Make the search pattern of given self-report codes
     code <- as.character(code)
