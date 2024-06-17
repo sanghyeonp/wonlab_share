@@ -1,0 +1,10 @@
+Interview 는 self-report
+
+# 나중에 cause of death 도
+40001	Underlying (primary) cause of death: ICD10	Death register  
+40002	Contributory (secondary) causes of death: ICD10	Death register  
+Date of death (Data-Field 40000)
+
+# 나중에 operation code 도
+Operation code (Data-Field 20004)
+Year/age first occurred (Data-Field 92)
