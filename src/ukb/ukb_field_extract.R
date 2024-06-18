@@ -23,7 +23,7 @@ parser$add_argument("--drop-na", dest="drop_na", action="store_true",
 parser$add_argument("--outf", required=FALSE, default="NA",
                     help="Specify the name of the output file. Default = UKB_phenotype_extract.tsv")
 parser$add_argument("--delim-out", dest="delim_out", required=FALSE, default="tab",
-                    help="Specify the delimiter for the output file. Options = [tab, comma, whitespace]. Default = tab.")
+                    help="Specify the delimiter for the output file. Options = [tab, comma, whitespace, rds]. Default = tab.")
 parser$add_argument("--outd", required=FALSE, default="NA",
                     help="Specify the output directory. Default = current working directory.")
 parser$add_argument("--n-cores", dest="n_cores", required=FALSE, default=1, type="integer",
@@ -121,9 +121,14 @@ if (drop_na){
 ### Save the 
 cat("\n::Run:: Save output")
 cat(paste0("\n\tSaved at: ", out_path))
-write.table(tab_data_sub, 
-            out_path, 
-            sep = delim_map[[delim_out]],
-            row.names = FALSE,
-            col.names = TRUE,
-            quote = FALSE)
+if (delim_out == "rds"){
+    saveRDS(tab_data_sub, out_path)
+} else{
+    write.table(tab_data_sub, 
+                out_path, 
+                sep = delim_map[[delim_out]],
+                row.names = FALSE,
+                col.names = TRUE,
+                quote = FALSE)
+}
+

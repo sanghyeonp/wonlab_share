@@ -49,11 +49,6 @@ merge_annovar_out <- function(
     df_merged <- df_merged %>% 
         select(-temp_var)
 
-    if (args$rm_flip_col){
-        df_merged <- df_merged %>% 
-            select(-flipped)
-    }
-
     # Write
     file_path <- paste0(filename_annovin_annot, ".merged")
 
