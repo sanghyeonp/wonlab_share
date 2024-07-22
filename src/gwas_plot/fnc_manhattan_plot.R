@@ -1,5 +1,5 @@
 library(dplyr)
-library(ggplot)
+library(ggplot2)
 library(ggrepel)
 
 plot_manhattan <- function(gwas, 
