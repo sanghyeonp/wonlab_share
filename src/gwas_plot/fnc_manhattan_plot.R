@@ -1,4 +1,6 @@
-
+library(dplyr)
+library(ggplot)
+library(ggrepel)
 
 plot_manhattan <- function(gwas, 
                         snp_col, chr_col, pos_col, p_col, 
