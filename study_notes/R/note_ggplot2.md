@@ -33,7 +33,7 @@ df <- rbind(df, data.frame(trait1=trait.list, trait2=trait.list, rg=1, se=NA, Z=
 df$trait1 <- factor(df$trait1, levels=sort(unique(df$trait1)))
 df$trait2 <- factor(df$trait2, levels=rev(sort(unique(df$trait2))))
 
-max_circle_size <- 30
+max_circle_size <- 30 # 저장하는 figure 사이즈에 따라 유동적으로 결정됨. Figure 파일 저장 후, 확인하면서 조절하기.
 min_rg <- min(abs(df$rg))
 ggplot(df, aes(trait1, trait2)) +
     geom_tile(color = "black", fill = NA) +
