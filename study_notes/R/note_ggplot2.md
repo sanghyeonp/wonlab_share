@@ -14,6 +14,9 @@ p1 +
 ```
 
 # Heatmap with circles
+
+<img src="heatmap_with_circles.png" width=50% height=50%>
+
 ```
 library(ggplot2)
 
