@@ -56,7 +56,7 @@ df <- fread(file_in, sep=delim_map[delim], data.table = F, nThread = n_thread)
 head(df, 5)
 
 ### 2. Read 1000 Genome bim file
-df.bim <- fread("/data1/sanghyeon/wonlab_contribute/combined/data_common/reference_panel/1kGp3/EUR/reference.1kG.EUR.bim", 
+df.bim <- fread("/data1/sanghyeon/wonlab_contribute/combined/data_common/reference_panel/1kGp3/EUR/reference.1kG.EUR.maf_0.005.geno_0.02.bim", 
                 sep = "\t", data.table = F, header = F, nThread = n_thread, col.names = c("CHR", "SNP", "CM", "BP", "ALT", "REF")) %>%
     dplyr::select(SNP, ALT, REF)
 

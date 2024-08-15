@@ -37,7 +37,7 @@ plot_manhattan <- function(gwas,
                     "BETA" := beta_col,
                     "SE" := se_col
             ) %>%
-            mutate(PVAL = 2 * pnorm(-abs(BETA / SE)))
+            mutate(PVAL = 2 * pnorm(abs(BETA / SE), lower.tail=F))
     } else{
         df <- df %>% 
             select(all_of(c(snp_col, chr_col, pos_col, p_col))) %>%
@@ -172,12 +172,12 @@ plot_manhattan_df_input <- function(df,
                         snp_col, chr_col, pos_col, p_col, 
                         beta_col='NA', se_col='NA',
                         snps_to_annotate=c('NA'), color_annotate='darkorange1',
-                        color1='grey50', color2='grey', 
+                        color1='grey50', color2='grey', point_size=1, point_size_annot=1.5,
                         chr_select=c('NA'),
                         img_type='png', dpi=300,
                         outf='NA', outd='NA',
                         width=180, height=100, units='mm',
-                        scale=1){
+                        scale=1, save_img=T){
 
     if (outf == "NA"){
         outf <- "manhattan"
@@ -285,7 +285,7 @@ plot_manhattan_df_input <- function(df,
     p1 <- ggplot(df_plot, aes(x=BPcum, y=-log10(PVAL))) +
 
         # Show all points
-        geom_point( aes(color=as.factor(CHR)), alpha=0.8, size=1) +
+        geom_point( aes(color=as.factor(CHR)), alpha=0.8, size=point_size) +
         scale_color_manual(values = rep(c(color1, color2), n_chr)) +
         
         # Add horizontal line (Genome-wide significant)
@@ -296,10 +296,10 @@ plot_manhattan_df_input <- function(df,
         
         # custom X axis:
         scale_x_continuous(label = axisdf$CHR, breaks= axisdf$center ) +
-        # scale_y_continuous(limits = c(0, -log10(min(df_plot$PVAL))), expand = c(0, 0) ) +     # remove space between plot area and x axis
+        scale_y_continuous(expand=expansion(mult = c(0, 0.1))) +     # remove space between plot area and x axis
         
         # Add highlighted points
-        geom_point(data=subset(df_plot, is_highlight=="yes"), color=color_annotate, size=1.5) +
+        geom_point(data=subset(df_plot, is_highlight=="yes"), color=color_annotate, size=point_size_annot) +
 
         # Label name
         labs(x = "Chromosome",
@@ -317,18 +317,22 @@ plot_manhattan_df_input <- function(df,
             axis.text = element_text(size = 14)
         )
 
-    if(img_type == "pdf"){
-        ggsave(paste0(outf, ".", img_type), p1, 
-        scale = scale, device = "pdf",
-        width = width, height = height,
-        units = units)
-    } else{
-        ggsave(paste0(outf, ".", img_type), p1, 
-        scale = scale, dpi = dpi,
-        width = width, height = height,
-        units = units)
+    if (save_img){
+        if(img_type == "pdf"){
+            ggsave(paste0(outf, ".", img_type), p1, 
+            scale = scale, device = "pdf",
+            width = width, height = height,
+            units = units)
+        } else{
+            ggsave(paste0(outf, ".", img_type), p1, 
+            scale = scale, dpi = dpi,
+            width = width, height = height,
+            units = units)
+        }
     }
 
+
+    return (p1)
 }
 
 

@@ -61,6 +61,7 @@ parser$add_argument("--thres-af", dest="threshold_AF", type="numeric", required=
 parser$add_argument("--thres-info", dest="threshold_INFO", type="numeric", required=FALSE, default=0.9,
                     help="")
 
+
 parser$add_argument("--additional-criteria", dest="additional_criteria", type="character", required=FALSE, default="",
                     help="")
 parser$add_argument("--additional-col", dest="additional_col", type="character", required=FALSE, default="",

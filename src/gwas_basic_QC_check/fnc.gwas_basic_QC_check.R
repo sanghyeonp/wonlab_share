@@ -16,12 +16,15 @@
 # 11. Check SNP INFO < threshold
 # 12. Additional criteria given
 
-#### Version control (Current version = 3)
+#### Version control (Current version = 4)
 # v1: Initial version
 # v2: Allow input of addtional criteria by the users
 # v3: 
 #   - Determine and consider whether Effect is in beta or odds ratio
 #   - Add p_col parameter to check whether SE is for beta or odds ratio
+# v4: 
+#   - Fix spelling
+#   - If OR, convert to log(OR) before P check
 ####
 
 library(dplyr)
@@ -33,13 +36,14 @@ map_delim <- c("txt" = " ", "tsv" = "\t", "csv" = ",")
 basic_GWAS_filter_criteria <- function(df_gwas, 
                                     snp_col=NA, chr_col=NA, pos_col=NA, a1_col=NA, a2_col=NA, af_col=NA, 
                                     effect_col=NA, se_col=NA, p_col=NA, info_col=NA,
-                                    threshold.AF=0.01, threshold.INFO=0.9, prefix="", 
+                                    threshold.AF=0.01, threshold.INFO=0.9, 
+                                    prefix="", 
                                     save.snp_count=NA, save.snp_list=NA,
                                     additional_columns=NA, additional_criteria=NA){
     ### Subset specified columns
     cat(":: Subset specified columns ::\n")
 
-    potential_col <- c(snp_col, chr_col, pos_col, a1_col, a2_col, af_col, effect_col, se_col, p_col)
+    potential_col <- c(snp_col, chr_col, pos_col, a1_col, a2_col, af_col, effect_col, se_col, p_col, info_col)
 
     if (!is.na(additional_columns)) {
         split_cols <- strsplit(additional_columns, ";")[[1]]
@@ -228,7 +232,7 @@ basic_GWAS_filter_criteria <- function(df_gwas,
     if(!is.na(se_col)){
         if (effect_type == "odds ratio" & !is.na(p_col)) {
             df.tmp <- df %>%
-                mutate(P.tmp = 2*pnorm(abs(!!as.name(effect_col))/!!as.name(se_col), lower.tail=F),
+                mutate(P.tmp = 2*pnorm(abs(exp(!!as.name(effect_col)))/!!as.name(se_col), lower.tail=F),
                     P.check = round(P.tmp, 2) != round(!!as.name(p_col), 2))
             if (sum(df.tmp$P.check, na.rm=T) >0){
                 cat("\t[SE could be for the odds ratio, not log(OR)] \n")
@@ -339,7 +343,7 @@ basic_GWAS_filter_criteria <- function(df_gwas,
     cat(paste0("\t[INFO threshold] ", threshold.INFO, "\n"))
     nsnp.INFO_below_thres <- NA; row.INFO_below_thres <- c(); df.INFO_below_thres <- data.frame()
     if (!is.na(info_col) & !is.na(threshold.INFO)){
-        df.tmp <- filter(df, !!as.name(info_col) < threhsold.INFO)
+        df.tmp <- filter(df, !!as.name(info_col) < threshold.INFO)
         nsnp.INFO_below_thres <- nrow(df.tmp); row.INFO_below_thres <- df.tmp$row_index
         df.INFO_below_thres <- data.frame(row_index = row.INFO_below_thres,
                                         criteria = rep(paste0("INFO<", threshold.INFO), nsnp.INFO_below_thres))
