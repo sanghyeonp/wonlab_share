@@ -36,65 +36,65 @@ parser$add_argument("--trait2", required=TRUE,
 # GWAS1 SNP list
 parser$add_argument("--gwas1-snplist", dest = "file_gwas1_snplist", required=TRUE, 
                     help="Path to the SNP list. Must have Chr, Pos, and SNP information.")
-parser$add_argument("--delim-gwas1-snplist", dest="delim_gwas1_snplist",  required=TRUE,
+parser$add_argument("--delim-gwas1-snplist", dest="delim_gwas1_snplist", required=TRUE,
                     help="Specify delimiter for GWAS summary statistics. Options = [tab, whitespace, comma]")
-parser$add_argument("--snp-col-gwas1-snplist", dest="snp_gwas1_snplist",  required=TRUE,
+parser$add_argument("--snp-col-gwas1-snplist", dest="snp_gwas1_snplist", required=TRUE,
                     help="Specify SNP column name.")
-# parser$add_argument("--secondary-snp-col-gwas1-snplist", dest="secondary_snp_gwas1_snplist",  required=TRUE,
+# parser$add_argument("--secondary-snp-col-gwas1-snplist", dest="secondary_snp_gwas1_snplist", required=TRUE,
 #                     help="Specify secondary SNP column name. The SNP should be separated by semicolon.")
 
 # GWAS2 SNP list
 parser$add_argument("--gwas2-snplist", dest = "file_gwas2_snplist", required=TRUE, 
                     help="Path to the SNP list. Must have Chr, Pos, and SNP information.")
-parser$add_argument("--delim-gwas2-snplist", dest="delim_gwas2_snplist",  required=TRUE,
+parser$add_argument("--delim-gwas2-snplist", dest="delim_gwas2_snplist", required=TRUE,
                     help="Specify delimiter for GWAS summary statistics. Options = [tab, whitespace, comma]")
-parser$add_argument("--snp-col-gwas2-snplist", dest="snp_gwas2_snplist",  required=TRUE,
+parser$add_argument("--snp-col-gwas2-snplist", dest="snp_gwas2_snplist", required=TRUE,
                     help="Specify SNP column name.")
-parser$add_argument("--secondary-snp-col-gwas2-snplist", dest="secondary_snp_gwas2_snplist",  required=TRUE,
+parser$add_argument("--secondary-snp-col-gwas2-snplist", dest="secondary_snp_gwas2_snplist", required=TRUE,
                     help="Specify secondary SNP column name. The SNP should be separated by semicolon.")
 
 # GWAS1 summary statistics
 parser$add_argument("--gwas1", dest = "file_gwas1", required=TRUE, 
                     help="Path to the 'other' GWAS summary statistics.")
-parser$add_argument("--delim-gwas1", dest="delim_gwas1",  required=TRUE,
+parser$add_argument("--delim-gwas1", dest="delim_gwas1", required=TRUE,
                     help="Specify delimiter for GWAS summary statistics. Options = [tab, whitespace, comma]")
-parser$add_argument("--snp-col-gwas1", dest="snp_gwas1",  required=TRUE,
+parser$add_argument("--snp-col-gwas1", dest="snp_gwas1", required=TRUE,
                     help="Specify SNP column name.")
-parser$add_argument("--chr-col-gwas1", dest="chr_gwas1",  required=TRUE,
+parser$add_argument("--chr-col-gwas1", dest="chr_gwas1", required=TRUE,
                     help="Specify chromosome column name.")
-parser$add_argument("--pos-col-gwas1", dest="pos_gwas1",  required=TRUE,
+parser$add_argument("--pos-col-gwas1", dest="pos_gwas1", required=TRUE,
                     help="Specify position column name.")
-parser$add_argument("--pval-col-gwas1", dest="p_gwas1",  required=TRUE,
+parser$add_argument("--pval-col-gwas1", dest="p_gwas1", required=TRUE,
                     help="Specify P-value column name.")
 
 # GWAS2 summary statistics
 parser$add_argument("--gwas2", dest = "file_gwas2", required=TRUE, 
                     help="Path to the 'other' GWAS summary statistics.")
-parser$add_argument("--delim-gwas2", dest="delim_gwas2",  required=TRUE,
+parser$add_argument("--delim-gwas2", dest="delim_gwas2", required=TRUE,
                     help="Specify delimiter for GWAS summary statistics. Options = [tab, whitespace, comma]")
-parser$add_argument("--snp-col-gwas2", dest="snp_gwas2",  required=TRUE,
+parser$add_argument("--snp-col-gwas2", dest="snp_gwas2", required=TRUE,
                     help="Specify SNP column name.")
-parser$add_argument("--chr-col-gwas2", dest="chr_gwas2",  required=TRUE,
+parser$add_argument("--chr-col-gwas2", dest="chr_gwas2", required=TRUE,
                     help="Specify chromosome column name.")
-parser$add_argument("--pos-col-gwas2", dest="pos_gwas2",  required=TRUE,
+parser$add_argument("--pos-col-gwas2", dest="pos_gwas2", required=TRUE,
                     help="Specify position column name.")
-parser$add_argument("--pval-col-gwas2", dest="p_gwas2",  required=TRUE,
+parser$add_argument("--pval-col-gwas2", dest="p_gwas2", required=TRUE,
                     help="Specify P-value column name.")
 
 ### Reference panel
-parser$add_argument("--reference-panel", dest="reference_panel",  required=FALSE, default = "1kG",
-                    help="Specify the reference panel to compute LD. Options = [1kg, UKB_random_10K]")
+parser$add_argument("--reference-panel", dest="reference_panel", required=FALSE, default = "1kG",
+                    help="Specify the reference panel to compute LD. Options = [1kG, UKB_random_10K]")
 
 ### Genome build
-parser$add_argument("--genome-build", dest="genome_build",  required=FALSE, default = "GRCh37",
+parser$add_argument("--genome-build", dest="genome_build", required=FALSE, default = "GRCh37",
                     help="Specify the genome build. Currently available = [GRCh37]")
 
 ### Independence threshold
-parser$add_argument("--r2-threshold", dest="r2_threshold",  required=TRUE, type = "numeric",
+parser$add_argument("--r2-threshold", dest="r2_threshold", required=TRUE, type = "numeric",
                     help="Specify R2 threshold to determine LD. If SNP from GWAS 1 has larger R2 than R2 threshold, then this SNP is considered as not independent from the signals from GWAS 2.")
-parser$add_argument("--window",  required=TRUE, type = "integer",
+parser$add_argument("--window", required=TRUE, type = "integer",
                     help="Specify the one-sided window to search for SNPs from GWAS 2. Unit = kb.")
-parser$add_argument("--pval-threshold", dest="p_threshold",  required=TRUE, type = "numeric",
+parser$add_argument("--pval-threshold", dest="p_threshold", required=TRUE, type = "numeric",
                     help="Specify the P-value threshold to select SNPs from GWAS 2. SNPs from GWAS 2 below this threshold will be considered as candidate SNPs to compute LD.")
 
 ### Parallel processing
@@ -103,11 +103,11 @@ parser$add_argument("--thread", required=FALSE, default = 1, type = "integer",
 
 
 ### Output arguments
-parser$add_argument("--dir-out", dest="dir_out",  required=FALSE, default = "NA",
+parser$add_argument("--dir-out", dest="dir_out", required=FALSE, default = "NA",
                     help="Specify the directory for the output. If NA, then it will be saved in the current working directory.")
-parser$add_argument("--prefix-out", dest="pref_out",  required=FALSE, default = "NA",
+parser$add_argument("--prefix-out", dest="pref_out", required=FALSE, default = "NA",
                     help="Specify the prefix of the output. If NA, then the prefix will be like 'snp_independence.<filename of gwas1 snplist>'.")
-parser$add_argument("--delim-out", dest="delim_out",  required=FALSE, default = "comma",
+parser$add_argument("--delim-out", dest="delim_out", required=FALSE, default = "comma",
                     help="Specify delimiter for the output file. Options = [tab, whitespace, comma]")
 
 
