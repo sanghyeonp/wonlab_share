@@ -24,6 +24,8 @@ parser$add_argument("--a1-col", dest="a1_col", type = "character", required = TR
                     help="")
 parser$add_argument("--a2-col", dest="a2_col", type = "character", required = TRUE,
                     help="")
+parser$add_argument("--a1-freq-col", dest="a1_freq_col", type = "character", required = TRUE,
+                    help="")
 parser$add_argument("--pval-col", dest="pval_col", type = "character", required = TRUE,
                     help="")
 parser$add_argument("--out-pref", dest="out_pref", type = "character", required = TRUE,
@@ -40,6 +42,7 @@ chr_col <- args$chr_col
 pos_col <- args$pos_col
 a1_col <- args$a1_col
 a2_col <- args$a2_col
+a1_freq_col <- args$a1_freq_col
 pval_col <- args$pval_col
 
 file_prefix <- args$out_pref
@@ -66,7 +69,7 @@ head(df.bim, 5)
 df <- df %>%
     # 필요한 column 만 남기고.
     dplyr::select(!!as.name(snp_col), !!as.name(chr_col), !!as.name(pos_col), 
-                  !!as.name(a1_col), !!as.name(a2_col), !!as.name(pval_col))
+                  !!as.name(a1_col), !!as.name(a2_col), !!as.name(a1_freq_col), !!as.name(pval_col))
 # A1, A2를 1000 Genome을 기반으로 reference, alternative 구분해주고.
 df1 <- merge(df, df.bim, by.x = snp_col, by.y = "SNP", all.x = T)
 
@@ -76,11 +79,12 @@ head(df1, 5)
 df1 <- df1 %>%
     # Reference, alternative allele 이 없는 경우, GWAS의 A1이 alternative, A2가 reference로
     dplyr::mutate(REF = ifelse(is.na(REF), !!as.name(a2_col), REF),
-                  ALT = ifelse(is.na(ALT), !!as.name(a1_col), ALT)) %>%
+                  ALT = ifelse(is.na(ALT), !!as.name(a1_col), ALT),
+                  ALT_freq = ifelse(ALT == !!as.name(a1_col), !!as.name(a1_freq_col), 1-!!as.name(a1_freq_col))) %>%
     # chr, pos로 sorting하고.
     dplyr::arrange(!!as.name(chr_col), !!as.name(pos_col)) %>%
     # 필요한 column만 남기고 (markername, chr, pos, ref, alt, pval).
-    dplyr::select(!!as.name(chr_col), !!as.name(pos_col), REF, ALT, !!as.name(pval_col)) %>%
+    dplyr::select(!!as.name(chr_col), !!as.name(pos_col), REF, ALT, ALT_freq, !!as.name(pval_col)) %>%
     # column이름 바꿔주고.
     dplyr::rename("Chr" = !!as.name(chr_col),
                 "Pos" = !!as.name(pos_col),
