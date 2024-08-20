@@ -21,6 +21,7 @@ issues/
 
 # Large files
 *.tsv
+*.rds
 
 ## Ignore software files
 # Location: /data1/sanghyeon/wonlab_contribute/combined/software
