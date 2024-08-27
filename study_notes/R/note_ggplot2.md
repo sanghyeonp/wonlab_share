@@ -3,6 +3,13 @@
 library(scales)
 show_col(c("#9C89B8", "#F0A6CA", "#EFC3E6", "#F0E6EF"))
 ```
+# Color-blind friendly color palette
+Source: https://github.com/JLSteenwyk/ggpubfigs
+```
+library(ggpubfigs)
+library(scales)
+scales::show_col(ggpubfigs::friendly_pal("muted_nine"))
+```
 
 # Center the plot by origin
 ```
