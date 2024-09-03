@@ -205,5 +205,5 @@ if (!remove_gene_placeholder){
 
 ### Save
 write.table(df_merged, 
-            paste0(dir_out, "/", name_out, ".", delim_extension_map[delim_out]),
+            paste0(dir_out, "/", name_out, delim_extension_map[delim_out]),
             sep=delim_map[delim_out], row.names = F, quote = T)
