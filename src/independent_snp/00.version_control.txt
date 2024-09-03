@@ -1,0 +1,7 @@
+
+### snp_independence.snp.v2.R
+- GWAS1에 대한 lead SNP list이 주어지면, lead SNP +- window내의 GWAS2에 대한 lead SNP과 clumped SNP의 R2를 비교.
+
+### snp_independence.snp.v3.R
+- GWAS1에 대한 lead SNP list이 주어지면, lead SNP +- window내의 GWAS2에 대한 lead SNP만 비교.
+- 다른 study에서 lead SNP만 supplementary table로 제시할 때 활용.
