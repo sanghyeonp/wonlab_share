@@ -1,7 +1,7 @@
 library(dplyr)
 
 query_date <- function(code_type, code, self_report_instance=0, simplify=TRUE){
-    # code_type: either "ICD10", "ICD9", "OPCS4", or "Self-report"
+    # code_type: either "ICD10", "ICD9", "OPCS4", "Self-report" or "Cause of death"
     # code: single or a vector character of ICD-10, ICD-9, or OPCS4 or Self-report codes
     # self_report_instance: either all, 0, 1, 2, 3
     # simplify: if TRUE, return f.eid and only the date of the earliest diagnosis,
@@ -15,8 +15,10 @@ query_date <- function(code_type, code, self_report_instance=0, simplify=TRUE){
         df.query <- query_date_OPCS4(code=code, simplify=simplify)
     } else if (code_type == "Self-report") {
         df.query <- query_date_Self_report(code=code, self_report_instance=self_report_instance, simplify=simplify)
+    } else if (code_type == "Cause of death"){
+        df.query <- query_date_cause_of_death(code=code, simplify=simplify)
     } else {
-        stop("Invalid code_type. Please choose from 'ICD10', 'ICD9', or 'OPCS4' or `Self-report`.")
+        stop("Invalid code_type. Please choose from 'ICD10', 'ICD9', 'OPCS4', 'Self-report' or 'Cause of death'.")
     }
     return (df.query)
 }
@@ -268,6 +270,59 @@ query_date_Self_report <- function(code, self_report_instance=0, simplify=TRUE){
 
     return (df.query)
 }
+
+
+###########################################
+# Query the death date for cause of death #
+###########################################
+query_date_cause_of_death <- function(code, simplify=TRUE){
+    # code: single or a vector character of ICD-10 codes
+    #   - Example) c("I21", "I24", "I25.2", "I46")
+    # simplify: if TRUE, return f.eid and only the date of the earliest diagnosis, 
+    #            otherwise return f.eid, index, quried ICD-10 code for death cause and quried death date
+
+    # Read the data
+    df.data <- readRDS("/data1/sanghyeon/wonlab_contribute/combined/src/UKBB_phenotype/UKBB.40000_40001.Cause_of_death_and_date_merged.rds")
+
+    # Make the search pattern of given ICD-10 codes
+    code <- as.character(code)
+    search_pattern <- paste(sapply(code, reformat_into_search_pattern, exact_match=FALSE, self_report=FALSE), collapse = "|")
+    exact_pattern <- paste(sapply(code, reformat_into_search_pattern, exact_match=TRUE, self_report=FALSE), collapse = "|")
+    cat(paste0("Specified ICD10: ", paste(code, collapse=", "), "\n", 
+            "Search pattern: ", search_pattern, "\n",
+            "Exact pattern: ", exact_pattern, "\n"))
+
+    # Query the ICD10 codes
+    df.query <- as.data.frame(df.data %>%
+        dplyr::rowwise() %>%
+        dplyr::mutate(
+            # Index of ICD10 code of interest
+            index = ifelse(grepl(search_pattern, Cause_of_death), 
+                            paste(which(grepl(exact_pattern, strsplit(Cause_of_death, ";")[[1]])), collapse=";"), NA), 
+            # Query ICD10 code of interest using the index (double check if correct code is queried)
+            code_query = ifelse(!is.na(index), 
+                        paste(strsplit(Cause_of_death, ";")[[1]][as.integer(strsplit(index, ";")[[1]])], collapse=";"), NA),
+            # Query date of diagnosis of interest using the index
+            date_query = ifelse(!is.na(index), 
+                        paste(strsplit(Cause_of_death_date, ";")[[1]][as.integer(strsplit(index, ";")[[1]])], collapse=";"), NA),
+            # Obtain the earliest date of diagnosis
+            date_earliest = ifelse(is.na(date_query),
+                            NA, ifelse(!grepl(";", date_query), 
+                                        date_query,
+                                        as.character(min(as.Date(strsplit(date_query, ";")[[1]], format="%Y-%m-%d"), na.rm=T))))) %>%
+        dplyr::select(f.eid, index, code_query, date_query, date_earliest) %>%
+        dplyr::mutate(f.eid = as.character(f.eid), index = as.character(index), 
+            code_query = as.character(code_query), date_query = as.character(date_query), 
+            date_earliest = as.character(date_earliest)) %>%
+        dplyr::rename(index.cause_of_death=index, code_query.cause_of_death=code_query, 
+                    date_query.cause_of_death=date_query, date_earliest.cause_of_death=date_earliest)
+    )
+
+    if (simplify) df.query <- df.query %>% dplyr::select(f.eid, date_earliest.cause_of_death)
+    
+    return(df.query)
+}
+
 
 #########################################################
 

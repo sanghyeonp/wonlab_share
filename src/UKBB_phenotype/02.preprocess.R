@@ -5,9 +5,9 @@
 library(dplyr)
 library(tidyr)
 
-######################################
-### Preprocess ICD10 code and date ###
-######################################
+# #####################################
+# ## Preprocess ICD10 code and date ###
+# #####################################
 # print("Preprocess ICD10 code and date")
 # start_time <- Sys.time()
 # df.icd10 <- readRDS("UKBB.41270.diagnoses_main_ICD10.rds")
