@@ -10,7 +10,7 @@ Subscript: "\<sub>X\</sub>"\
 Superscript: "\<sup>X\</sup>"\
 Italic: "\*X*"\
 Bold: "\**X**"\
-Break line: "\<br>"
+Break line: "\<br>"\
 Different text style (e.g., font, color): "\<span style = 'color:red;font-size:8pt'>X\</span>"
 
 
