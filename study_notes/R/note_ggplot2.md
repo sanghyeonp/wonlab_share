@@ -6,10 +6,10 @@ SOME GGPLOT OBJECT +
   theme(axis.title.y = ggtext::element_markdown(size=12, face="bold", family="Helvetica", color="black")
 ```
 
-Subscript: <sub>X</sub>
-Superscript: <sup>X</sup>
-Italic: *X*
-Bold: **X**
+Subscript: "\<sub>X</sub>"\
+Superscript: "\<sup>X</sup>"\
+Italic: "\*X*"\
+Bold: "\**X**"\
 
 
 # Visualize specified colors
