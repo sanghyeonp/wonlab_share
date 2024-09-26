@@ -1,3 +1,17 @@
+# Axis title with markdown
+```
+library(ggtext)
+SOME GGPLOT OBJECT +
+  labs(y = "-log<sub>10</sub>(*P*)") +
+  theme(axis.title.y = ggtext::element_markdown(size=12, face="bold", family="Helvetica", color="black")
+```
+
+Subscript: <sub>X</sub>
+Superscript: <sup>X</sup>
+Italic: *X*
+Bold: **X**
+
+
 # Visualize specified colors
 ```
 library(scales)
