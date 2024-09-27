@@ -1,3 +1,15 @@
+# How expand in scale_?_continuous() works?
+Reference: https://stackoverflow.com/questions/44170871/how-does-ggplot-scale-continuous-expand-argument-work
+
+```
+SOME GGPLOT OBJECT +
+scale_x_continuous(limits = c(1, 7), 
+                   expand = expand_scale(mult = c(0, 0.5), 
+                                         add = c(2, 0))
+# left most position will be 1 - (7-1) * 0.0  -2 = -1, 
+# right most position will be 7 + (7-1) * 0.5 = 10
+```
+
 # Axis title with markdown
 ```
 library(ggtext)
