@@ -16,6 +16,12 @@ library(ggtext)
 SOME GGPLOT OBJECT +
   labs(y = "-log<sub>10</sub>(*P*)") +
   theme(axis.title.y = ggtext::element_markdown(size=12, face="bold", family="Helvetica", color="black")
+
+### When saving the plot using ggsave(), save it with Cario-based
+# As PNG
+ggsave(..., device=png, type="cairo")
+# As PDF
+ggsave(..., device=cario_pdf)
 ```
 
 Subscript: "\<sub>X\</sub>"\
