@@ -21,7 +21,7 @@ SOME GGPLOT OBJECT +
 # As PNG
 ggsave(..., device=png, type="cairo")
 # As PDF
-ggsave(..., device=cario_pdf)
+ggsave(..., device=cairo_pdf)
 ```
 
 Subscript: "\<sub>X\</sub>"\
