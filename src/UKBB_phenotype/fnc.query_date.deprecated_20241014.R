@@ -25,29 +25,25 @@ query_date <- function(code_type, code, self_report_instance=0, simplify=TRUE){
 
 
 #########################################################
-# reformat_into_search_pattern <- function(code, exact_match, self_report=FALSE){
-#     # 
-#     # Example
-#     # Looking for all sub-classes of ICD10 L71: "L71*"
-#     # Looking for specific sub-class (ICD10 L48.6): either "L48.6" or "L486"
-#     if (exact_match){
-#         if (!self_report){
-#             # Check if looking for all subclassifications
-#             # all_subclass <- grepl("*", code)
-#             # Remove "." from the code
-#             code <- gsub("\\.", "", code)
-#             # Add "*" if looking for all subclassifications, otherwise add "$"
-#             if(!all_subclass) code <- paste0(code, "$")
-#             # Start with the given code itself
-#             code <- paste0("^", code)
-#         } else{
-#             code <- paste0("^", code, "$")
-#         }
-#     } else{ # For general search among collapsed codes
-#         code <- gsub("\\.", "", code)
-#     }
-#     return (code)
-# }
+reformat_into_search_pattern <- function(code, exact_match, self_report=FALSE){
+    if (exact_match){
+        if (!self_report){
+            # Check if looking for all subclassifications
+            all_subclass <- !grepl("\\.", code)
+            # Remove "." from the code
+            code <- gsub("\\.", "", code)
+            # Add "*" if looking for all subclassifications, otherwise add "$"
+            if(all_subclass) code <- paste0(code, "\\d*") else code <- paste0(code, "$")
+            # Start with the given code itself
+            code <- paste0("^", code)
+        } else{
+            code <- paste0("^", code, "$")
+        }
+    } else{ # For general search among collapsed codes
+        code <- gsub("\\.", "", code)
+    }
+    return (code)
+}
 
 ####################################################
 # Query the earilest date of diagnosis from ICD-10 #
@@ -63,19 +59,19 @@ query_date_ICD10 <- function(code, simplify=TRUE){
 
     # Make the search pattern of given ICD-10 codes
     code <- as.character(code)
-    search_pattern <- paste(paste0("^", gsub("\\.", "", code), collapse="|"))
-    # search_pattern <- paste(sapply(code, reformat_into_search_pattern, exact_match=FALSE, self_report=FALSE), collapse = "|")
-    # exact_pattern <- paste(sapply(code, reformat_into_search_pattern, exact_match=TRUE, self_report=FALSE), collapse = "|")
+    search_pattern <- paste(sapply(code, reformat_into_search_pattern, exact_match=FALSE, self_report=FALSE), collapse = "|")
+    exact_pattern <- paste(sapply(code, reformat_into_search_pattern, exact_match=TRUE, self_report=FALSE), collapse = "|")
     cat(paste0("Specified ICD10: ", paste(code, collapse=", "), "\n", 
-            "Search pattern: ", search_pattern, "\n"))
+            "Search pattern: ", search_pattern, "\n",
+            "Exact pattern: ", exact_pattern, "\n"))
 
     # Query the ICD10 codes
     df.query <- as.data.frame(df.data %>%
         dplyr::rowwise() %>%
         dplyr::mutate(
             # Index of ICD10 code of interest
-            index = ifelse(sum(grepl(search_pattern, strsplit(ICD10_main, ";")[[1]])) > 0, 
-                            paste(which(grepl(search_pattern, strsplit(ICD10_main, ";")[[1]])), collapse=";"), NA), 
+            index = ifelse(grepl(search_pattern, ICD10_main), 
+                            paste(which(grepl(exact_pattern, strsplit(ICD10_main, ";")[[1]])), collapse=";"), NA), 
             # Query ICD10 code of interest using the index (double check if correct code is queried)
             code_query = ifelse(!is.na(index), 
                         paste(strsplit(ICD10_main, ";")[[1]][as.integer(strsplit(index, ";")[[1]])], collapse=";"), NA),
@@ -115,19 +111,19 @@ query_date_ICD9 <- function(code, simplify=TRUE){
 
     # Make the search pattern of given ICD-9 codes
     code <- as.character(code)
-    search_pattern <- paste(paste0("^", gsub("\\.", "", code), collapse="|"))
-    # search_pattern <- paste(sapply(code, reformat_into_search_pattern, exact_match=FALSE, self_report=FALSE), collapse = "|")
-    # exact_pattern <- paste(sapply(code, reformat_into_search_pattern, exact_match=TRUE, self_report=FALSE), collapse = "|")
+    search_pattern <- paste(sapply(code, reformat_into_search_pattern, exact_match=FALSE, self_report=FALSE), collapse = "|")
+    exact_pattern <- paste(sapply(code, reformat_into_search_pattern, exact_match=TRUE, self_report=FALSE), collapse = "|")
     cat(paste0("Specified ICD9: ", paste(code, collapse=", "), "\n", 
-            "Search pattern: ", search_pattern, "\n"))
+            "Search pattern: ", search_pattern, "\n",
+            "Exact pattern: ", exact_pattern, "\n"))
 
     # Query the ICD9 codes
     df.query <- as.data.frame(df.data %>%
         dplyr::rowwise() %>%
         dplyr::mutate(
-            # Index of ICD9_main code of interest
-            index = ifelse(sum(grepl(search_pattern, strsplit(ICD9_main, ";")[[1]])) > 0, 
-                        paste(which(grepl(search_pattern, strsplit(ICD9_main, ";")[[1]])), collapse=";"), NA), 
+            # Index of ICD9 code of interest
+            index = ifelse(grepl(search_pattern, ICD9_main), 
+                            paste(which(grepl(exact_pattern, strsplit(ICD9_main, ";")[[1]])), collapse=";"), NA), 
             # Query ICD9 code of interest using the index (double check if correct code is queried)
             code_query = ifelse(!is.na(index), 
                         paste(strsplit(ICD9_main, ";")[[1]][as.integer(strsplit(index, ";")[[1]])], collapse=";"), NA),
@@ -167,19 +163,19 @@ query_date_OPCS4 <- function(code, simplify=TRUE){
 
     # Make the search pattern of given OPCS4 codes
     code <- as.character(code)
-    search_pattern <- paste(paste0("^", gsub("\\.", "", code), collapse="|"))
-    # search_pattern <- paste(sapply(code, reformat_into_search_pattern, exact_match=FALSE, self_report=FALSE), collapse = "|")
-    # exact_pattern <- paste(sapply(code, reformat_into_search_pattern, exact_match=TRUE, self_report=FALSE), collapse = "|")
+    search_pattern <- paste(sapply(code, reformat_into_search_pattern, exact_match=FALSE, self_report=FALSE), collapse = "|")
+    exact_pattern <- paste(sapply(code, reformat_into_search_pattern, exact_match=TRUE, self_report=FALSE), collapse = "|")
     cat(paste0("Specified OPCS4: ", paste(code, collapse=", "), "\n", 
-            "Search pattern: ", search_pattern, "\n"))
+            "Search pattern: ", search_pattern, "\n",
+            "Exact pattern: ", exact_pattern, "\n"))
 
     # Query the OPCS4 codes
     df.query <- as.data.frame(df.data %>%
         dplyr::rowwise() %>%
         dplyr::mutate(
             # Index of OPCS4 code of interest
-            index = ifelse(sum(grepl(search_pattern, strsplit(OPCS4, ";")[[1]])) > 0, 
-                        paste(which(grepl(search_pattern, strsplit(OPCS4, ";")[[1]])), collapse=";"), NA), 
+            index = ifelse(grepl(search_pattern, OPCS4), 
+                            paste(which(grepl(exact_pattern, strsplit(OPCS4, ";")[[1]])), collapse=";"), NA), 
             # Query OPCS4 code of interest using the index (double check if correct code is queried)
             code_query = ifelse(!is.na(index), 
                         paste(strsplit(OPCS4, ";")[[1]][as.integer(strsplit(index, ";")[[1]])], collapse=";"), NA),
@@ -223,11 +219,11 @@ query_date_Self_report <- function(code, self_report_instance=0, simplify=TRUE){
 
     # Make the search pattern of given self-report codes
     code <- as.character(code)
-    search_pattern <- paste(paste0("^", gsub("\\.", "", code), collapse="|"))
-    # search_pattern <- paste(sapply(code, reformat_into_search_pattern, exact_match=FALSE, self_report=FALSE), collapse = "|")
-    # exact_pattern <- paste(sapply(code, reformat_into_search_pattern, exact_match=TRUE, self_report=FALSE), collapse = "|")
-    cat(paste0("Specified self-report codes: ", paste(code, collapse=", "), "\n", 
-            "Search pattern: ", search_pattern, "\n"))
+    search_pattern <- paste(sapply(code, reformat_into_search_pattern, exact_match=FALSE, self_report=FALSE), collapse = "|")
+    exact_pattern <- paste(sapply(code, reformat_into_search_pattern, exact_match=TRUE, self_report=FALSE), collapse = "|")
+    cat(paste0("Specified self-report: ", paste(code, collapse=", "), "\n", 
+            "Search pattern: ", search_pattern, "\n",
+            "Exact pattern: ", exact_pattern, "\n"))
     
     if (self_report_instance == "all"){
         instance_to_retain <- c("f.eid", names(df.data)[grepl("all", names(df.data))])
@@ -241,14 +237,14 @@ query_date_Self_report <- function(code, self_report_instance=0, simplify=TRUE){
 
     code_col <- colnames(df.data)[2]; date_col <- colnames(df.data)[4]
 
-    # Query the Self-report codes
+    # Query the ICD9 codes
     df.query <- as.data.frame(df.data %>%
                 dplyr::rowwise() %>%
                 dplyr::mutate(
-                    # Index of self-report code of interest
-                    index = ifelse(sum(grepl(search_pattern, !!as.name(code_col))) > 0, 
-                                    paste(which(grepl(search_pattern, strsplit(!!as.name(code_col), ";")[[1]])), collapse=";"), NA), 
-                    # Query self-report code of interest using the index (double check if correct code is queried)
+                    # Index of ICD9 code of interest
+                    index = ifelse(grepl(search_pattern, !!as.name(code_col)), 
+                                    paste(which(grepl(exact_pattern, strsplit(!!as.name(code_col), ";")[[1]])), collapse=";"), NA), 
+                    # Query ICD9 code of interest using the index (double check if correct code is queried)
                     code_query = ifelse(!is.na(index), 
                                         paste(strsplit(!!as.name(code_col), ";")[[1]][as.integer(strsplit(index, ";")[[1]])], collapse=";"), NA),
                     # Query date of diagnosis of interest using the index
@@ -290,19 +286,19 @@ query_date_cause_of_death <- function(code, simplify=TRUE){
 
     # Make the search pattern of given ICD-10 codes
     code <- as.character(code)
-    search_pattern <- paste(paste0("^", gsub("\\.", "", code), collapse="|"))
-    # search_pattern <- paste(sapply(code, reformat_into_search_pattern, exact_match=FALSE, self_report=FALSE), collapse = "|")
-    # exact_pattern <- paste(sapply(code, reformat_into_search_pattern, exact_match=TRUE, self_report=FALSE), collapse = "|")
+    search_pattern <- paste(sapply(code, reformat_into_search_pattern, exact_match=FALSE, self_report=FALSE), collapse = "|")
+    exact_pattern <- paste(sapply(code, reformat_into_search_pattern, exact_match=TRUE, self_report=FALSE), collapse = "|")
     cat(paste0("Specified ICD10: ", paste(code, collapse=", "), "\n", 
-            "Search pattern: ", search_pattern, "\n"))
+            "Search pattern: ", search_pattern, "\n",
+            "Exact pattern: ", exact_pattern, "\n"))
 
     # Query the ICD10 codes
     df.query <- as.data.frame(df.data %>%
         dplyr::rowwise() %>%
         dplyr::mutate(
             # Index of ICD10 code of interest
-            index = ifelse(sum(grepl(search_pattern, strsplit(Cause_of_death, ";")[[1]])) > 0, 
-                            paste(which(grepl(search_pattern, strsplit(Cause_of_death, ";")[[1]])), collapse=";"), NA), 
+            index = ifelse(grepl(search_pattern, Cause_of_death), 
+                            paste(which(grepl(exact_pattern, strsplit(Cause_of_death, ";")[[1]])), collapse=";"), NA), 
             # Query ICD10 code of interest using the index (double check if correct code is queried)
             code_query = ifelse(!is.na(index), 
                         paste(strsplit(Cause_of_death, ";")[[1]][as.integer(strsplit(index, ";")[[1]])], collapse=";"), NA),
