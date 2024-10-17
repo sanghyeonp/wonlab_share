@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J 02.preprocess
+#SBATCH -J 02_2.preprocess.cause_of_death
 #SBATCH -p cpu
 #SBATCH -o ./%x_%j.out
 #SBATCH --nodes=1
@@ -13,4 +13,4 @@ module purge
 CONDA_PATH=/data1/software/anaconda3 
 source $CONDA_PATH/bin/activate /home/sanghyeon/.conda/envs/R4_HPC 
 
-/home/sanghyeon/.conda/envs/R4_HPC/bin/Rscript 02.preprocess.R
+/home/sanghyeon/.conda/envs/R4_HPC/bin/Rscript 02_2.preprocess.cause_of_death.R

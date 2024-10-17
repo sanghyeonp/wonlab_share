@@ -72,3 +72,4 @@ dplyr::rowwise() %>%
     dplyr::select(f.eid, index, code_query, date_query, date_earliest)
 
 ### 
+
