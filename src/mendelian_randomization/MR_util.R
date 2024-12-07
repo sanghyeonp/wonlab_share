@@ -1,17 +1,30 @@
 
-compute_f_stat <- function(b, se){
-    b <- as.numeric(b); se <- as.numeric(se)
-    return (b^2 / se^2)
-}
-
-compute_R2 <- function(f, k, n){
-    # f: f statistics (use compute_f_stat())
-    # k: number of IVs
-    # n: total sample size of exposure
-    f <- as.numeric(f); k <- as.numeric(k); n <- as.numeric(n)
-    r2 <- (f*k)/(n-1-k+(f*k))
+compute_R2 <- function(b, maf){
+    ## Reference: Burgess, S., Dudbridge, F. & Thompson, S.G. Combining information on multiple instrumental variables in Mendelian randomization: comparison of allele score and summarized data methods. Statistics in Medicine 35, 1880-1906 (2016).
+    # b: marginal effect
+    # maf: minor allele frequency
+    b <- as.numeric(b); maf <- as.numeric(maf)
+    if(maf > 0.5){maf <- 1-maf}
+    r2 <- 2*b^2 * maf * (1-maf)
     return(r2)
 }
+
+compute_F <- function(r2, n, k){
+    ## Reference: Burgess, S., Dudbridge, F. & Thompson, S.G. Combining information on multiple instrumental variables in Mendelian randomization: comparison of allele score and summarized data methods. Statistics in Medicine 35, 1880-1906 (2016).
+    # r2: Proportion of variance of exposure explained by the SNP
+    # n: Sample size of exposure
+    # k: Number of IVs
+    r2 <- as.numeric(r2); n <- as.numeric(n); k <- as.numeric(k)
+    F <- ((n-k-1)/k) * (r2/(1-r2))
+    return(F)
+}
+
+# compute_f_stat <- function(b, se){
+#     b <- as.numeric(b); se <- as.numeric(se)
+#     return (b^2 / se^2)
+# }
+
+
 
 ########################################################################################
 ### Power calculation
