@@ -1,3 +1,8 @@
+### Updates
+# 2025.04.12:
+#    - '1065;1223;;;;;;;;;;;1143;;;;;;;;;;;' 에서 ^1223을 찾을 수는 없음.
+
+######
 library(dplyr)
 
 query_date <- function(code_type, code, instance=0, simplify=TRUE){
@@ -17,13 +22,15 @@ query_date <- function(code_type, code, instance=0, simplify=TRUE){
         df.query <- query_date.self_report_verbal(code=code, instance=instance, simplify=simplify)
     } else if (code_type == "Cause of death"){
         df.query <- query_date.cause_of_death(code=code, simplify=simplify)
+    } else if (code_type == "Secondary cause of death"){
+        df.query <- query_date.secondary_cause_of_death(code=code, simplify=simplify)
     } else if (code_type == "Surgical operation"){
         df.query <- query_date.surgical_operation(code=code, instance=instance, simplify=simplify)
     } else if (code_type == "Touchscreen heart problem"){
         df.query <- query_date.heart_problem(code=code, instance=instance, simplify=simplify)
     }
     else {
-        stop("Invalid code_type. Please choose from 'ICD10', 'ICD9', 'OPCS4', 'Self-report', 'Cause of death', 'Surgical operation' or 'Touchscreen heart problem'.")
+        stop("Invalid code_type. Please choose from 'ICD10', 'ICD9', 'OPCS4', 'Self-report', 'Cause of death', 'Secondary cause of death', 'Surgical operation' or 'Touchscreen heart problem'.")
     }
     return (df.query)
 }
@@ -68,7 +75,9 @@ query_date.ICD10 <- function(code, simplify=TRUE){
 
     # Make the search pattern of given ICD-10 codes
     code <- as.character(code)
-    search_pattern <- paste(paste0("^", gsub("\\.", "", code), collapse="|"))
+    search_pattern <- paste(sapply(code, function(x){ifelse(grepl("\\.", x), paste0("(^|;)", gsub("\\.", "", x), "(;|$)"),
+                                                        paste0("(^|;)", gsub("\\.", "", x), "[^;]*(;|$)"))}),
+                        collapse="|")
     # search_pattern <- paste(sapply(code, reformat_into_search_pattern, exact_match=FALSE, self_report=FALSE), collapse = "|")
     # exact_pattern <- paste(sapply(code, reformat_into_search_pattern, exact_match=TRUE, self_report=FALSE), collapse = "|")
     cat(paste0("Specified ICD10: ", paste(code, collapse=", "), "\n", 
@@ -79,7 +88,7 @@ query_date.ICD10 <- function(code, simplify=TRUE){
         dplyr::rowwise() %>%
         dplyr::mutate(
             # Index of ICD10 code of interest
-            index = ifelse(sum(grepl(search_pattern, strsplit(ICD10_main, ";")[[1]])) > 0, 
+            index = ifelse(grepl(search_pattern, ICD10_main),
                             paste(which(grepl(search_pattern, strsplit(ICD10_main, ";")[[1]])), collapse=";"), NA), 
             # Query ICD10 code of interest using the index (double check if correct code is queried)
             code_query = ifelse(!is.na(index), 
@@ -120,7 +129,9 @@ query_date.ICD9 <- function(code, simplify=TRUE){
 
     # Make the search pattern of given ICD-9 codes
     code <- as.character(code)
-    search_pattern <- paste(paste0("^", gsub("\\.", "", code), collapse="|"))
+    search_pattern <- paste(sapply(code, function(x){ifelse(grepl("\\.", x), paste0("(^|;)", gsub("\\.", "", x), "(;|$)"),
+                                                        paste0("(^|;)", gsub("\\.", "", x), "[^;]*(;|$)"))}),
+                        collapse="|")
     # search_pattern <- paste(sapply(code, reformat_into_search_pattern, exact_match=FALSE, self_report=FALSE), collapse = "|")
     # exact_pattern <- paste(sapply(code, reformat_into_search_pattern, exact_match=TRUE, self_report=FALSE), collapse = "|")
     cat(paste0("Specified ICD9: ", paste(code, collapse=", "), "\n", 
@@ -131,7 +142,7 @@ query_date.ICD9 <- function(code, simplify=TRUE){
         dplyr::rowwise() %>%
         dplyr::mutate(
             # Index of ICD9_main code of interest
-            index = ifelse(sum(grepl(search_pattern, strsplit(ICD9_main, ";")[[1]])) > 0, 
+            index = ifelse(grepl(search_pattern, ICD9_main),
                         paste(which(grepl(search_pattern, strsplit(ICD9_main, ";")[[1]])), collapse=";"), NA), 
             # Query ICD9 code of interest using the index (double check if correct code is queried)
             code_query = ifelse(!is.na(index), 
@@ -172,7 +183,9 @@ query_date.OPCS4 <- function(code, simplify=TRUE){
 
     # Make the search pattern of given OPCS4 codes
     code <- as.character(code)
-    search_pattern <- paste(paste0("^", gsub("\\.", "", code), collapse="|"))
+    search_pattern <- paste(sapply(code, function(x){ifelse(grepl("\\.", x), paste0("(^|;)", gsub("\\.", "", x), "(;|$)"),
+                                                        paste0("(^|;)", gsub("\\.", "", x), "[^;]*(;|$)"))}),
+                        collapse="|")
     # search_pattern <- paste(sapply(code, reformat_into_search_pattern, exact_match=FALSE, self_report=FALSE), collapse = "|")
     # exact_pattern <- paste(sapply(code, reformat_into_search_pattern, exact_match=TRUE, self_report=FALSE), collapse = "|")
     cat(paste0("Specified OPCS4: ", paste(code, collapse=", "), "\n", 
@@ -183,7 +196,7 @@ query_date.OPCS4 <- function(code, simplify=TRUE){
         dplyr::rowwise() %>%
         dplyr::mutate(
             # Index of OPCS4 code of interest
-            index = ifelse(sum(grepl(search_pattern, strsplit(OPCS4, ";")[[1]])) > 0, 
+            index = ifelse(grepl(search_pattern, OPCS4),
                         paste(which(grepl(search_pattern, strsplit(OPCS4, ";")[[1]])), collapse=";"), NA), 
             # Query OPCS4 code of interest using the index (double check if correct code is queried)
             code_query = ifelse(!is.na(index), 
@@ -228,7 +241,8 @@ query_date.self_report_verbal <- function(code, instance=0, simplify=TRUE){
 
     # Make the search pattern of given self-report codes
     code <- as.character(code)
-    search_pattern <- paste(paste0("^", gsub("\\.", "", code), collapse="|"))
+    code <- gsub("\\.", "", code)
+    search_pattern <- paste(paste0("(^|;)", code, "(;|$)"), collapse="|")
     # search_pattern <- paste(sapply(code, reformat_into_search_pattern, exact_match=FALSE, self_report=FALSE), collapse = "|")
     # exact_pattern <- paste(sapply(code, reformat_into_search_pattern, exact_match=TRUE, self_report=FALSE), collapse = "|")
     cat(paste0("Specified self-report codes: ", paste(code, collapse=", "), "\n", 
@@ -251,7 +265,7 @@ query_date.self_report_verbal <- function(code, instance=0, simplify=TRUE){
                 dplyr::rowwise() %>%
                 dplyr::mutate(
                     # Index of self-report code of interest
-                    index = ifelse(sum(grepl(search_pattern, !!as.name(code_col))) > 0, 
+                    index = ifelse(grepl(search_pattern, !!as.name(code_col)), 
                                     paste(which(grepl(search_pattern, strsplit(!!as.name(code_col), ";")[[1]])), collapse=";"), NA), 
                     # Query self-report code of interest using the index (double check if correct code is queried)
                     code_query = ifelse(!is.na(index), 
@@ -275,6 +289,8 @@ query_date.self_report_verbal <- function(code, instance=0, simplify=TRUE){
                             !!as.name(paste0("date_earliest.", suffix)) := date_earliest)
                 )
 
+    
+
     if (simplify) df.query <- df.query %>% dplyr::select(f.eid, !!as.name(paste0("date_earliest.", suffix)))
 
     cat("\n::Please note to check for missing date coded as 3000-12-31\n")
@@ -297,7 +313,9 @@ query_date.cause_of_death <- function(code, simplify=TRUE){
 
     # Make the search pattern of given ICD-10 codes
     code <- as.character(code)
-    search_pattern <- paste(paste0("^", gsub("\\.", "", code), collapse="|"))
+    search_pattern <- paste(sapply(code, function(x){ifelse(grepl("\\.", x), paste0("(^|;)", gsub("\\.", "", x), "(;|$)"),
+                                                        paste0("(^|;)", gsub("\\.", "", x), "[^;]*(;|$)"))}),
+                        collapse="|")
     # search_pattern <- paste(sapply(code, reformat_into_search_pattern, exact_match=FALSE, self_report=FALSE), collapse = "|")
     # exact_pattern <- paste(sapply(code, reformat_into_search_pattern, exact_match=TRUE, self_report=FALSE), collapse = "|")
     cat(paste0("Specified ICD10: ", paste(code, collapse=", "), "\n", 
@@ -308,7 +326,7 @@ query_date.cause_of_death <- function(code, simplify=TRUE){
         dplyr::rowwise() %>%
         dplyr::mutate(
             # Index of ICD10 code of interest
-            index = ifelse(sum(grepl(search_pattern, strsplit(Cause_of_death, ";")[[1]])) > 0, 
+            index = ifelse(grepl(search_pattern, Cause_of_death),
                             paste(which(grepl(search_pattern, strsplit(Cause_of_death, ";")[[1]])), collapse=";"), NA), 
             # Query ICD10 code of interest using the index (double check if correct code is queried)
             code_query = ifelse(!is.na(index), 
@@ -334,6 +352,61 @@ query_date.cause_of_death <- function(code, simplify=TRUE){
     return(df.query)
 }
 
+###########################################
+# Query the death date for secondary cause of death #
+###########################################
+query_date.secondary_cause_of_death <- function(code, simplify=TRUE){
+    # code: single or a vector character of ICD-10 codes
+    #   - Example) c("I21", "I24", "I25.2", "I46")
+    # simplify: if TRUE, return f.eid and only the date of the earliest diagnosis, 
+    #            otherwise return f.eid, index, quried ICD-10 code for death cause and quried death date
+
+    # Read the data
+    df.data <- readRDS("/data1/sanghyeon/wonlab_contribute/combined/src/UKBB_phenotype/UKBB.40002_40001.Secondary_cause_of_death_and_date_merged.rds")
+
+    # Make the search pattern of given ICD-10 codes
+    code <- as.character(code)
+    search_pattern <- paste(sapply(code, function(x){ifelse(grepl("\\.", x), paste0("(^|;|,)", gsub("\\.", "", x), "(,|;|$)"),
+                                                            paste0("(^|;|,)", gsub("\\.", "", x), "[^;]*(,|;|$)"))}),
+                            collapse="|")
+    # search_pattern <- paste(sapply(code, reformat_into_search_pattern, exact_match=FALSE, self_report=FALSE), collapse = "|")
+    # exact_pattern <- paste(sapply(code, reformat_into_search_pattern, exact_match=TRUE, self_report=FALSE), collapse = "|")
+    cat(paste0("Specified ICD10: ", paste(code, collapse=", "), "\n", 
+            "Search pattern: ", search_pattern, "\n"))
+
+    # Query the ICD10 codes in first instance
+    df.query <- df.data
+    df.query$has_code <- sapply(df.query$Secondary_cause_of_death, function(x){grepl(search_pattern, x)})
+    df.query$index_inst <- apply(df.query, 1, function(x){ifelse(x[["has_code"]], 
+                                                        paste(which(grepl(search_pattern, strsplit(x[["Secondary_cause_of_death"]], ";")[[1]])), collapse=";"), 
+                                                        NA)})
+    df.query$index_code <- apply(df.query, 1, function(x){ifelse(x[["has_code"]], 
+                                                            paste(which(grepl(search_pattern, strsplit(strsplit(x[["Secondary_cause_of_death"]], ";")[[1]][as.integer(x[["index_inst"]])], ",")[[1]])), collapse=","), 
+                                                            NA)})
+    df.query$code_query <- apply(df.query, 1 ,function(x){ifelse(x[["has_code"]],
+                                                                paste(strsplit(x[["Secondary_cause_of_death"]], ";")[[1]][as.integer(strsplit(x[["index_inst"]], ";")[[1]])], collapse=";"),
+                                                                NA)})
+    df.query$date_query <- apply(df.query, 1 ,function(x){ifelse(x[["has_code"]],
+                                                                paste(strsplit(x[["Secondary_cause_of_death_date"]], ";")[[1]][as.integer(strsplit(x[["index_inst"]], ";")[[1]])], collapse=";"),
+                                                                NA)})
+    df.query$date_earliest <- apply(df.query, 1, function(x){ifelse(x[["has_code"]], 
+                                                                            as.character(min(as.Date(strsplit(x[["date_query"]], ";")[[1]], format="%Y-%m-%d"), na.rm=T)),
+                                                                            NA)})
+    df.query <- df.query %>%
+        dplyr::select(f.eid, index_inst, index_code, code_query, date_query, date_earliest) %>%
+        dplyr::mutate(f.eid = as.character(f.eid), index_inst = as.character(index_inst), index_code = as.character(index_code),
+                    code_query = as.character(code_query), date_query = as.character(date_query), 
+                    date_earliest = as.character(date_earliest)) %>%
+        dplyr::rename(index_inst.secondary_cause_of_death=index_inst, index_code.secondary_cause_of_death=index_code,
+                    code_query.secondary_cause_of_death=code_query, date_query.secondary_cause_of_death=date_query, date_earliest.secondary_cause_of_death=date_earliest)
+
+    # Query the ICD10 codes in thrid instance
+    if (simplify) df.query <- df.query %>% dplyr::select(f.eid, date_earliest.secondary_cause_of_death)
+    
+    return(df.query)
+}
+
+
 #########################################################
 # Query the earilest date of surgical operation #
 #########################################################
@@ -352,7 +425,8 @@ query_date.surgical_operation <- function(code, instance=0, simplify=TRUE){
 
     # Make the search pattern of given self-report codes
     code <- as.character(code)
-    search_pattern <- paste(paste0("^", gsub("\\.", "", code), collapse="|"))
+    code <- gsub("\\.", "", code)
+    search_pattern <- paste(paste0("(^|;)", code, "(;|$)"), collapse="|")
     # search_pattern <- paste(sapply(code, reformat_into_search_pattern, exact_match=FALSE, self_report=FALSE), collapse = "|")
     # exact_pattern <- paste(sapply(code, reformat_into_search_pattern, exact_match=TRUE, self_report=FALSE), collapse = "|")
     cat(paste0("Specified surgical operation codes: ", paste(code, collapse=", "), "\n", 
@@ -406,7 +480,8 @@ query_date.heart_problem <- function(code, instance=0, simplify=TRUE){
 
     # Make the search pattern of given self-report codes
     code <- as.character(code)
-    search_pattern <- paste(paste0("^", gsub("\\.", "", code), collapse="|"))
+    code <- gsub("\\.", "", code)
+    search_pattern <- paste(paste0("(^|;)", code, "(;|$)"), collapse="|")
     # search_pattern <- paste(sapply(code, reformat_into_search_pattern, exact_match=FALSE, self_report=FALSE), collapse = "|")
     # exact_pattern <- paste(sapply(code, reformat_into_search_pattern, exact_match=TRUE, self_report=FALSE), collapse = "|")
     cat(paste0("Specified heart problem codes: ", paste(code, collapse=", "), "\n", 
@@ -430,7 +505,7 @@ query_date.heart_problem <- function(code, instance=0, simplify=TRUE){
                 dplyr::rowwise() %>%
                 dplyr::mutate(
                     # Index of self-report code of interest
-                    index = ifelse(sum(grepl(search_pattern, !!as.name(code_col))) > 0, 
+                    index = ifelse(grepl(search_pattern, !!as.name(code_col)), 
                                     paste(which(grepl(search_pattern, strsplit(!!as.name(code_col), ";")[[1]])), collapse=";"), NA), 
                     # Query self-report code of interest using the index (double check if correct code is queried)
                     code_query = ifelse(!is.na(index), 
@@ -462,63 +537,147 @@ query_date.heart_problem <- function(code, instance=0, simplify=TRUE){
 }
 
 
+#########################################################
+parse_pheno <- function(code_list, pheno_col, ...){
+    # code_list: a list of code names queried separated by semicolon. 
+    #       For example, if ICD10, ICD9, Self-report were used, then x(code_list="ICD10;ICD9;Self-report")
+    #       Possible options: "ICD10", "ICD9", "Self-report", "Cause of death", 
+    # pheno_col: Name of the phenotype of interest
+    #       Output dataframe will have <pheno_col> and <pheno_col>.Date
+    # dataframe_list: Specify dataframe object in the same order as code listed in code_list.
+    #       For example (continued from above example), x(code_list="ICD10;ICD9;Self-report", df.icd10, df.icd9, df.self)
+    # Overall example: phenotype of interest is T2D and queried ICD10 and Self-report where the queried dataframe is held by df.icd10 and df.sr, respectively
+    #       parse_pheno("ICD10;ICD9", "T2D", df.icd10, df.sr)
+    
+    df_list <- list(...); code_list <- strsplit(code_list, ";")[[1]]
 
+    code_rename <- c("ICD10"="ICD10", "ICD9"="ICD9",
+                     "Self-report"="selfreport", 
+                     "Cause of death"="cause_of_death",
+                     "Secondary cause of death"="secondary_cause_of_death")
+    
+    df.merged <- data.frame(); selfreport_col_suffix <- "NA"
+    for (i in 1:length(code_list)){
+        df.tmp <- df_list[[i]]; code <- as.vector(code_rename[code_list[i]])
+        df.tmp <- df.tmp %>%
+            dplyr::select(matches("^f\\.eid$|^code_query\\.|^date_earliest\\."))
+        if (code == "ICD10"){
+            df.tmp <- df.tmp %>% mutate(pheno.ICD10=ifelse(is.na(code_query.ICD10) & is.na(date_earliest.ICD10), 0, 
+                                                           ifelse(!is.na(code_query.ICD10) & is.na(date_earliest.ICD10), NA, 1)))
+        } else if (code == "ICD9"){
+            df.tmp <- df.tmp %>% mutate(pheno.ICD9=ifelse(is.na(code_query.ICD9) & is.na(date_earliest.ICD9), 0, 
+                                                          ifelse(!is.na(code_query.ICD9) & is.na(date_earliest.ICD9), NA, 1)))
+        } else if (code == "selfreport"){
+            selfreport_col_suffix <- strsplit(colnames(df.tmp)[2], "\\.")[[1]][2]
+            col_code <- colnames(df.tmp)[2]; col_date <- colnames(df.tmp)[3]
+            df.tmp <- df.tmp %>% mutate(!!as.name(paste0("pheno.", selfreport_col_suffix)):=ifelse(is.na(!!as.name(col_code)) & is.na(!!as.name(col_date)), 0, 
+                                                                                                   ifelse(!is.na(!!as.name(col_code)) & (is.na(!!as.name(col_date)) | !!as.name(col_date) == "3000-12-31"), NA, 1)))
+        } else if (code == "cause_of_death"){
+            df.tmp <- df.tmp %>% mutate(pheno.cause_of_death=ifelse(is.na(code_query.cause_of_death) & is.na(date_earliest.cause_of_death), 0, 
+                                                                    ifelse(!is.na(code_query.cause_of_death) & is.na(date_earliest.cause_of_death), NA, 1)))
+        } else if (code == "secondary_cause_of_death"){
+            df.tmp <- df.tmp %>% mutate(pheno.secondary_cause_of_death=ifelse(is.na(code_query.secondary_cause_of_death) & is.na(date_earliest.secondary_cause_of_death), 0, 
+                                                                    ifelse(!is.na(code_query.secondary_cause_of_death) & is.na(date_earliest.secondary_cause_of_death), NA, 1)))
+        } else{
+            stop("Unknown code type")
+        }
+        if (i == 1){
+            df.merged <- df.tmp
+        } else{
+            df.merged <- df.merged %>% left_join(df.tmp, by="f.eid")
+        }
+    }
+    
+    df.pheno <- df.merged %>%
+        dplyr::select(f.eid, matches("^pheno\\.")) %>%
+        mutate(pheno.final = ifelse(rowSums(select(., -1), na.rm = TRUE) > 0, 1, 0)) %>%
+        dplyr::select(f.eid, pheno.final)
+    
+    df.merged <- df.merged %>%
+        left_join(df.pheno, by="f.eid")
+    
+    if ("Self-report" %in% code_list){
+        df.merged <- df.merged %>%
+            rename(pheno.tmp = pheno.final) %>%
+            mutate(pheno.final = ifelse(pheno.tmp == 0 & is.na(!!as.name(paste0("pheno.", selfreport_col_suffix))), NA, pheno.tmp)) %>%
+            dplyr::select(-pheno.tmp)
+    }
+    
+    df.pheno_date <- df.merged %>% 
+        dplyr::select(f.eid, pheno.final, matches("^date_earliest\\.")) %>%
+        mutate(across(3:last_col(), ~as.Date(.x, format = "%Y-%m-%d"))) %>%
+        mutate(pheno.date = do.call(pmin, c(select(., 3:last_col()), na.rm = TRUE)),
+               pheno.date = as.character(pheno.date),
+               pheno.date = ifelse(is.na(pheno.final), NA, pheno.date)) %>%
+        dplyr::select(f.eid, pheno.date)
+    
+    df.merged <- df.merged %>%
+        left_join(df.pheno_date, by="f.eid")
+    
+    if (pheno_col != "NA"){
+        df.merged <- df.merged %>%
+            rename(!!as.name(pheno_col):=pheno.final,
+                   !!as.name(paste0(pheno_col, ".Date")):=pheno.date)
+    }
+    
+    return(df.merged)
+}
 
 
 #########################################################
 
-query_date_multiple_source <- function(queried_code_type, ICD10=NA, ICD9=NA, 
-                                        OPCS4=NA, Self_report=NA, simplify=FALSE){
-    # queried_code_type: a string or vector of strings of ICD10, ICD9, OPCS4, or Self-report
-    # Note: date with 3000-12-12 is considered as having disease but the exact date is unknown (according to coding 37 from field 87) from Self-report
-    #       - These should be considered as case. But if date is required, it should be considered as missing. 
+# query_date_multiple_source <- function(queried_code_type, ICD10=NA, ICD9=NA, 
+#                                         OPCS4=NA, Self_report=NA, simplify=FALSE){
+#     # queried_code_type: a string or vector of strings of ICD10, ICD9, OPCS4, or Self-report
+#     # Note: date with 3000-12-12 is considered as having disease but the exact date is unknown (according to coding 37 from field 87) from Self-report
+#     #       - These should be considered as case. But if date is required, it should be considered as missing. 
 
-    n_quried <- length(queried_code_type)
-    for (idx in 1:n_quried){
-        if (queried_code_type[idx] == "ICD10"){
-            date_earliest_col <- colnames(ICD10)[grep("date_earliest*", colnames(ICD10))]
-            ICD10[[date_earliest_col]] <- as.Date(ICD10[[date_earliest_col]], format="%Y-%m-%d")
-        } else if (queried_code_type[idx] =="ICD9"){
-            date_earliest_col <- colnames(ICD9)[grep("date_earliest*", colnames(ICD9))]
-            ICD9[[date_earliest_col]] <- as.Date(ICD9[[date_earliest_col]], format="%Y-%m-%d")   
-        } else if (queried_code_type[idx] == "OPCS4"){
-            date_earliest_col <- colnames(OPCS4)[grep("date_earliest*", colnames(OPCS4))]
-            OPCS4[[date_earliest_col]] <- as.Date(OPCS4[[date_earliest_col]], format="%Y-%m-%d")   
-        } else if (queried_code_type[idx] == "Self-report"){
-            date_earliest_col <- colnames(Self_report)[grep("date_earliest*", colnames(Self_report))]
-            Self_report[[date_earliest_col]] <- as.Date(Self_report[[date_earliest_col]], format="%Y-%m-%d")        
-        }
-        if (idx == 1){
-            if (queried_code_type[idx] == "ICD10"){
-                df <- ICD10
-            } else if (queried_code_type[idx] =="ICD9"){
-                df <- ICD9
-            } else if (queried_code_type[idx] == "OPCS4"){
-                df <- OPCS4
-            } else if (queried_code_type[idx] == "Self-report"){
-                df <- Self_report
-            }
-        } else{
-            if (queried_code_type[idx] == "ICD10"){
-                df <- merge(df, ICD10, by="f.eid", all=T)
-            } else if (queried_code_type[idx] =="ICD9"){
-                df <- merge(df, ICD9, by="f.eid", all=T)
-            } else if (queried_code_type[idx] == "OPCS4"){
-                df <- merge(df, OPCS4, by="f.eid", all=T)
-            } else if (queried_code_type[idx] == "Self-report"){
-                df <- merge(df, Self_report, by="f.eid", all=T)
-            }
-        }
-    }
+#     n_quried <- length(queried_code_type)
+#     for (idx in 1:n_quried){
+#         if (queried_code_type[idx] == "ICD10"){
+#             date_earliest_col <- colnames(ICD10)[grep("date_earliest*", colnames(ICD10))]
+#             ICD10[[date_earliest_col]] <- as.Date(ICD10[[date_earliest_col]], format="%Y-%m-%d")
+#         } else if (queried_code_type[idx] =="ICD9"){
+#             date_earliest_col <- colnames(ICD9)[grep("date_earliest*", colnames(ICD9))]
+#             ICD9[[date_earliest_col]] <- as.Date(ICD9[[date_earliest_col]], format="%Y-%m-%d")   
+#         } else if (queried_code_type[idx] == "OPCS4"){
+#             date_earliest_col <- colnames(OPCS4)[grep("date_earliest*", colnames(OPCS4))]
+#             OPCS4[[date_earliest_col]] <- as.Date(OPCS4[[date_earliest_col]], format="%Y-%m-%d")   
+#         } else if (queried_code_type[idx] == "Self-report"){
+#             date_earliest_col <- colnames(Self_report)[grep("date_earliest*", colnames(Self_report))]
+#             Self_report[[date_earliest_col]] <- as.Date(Self_report[[date_earliest_col]], format="%Y-%m-%d")        
+#         }
+#         if (idx == 1){
+#             if (queried_code_type[idx] == "ICD10"){
+#                 df <- ICD10
+#             } else if (queried_code_type[idx] =="ICD9"){
+#                 df <- ICD9
+#             } else if (queried_code_type[idx] == "OPCS4"){
+#                 df <- OPCS4
+#             } else if (queried_code_type[idx] == "Self-report"){
+#                 df <- Self_report
+#             }
+#         } else{
+#             if (queried_code_type[idx] == "ICD10"){
+#                 df <- merge(df, ICD10, by="f.eid", all=T)
+#             } else if (queried_code_type[idx] =="ICD9"){
+#                 df <- merge(df, ICD9, by="f.eid", all=T)
+#             } else if (queried_code_type[idx] == "OPCS4"){
+#                 df <- merge(df, OPCS4, by="f.eid", all=T)
+#             } else if (queried_code_type[idx] == "Self-report"){
+#                 df <- merge(df, Self_report, by="f.eid", all=T)
+#             }
+#         }
+#     }
 
-    col_name <- colnames(df)[2:length(colnames(df))]
-    df$date_earliest <- apply(df[, col_name], 1, function(x) min(x, na.rm = TRUE))
+#     col_name <- colnames(df)[2:length(colnames(df))]
+#     df$date_earliest <- apply(df[, col_name], 1, function(x) min(x, na.rm = TRUE))
 
-    date_columns <- sapply(df, inherits, "Date")
-    df <- df %>%
-        mutate(across(all_of(names(which(date_columns))), as.character))
+#     date_columns <- sapply(df, inherits, "Date")
+#     df <- df %>%
+#         mutate(across(all_of(names(which(date_columns))), as.character))
 
-    if (simplify) df <- df %>% dplyr::select(f.eid, date_earliest)
+#     if (simplify) df <- df %>% dplyr::select(f.eid, date_earliest)
     
-    return (df)
-}
+#     return (df)
+# }

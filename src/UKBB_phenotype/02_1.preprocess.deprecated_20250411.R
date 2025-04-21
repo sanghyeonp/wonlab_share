@@ -1,47 +1,40 @@
 # Sanghyeon Park
 # 2024.06.06
 # Credit: Shaun Chen
-######## Update
-### 2025.04.11
-# The field name is not in order. Fixed.
-
-########
 
 library(dplyr)
 library(tidyr)
 
-#####################################
-## Preprocess ICD10 code and date ###
-#####################################
-print("Preprocess ICD10 code and date")
-start_time <- Sys.time()
-df.icd10 <- readRDS("UKBB.41270.diagnoses_main_ICD10.rds")
-df.icd10_date <- readRDS("UKBB.41280.diagnoses_main_ICD10_date.rds")
+# #####################################
+# ## Preprocess ICD10 code and date ###
+# #####################################
+# print("Preprocess ICD10 code and date")
+# start_time <- Sys.time()
+# df.icd10 <- readRDS("UKBB.41270.diagnoses_main_ICD10.rds")
+# df.icd10_date <- readRDS("UKBB.41280.diagnoses_main_ICD10_date.rds")
 
-df.icd10.collapse <- as.data.frame(df.icd10 %>%
-        dplyr::select(f.eid, all_of(paste0("f.41270.0.", 0:225))) %>%
-        rowwise() %>%
-        mutate(ICD10_main = paste(c_across(-f.eid), collapse = ";")) %>%
-        ungroup() %>%
-        dplyr::select(f.eid, ICD10_main))
+# df.icd10.collapse <- as.data.frame(df.icd10 %>%
+#         rowwise() %>%
+#         mutate(ICD10_main = paste(c_across(-f.eid), collapse = ";")) %>%
+#         ungroup() %>%
+#         dplyr::select(f.eid, ICD10_main))
 
-idate_columns <- sapply(df.icd10_date, inherits, "IDate")
-df.icd10_date.collapse <- as.data.frame(df.icd10_date %>%
-    mutate(across(all_of(names(which(idate_columns))), as.character)) %>%
-    mutate_all(~replace_na(., "")) %>%
-    dplyr::select(f.eid, all_of(paste0("f.41280.0.", 0:225))) %>%
-    rowwise() %>%
-    mutate(ICD10_date = paste(c_across(-f.eid), collapse = ";")) %>%
-    ungroup() %>%
-    dplyr::select(f.eid, ICD10_date))
+# idate_columns <- sapply(df.icd10_date, inherits, "IDate")
+# df.icd10_date.collapse <- as.data.frame(df.icd10_date %>%
+#     mutate(across(all_of(names(which(idate_columns))), as.character)) %>%
+#     mutate_all(~replace_na(., "")) %>%
+#     rowwise() %>%
+#     mutate(ICD10_date = paste(c_across(-f.eid), collapse = ";")) %>%
+#     ungroup() %>%
+#     dplyr::select(f.eid, ICD10_date))
 
-df.icd10_code_date <- merge(df.icd10.collapse, df.icd10_date.collapse, by="f.eid", all=T)
+# df.icd10_code_date <- merge(df.icd10.collapse, df.icd10_date.collapse, by="f.eid", all=T)
 
-saveRDS(df.icd10_code_date, "UKBB.41270_41280.ICD10_code_and_date_merged.rds")
+# saveRDS(df.icd10_code_date, "UKBB.41270_41280.ICD10_code_and_date_merged.rds")
 
-end_time <- Sys.time()
-elapsed_time <- end_time - start_time
-print(elapsed_time)
+# end_time <- Sys.time()
+# elapsed_time <- end_time - start_time
+# print(elapsed_time)
 
 ### This is how to query a single ICD-10 code date
 # ICD10_code <- "M161"
@@ -58,40 +51,38 @@ print(elapsed_time)
 #####################################
 ### Preprocess ICD9 code and date ###
 #####################################
-print("Preprocess ICD9 code and date")
-start_time <- Sys.time()
-df.icd9 <- readRDS("UKBB.41271.diagnoses_main_ICD9.rds")
-df.icd9_date <- readRDS("UKBB.41281.diagnoses_main_ICD9_date.rds")
+# print("Preprocess ICD9 code and date")
+# start_time <- Sys.time()
+# df.icd9 <- readRDS("UKBB.41271.diagnoses_main_ICD9.rds")
+# df.icd9_date <- readRDS("UKBB.41281.diagnoses_main_ICD9_date.rds")
 
-integer_columns <- sapply(df.icd9, inherits, "integer")
-df.icd9 <- df.icd9 %>%
-    mutate(across(all_of(names(which(integer_columns))), as.character)) %>%
-    mutate_all(~replace_na(., "")) %>%
-    dplyr::select(f.eid, all_of(paste0("f.41271.0.", 0:46)))
+# integer_columns <- sapply(df.icd9, inherits, "integer")
+# df.icd9 <- df.icd9 %>%
+#     mutate(across(all_of(names(which(integer_columns))), as.character)) %>%
+#     mutate_all(~replace_na(., ""))
 
-df.icd9.collapse <- as.data.frame(df.icd9 %>%
-                       rowwise() %>%
-                       mutate(ICD9_main = paste(c_across(-f.eid), collapse = ";")) %>%
-                       ungroup() %>%
-                       dplyr::select(f.eid, ICD9_main))
+# df.icd9.collapse <- as.data.frame(df.icd9 %>%
+#                        rowwise() %>%
+#                        mutate(ICD9_main = paste(c_across(-f.eid), collapse = ";")) %>%
+#                        ungroup() %>%
+#                        dplyr::select(f.eid, ICD9_main))
 
-idate_columns <- sapply(df.icd9_date, inherits, "IDate")
-df.icd9_date.collapse <- as.data.frame(df.icd9_date %>%
-                            mutate(across(all_of(names(which(idate_columns))), as.character)) %>%
-                            mutate_all(~replace_na(., "")) %>%
-                            dplyr::select(f.eid, all_of(paste0("f.41281.0.", 0:46))) %>%
-                            rowwise() %>%
-                            mutate(ICD9_date = paste(c_across(-f.eid), collapse = ";")) %>%
-                            ungroup() %>%
-                            dplyr::select(f.eid, ICD9_date))
+# idate_columns <- sapply(df.icd9_date, inherits, "IDate")
+# df.icd9_date.collapse <- as.data.frame(df.icd9_date %>%
+#                             mutate(across(all_of(names(which(idate_columns))), as.character)) %>%
+#                             mutate_all(~replace_na(., "")) %>%
+#                             rowwise() %>%
+#                             mutate(ICD9_date = paste(c_across(-f.eid), collapse = ";")) %>%
+#                             ungroup() %>%
+#                             dplyr::select(f.eid, ICD9_date))
 
-df.icd9_code_date <- merge(df.icd9.collapse, df.icd9_date.collapse, by="f.eid", all=T)
+# df.icd9_code_date <- merge(df.icd9.collapse, df.icd9_date.collapse, by="f.eid", all=T)
 
-saveRDS(df.icd9_code_date, "UKBB.41271_41281.ICD9_code_and_date_merged.rds")
+# saveRDS(df.icd9_code_date, "UKBB.41271_41281.ICD9_code_and_date_merged.rds")
 
-end_time <- Sys.time()
-elapsed_time <- end_time - start_time
-print(elapsed_time)
+# end_time <- Sys.time()
+# elapsed_time <- end_time - start_time
+# print(elapsed_time)
 
 ### This is how to query a single ICD-9 code date
 # ICD9_code <- "3540"
@@ -108,36 +99,34 @@ print(elapsed_time)
 ######################################
 ### Preprocess OPCS4 code and date ###
 ######################################
-print("Preprocess OPCS4 code and date")
-start_time <- Sys.time()
+# print("Preprocess OPCS4 code and date")
+# start_time <- Sys.time()
 
-df.opcs4 <- readRDS("UKBB.41272.OPCS4.rds")
-df.opcs4_date <- readRDS("UKBB.41282.OPCS4_date.rds")
+# df.opcs4 <- readRDS("UKBB.41272.OPCS4.rds")
+# df.opcs4_date <- readRDS("UKBB.41282.OPCS4_date.rds")
 
-df.opcs4.collapse <- as.data.frame(df.opcs4 %>%
-                        dplyr::select(f.eid, all_of(paste0("f.41272.0.", 0:123))) %>%
-                       rowwise() %>%
-                       mutate(OPCS4 = paste(c_across(-f.eid), collapse = ";")) %>%
-                       ungroup() %>%
-                       dplyr::select(f.eid, OPCS4))
+# df.opcs4.collapse <- as.data.frame(df.opcs4 %>%
+#                        rowwise() %>%
+#                        mutate(OPCS4 = paste(c_across(-f.eid), collapse = ";")) %>%
+#                        ungroup() %>%
+#                        dplyr::select(f.eid, OPCS4))
 
-idate_columns <- sapply(df.opcs4_date, inherits, "IDate")
-df.opcs4_date.collapse <- as.data.frame(df.opcs4_date %>%
-                            mutate(across(all_of(names(which(idate_columns))), as.character)) %>%
-                            mutate_all(~replace_na(., "")) %>%
-                            dplyr::select(f.eid, all_of(paste0("f.41282.0.", 0:123))) %>%
-                            rowwise() %>%
-                            mutate(OPCS4_date = paste(c_across(-f.eid), collapse = ";")) %>%
-                            ungroup() %>%
-                            dplyr::select(f.eid, OPCS4_date))
+# idate_columns <- sapply(df.opcs4_date, inherits, "IDate")
+# df.opcs4_date.collapse <- as.data.frame(df.opcs4_date %>%
+#                             mutate(across(all_of(names(which(idate_columns))), as.character)) %>%
+#                             mutate_all(~replace_na(., "")) %>%
+#                             rowwise() %>%
+#                             mutate(OPCS4_date = paste(c_across(-f.eid), collapse = ";")) %>%
+#                             ungroup() %>%
+#                             dplyr::select(f.eid, OPCS4_date))
 
-df.opcs4_code_date <- merge(df.opcs4.collapse, df.opcs4_date.collapse, by="f.eid", all=T)
+# df.opcs4_code_date <- merge(df.opcs4.collapse, df.opcs4_date.collapse, by="f.eid", all=T)
 
-saveRDS(df.opcs4_code_date, "UKBB.41272_41282.OPCS4_code_and_date_merged.rds")
+# saveRDS(df.opcs4_code_date, "UKBB.41272_41282.OPCS4_code_and_date_merged.rds")
 
-end_time <- Sys.time()
-elapsed_time <- end_time - start_time
-print(elapsed_time)
+# end_time <- Sys.time()
+# elapsed_time <- end_time - start_time
+# print(elapsed_time)
 
 ### This is how to query a single OPCS4 code date
 # OPCS4_code <- "E492"
@@ -160,11 +149,6 @@ start_time <- Sys.time()
 df.self_report <- readRDS("UKBB.20002.Self_report.rds")
 df.self_report_age_year <- readRDS("UKBB.87.Self_report_age_year.rds")
 df.year_of_birth <- readRDS("UKBB.34.year_of_birth.rds")
-
-df.self_report <- df.self_report %>%
-    dplyr::select(f.eid, all_of(paste0("f.20002.0.", 0:33)), all_of(paste0("f.20002.1.", 0:33)), all_of(paste0("f.20002.2.", 0:33)), all_of(paste0("f.20002.3.", 0:33)))
-df.self_report_age_year <- df.self_report_age_year %>%
-    dplyr::select(f.eid, all_of(paste0("f.87.0.", 0:33)), all_of(paste0("f.87.1.", 0:33)), all_of(paste0("f.87.2.", 0:33)), all_of(paste0("f.87.3.", 0:33)))
 
 integer_columns <- sapply(df.self_report, inherits, "integer")
 logical_columns <- sapply(df.self_report, inherits, "logical")
