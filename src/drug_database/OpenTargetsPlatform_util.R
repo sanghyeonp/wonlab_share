@@ -69,7 +69,7 @@ parse_drug_count <- function(gene_id){
 }
 
 parse_known_drugs <- function(gene_id, n_count){
-    if (n_count == 0){return(data.frame())}
+    if (is.null(n_count) || n_count == 0){return(data.frame())}
     
     variables <- list("ensemblId" = gene_id, "size" = n_count)
     post_body <- list(query = query.drugs, variables = variables)
