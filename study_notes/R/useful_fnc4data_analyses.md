@@ -1,4 +1,21 @@
 
+# SNP genomic position annotation
+```
+library(biomaRt)
+rsids <- df$rsID
+
+# Connect to Ensembl GRCh37
+mart37 <- useEnsembl(biomart = "snp", dataset = "hsapiens_snp", GRCh = 37)
+
+snp_annot <- getBM(
+    attributes = c("refsnp_id", "chr_name", "chrom_start", "chrom_end", "allele"),
+    filters    = "snp_filter",
+    values     = rsids,
+    mart       = mart37
+)
+
+```
+
 # skimr::skim
 ```
 library(skimr)
