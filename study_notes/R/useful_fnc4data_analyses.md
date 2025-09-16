@@ -14,6 +14,9 @@ snp_annot <- getBM(
     mart       = mart37
 )
 
+snp_annot <- snp_annot %>%
+    filter(chr_name %in% as.character(1:22, "X", "Y"))
+
 ```
 
 # skimr::skim
