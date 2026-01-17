@@ -5,3 +5,7 @@
 ### snp_independence.snp.v3.R
 - GWAS1에 대한 lead SNP list이 주어지면, lead SNP +- window내의 GWAS2에 대한 lead SNP만 비교.
 - 다른 study에서 lead SNP만 supplementary table로 제시할 때 활용.
+
+### snp_independence.snp.v4.R
+- v2에 대한 업데이트
+- GWAS1에 대한 lead SNP list가 주어지면, 해당 lead SNP +-window 내에서 GWAS2에서의 P < 5e-8, r2 > 0.01 인 SNP이 있는지 확인. 있다면 "previously reported".

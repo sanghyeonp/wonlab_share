@@ -29,26 +29,18 @@ parser <- argparse::ArgumentParser(description=":: SNP independence by P-value a
                                 formatter_class="argparse.ArgumentDefaultsHelpFormatter")
 
 parser$add_argument("--trait1", required=TRUE, 
-                    help="Specify the trait name for GWAS 1.") # args$trait1 == --trait1 "x" 가 됨
+                    help="Specify the trait name for GWAS 1.")
 parser$add_argument("--trait2", required=TRUE, 
                     help="Specify the trait name for GWAS 2.")
 
 # GWAS1 SNP list
 parser$add_argument("--gwas1-snplist", dest = "file_gwas1_snplist", required=TRUE, 
-                    help="Path to the SNP list. Must have Chr, Pos, and SNP information.") # 하이픈이 있기 때문. args$file_gwas1_snplist
+                    help="Path to the SNP list. Must have Chr, Pos, and SNP information.")
 parser$add_argument("--delim-gwas1-snplist", dest="delim_gwas1_snplist", required=TRUE,
                     help="Specify delimiter for GWAS summary statistics. Options = [tab, whitespace, comma]")
 parser$add_argument("--snp-col-gwas1-snplist", dest="snp_gwas1_snplist", required=TRUE,
                     help="Specify SNP column name.")
-
-# GWAS2 SNP list
-parser$add_argument("--gwas2-snplist", dest = "file_gwas2_snplist", required=TRUE, 
-                    help="Path to the SNP list. Must have Chr, Pos, and SNP information.")
-parser$add_argument("--delim-gwas2-snplist", dest="delim_gwas2_snplist", required=TRUE,
-                    help="Specify delimiter for GWAS summary statistics. Options = [tab, whitespace, comma]")
-parser$add_argument("--snp-col-gwas2-snplist", dest="snp_gwas2_snplist", required=TRUE,
-                    help="Specify SNP column name.")
-# parser$add_argument("--secondary-snp-col-gwas2-snplist", dest="secondary_snp_gwas2_snplist", required=TRUE,
+# parser$add_argument("--secondary-snp-col-gwas1-snplist", dest="secondary_snp_gwas1_snplist", required=TRUE,
 #                     help="Specify secondary SNP column name. The SNP should be separated by semicolon.")
 
 # GWAS1 summary statistics
@@ -120,9 +112,9 @@ delim_gwas1_snplist <- args$delim_gwas1_snplist
 snp_gwas1_snplist <- args$snp_gwas1_snplist
 # secondary_snp_gwas1_snplist <- args$secondary_snp_gwas1_snplist
 
-file_gwas2_snplist <- args$file_gwas2_snplist
-delim_gwas2_snplist <- args$delim_gwas2_snplist
-snp_gwas2_snplist <- args$snp_gwas2_snplist
+# file_gwas2_snplist <- args$file_gwas2_snplist
+# delim_gwas2_snplist <- args$delim_gwas2_snplist
+# snp_gwas2_snplist <- args$snp_gwas2_snplist
 # secondary_snp_gwas2_snplist <- args$secondary_snp_gwas2_snplist
 
 file_gwas1 <- args$file_gwas1
@@ -252,7 +244,14 @@ df_gwas1_snplist <- fread(file_gwas1_snplist,
 df_gwas1_snplist <- df_gwas1_snplist %>%
     dplyr::select(!!as.name(snp_gwas1_snplist)) %>%
     rename(leadSNP = !!as.name(snp_gwas1_snplist))
-
+# # Make sure leadSNP itself is in the clumped SNP list
+# gwas1.leadSNP <- unique(df_gwas1_snplist$leadSNP)
+# gwas1.leadSNP_to_add <- gwas1.leadSNP[!(gwas1.leadSNP %in% df_gwas1_snplist$secondarySNP)]
+# if (length(gwas1.leadSNP_to_add) > 0){
+#     df_gwas1_snplist <- rbind(df_gwas1_snplist,
+#                               data.frame(leadSNP = gwas1.leadSNP_to_add,
+#                                          secondarySNP = gwas1.leadSNP_to_add))
+# }
 # Map genomic position and P-value
 df_gwas1 <- fread(file_gwas1, 
                   sep = delim_mapper[[delim_gwas1]],
@@ -269,19 +268,32 @@ df_gwas1 <- df_gwas1 %>%
 
 df_gwas1_snplist <- merge(df_gwas1_snplist, df_gwas1, by.x = "leadSNP", by.y = snp_gwas1, all.x = T)
 
+
+# df_gwas1_leadsnplist <- df_gwas1_snplist %>%
+#     dplyr::select(leadSNP) %>%
+#     distinct()
+# df_gwas1_leadsnplist <- merge(df_gwas1_leadsnplist, df_gwas1, by.x = "leadSNP", by.y = snp_gwas1, all.x = T)
+
 ## For GWAS2
-df_gwas2_snplist <- fread(file_gwas2_snplist, 
-                          sep = delim_mapper[[delim_gwas2_snplist]],
-                          data.table = F,
-                          nThread = n_thread,
-                          showProgress = F)
+# df_gwas2_snplist <- fread(file_gwas2_snplist, 
+#                           sep = delim_mapper[[delim_gwas2_snplist]],
+#                           data.table = F,
+#                           nThread = n_thread,
+#                           showProgress = F)
 
-df_gwas2_snplist <- df_gwas2_snplist %>%
-    dplyr::select(!!as.name(snp_gwas2_snplist)) %>%
-    rename(leadSNP = !!as.name(snp_gwas2_snplist))
-# Make sure leadSNP itself is in the clumped SNP list
-gwas2.leadSNP <- unique(df_gwas2_snplist$leadSNP)
-
+# df_gwas2_snplist <- df_gwas2_snplist %>%
+#     dplyr::select(!!as.name(snp_gwas2_snplist), !!as.name(secondary_snp_gwas2_snplist)) %>%
+#     tidyr::separate_rows(!!as.name(secondary_snp_gwas2_snplist), sep=";") %>%
+#     rename(leadSNP = !!as.name(snp_gwas2_snplist),
+#            secondarySNP = !!as.name(secondary_snp_gwas2_snplist))
+# # Make sure leadSNP itself is in the clumped SNP list
+# gwas2.leadSNP <- unique(df_gwas2_snplist$leadSNP)
+# gwas2.leadSNP_to_add <- gwas2.leadSNP[!(gwas2.leadSNP %in% df_gwas2_snplist$secondarySNP)]
+# if (length(gwas2.leadSNP_to_add) > 0){
+#     df_gwas2_snplist <- rbind(df_gwas2_snplist,
+#                               data.frame(leadSNP = gwas2.leadSNP_to_add,
+#                                          secondarySNP = gwas2.leadSNP_to_add))
+# }
 # Map genomic position and P-value
 df_gwas2 <- fread(file_gwas2, 
                   sep = delim_mapper[[delim_gwas2]],
@@ -296,7 +308,9 @@ df_gwas2 <- df_gwas2 %>%
            POS = !!as.name(pos_gwas2),
            P = !!as.name(p_gwas2))
 
-df_gwas2_snplist <- merge(df_gwas2_snplist, df_gwas2, by.x = "leadSNP", by.y = snp_gwas2, all.x = T)
+# df_gwas2_snplist <- merge(df_gwas2_snplist, df_gwas2, by.x = "secondarySNP", by.y = snp_gwas2, all.x = T)
+# df_gwas2_snplist <- df_gwas2_snplist %>%
+#   filter(P < 5e-8)
 
 # df_gwas2_leadsnplist <- df_gwas2_snplist %>%
 #     dplyr::select(leadSNP) %>%
@@ -337,7 +351,7 @@ df_ld_result.gwas1 <- NULL
 for (chr in 1:22){
   print(paste0("Processing chromosome ", chr, "..."))
   df_gwas1_snplist.chr <- filter(df_gwas1_snplist, CHR == chr)
-  df_gwas2_snplist.chr <- filter(df_gwas2_snplist, CHR == chr)
+  df_gwas2_snplist.chr <- filter(df_gwas2, CHR == chr)
   
   if (nrow(df_gwas1_snplist.chr) != 0){
     # df_ld_per_chr comprises the columns below:
@@ -349,98 +363,27 @@ for (chr in 1:22){
     df_ld_per_chr <- NULL
     unique_leadsnp <- unique(df_gwas1_snplist.chr$leadSNP)
     for (idx in 1:length(unique_leadsnp)){
+
+      # row.df_gwas1_snplist.chr <- df_gwas1_snplist.chr[idx, ]
       ref_snp <- unique_leadsnp[idx]
       ref_snp.pos <- df_gwas1_snplist.chr[df_gwas1_snplist.chr$leadSNP == ref_snp, ]$POS
       
       df_gwas2_snplist.chr.filter <- filter(df_gwas2_snplist.chr, 
                                                   (POS >= ref_snp.pos - (window * 1000)) &
-                                                  (POS < ref_snp.pos + (window * 1000)),
-                                                  (P < p_threshold))
-
-      # df_gwas2_snplist.chr.filter  <- df_gwas2_snplist.chr.filter  %>%
-      #                         distinct(secondarySNP, .keep_all = TRUE) # Important note 2
-
-      if(nrow(df_gwas2_snplist.chr.filter ) != 0){
-        leadsnp_to_compare <- df_gwas2_snplist.chr.filter$leadSNP
-        
-        snp_gwas2_tested <- c()
-        snp_gwas2_tested_pval <- c()
-        snp_gwas2_tested_r2 <- c()
-        is_in_LD <- NA
-        snp_gwas2_in_ld <- "NA"
-        snp_gwas2_in_ld_pval <- "NA"
-        snp_gwas2_in_ld_r2 <- "NA"
+                                                  (POS < ref_snp.pos + (window * 1000)))
+      n_snp_in_region <- nrow(df_gwas2_snplist.chr.filter)
       
-        # Register a parallel backend
-        cl <- makeCluster(n_thread)
-        registerDoParallel(cl)
-
-        plink_ld_result <- foreach(leadsnp_gwas2 = leadsnp_to_compare,
-                                .export = c("ref_snp", "plink_exe", "file_reference_panel", "chr"),
-                                .packages = c("dplyr", "data.table"),
-                                .combine = 'bind_rows') %dopar% {
-                            compute_snp_ld(snp1 = ref_snp, 
-                                          snp2 = leadsnp_gwas2, 
-                                          plink_exe = plink_exe, 
-                                          file_reference = file_reference_panel, 
-                                          chr = chr)
-                          }
-        stopCluster(cl)
-        
-        snp_gwas2_tested <- plink_ld_result$other_snp
-        df_tmp <- df_gwas2_snplist.chr.filter  %>%
-                    dplyr::select(leadSNP, P) %>%
-                    filter(leadSNP %in% snp_gwas2_tested)
-        df_tmp <- merge(df_tmp, plink_ld_result %>% dplyr::select(-ref_snp), by.x = "leadSNP", by.y = "other_snp", all.x = T)
-        # df_tmp[[snp_gwas2_snplist]] <- factor(df_tmp[[snp_gwas2_snplist]], levels = snp_gwas2_tested)
-        snp_gwas2_tested_pval <- df_tmp$P
-        snp_gwas2_tested_r2 <- as.numeric(df_tmp$R2)
-
-        idx_in_ld <- which(snp_gwas2_tested_r2 > r2_threshold)
-
-        if (identical(idx_in_ld, integer(0))){ # No SNPs from GWAS2 in LD with SNP from GWAS1
-          is_in_LD <- FALSE
-          snp_gwas2_in_ld_leadsnp <- "NA"
-        } else{
-          is_in_LD <- TRUE
-          snp_gwas2_in_ld <- paste(snp_gwas2_tested[idx_in_ld], collapse = ";")
-          snp_gwas2_in_ld_pval <- paste(snp_gwas2_tested_pval[idx_in_ld], collapse = ";")
-          snp_gwas2_in_ld_r2 <- paste(snp_gwas2_tested_r2[idx_in_ld], collapse = ";")
-          snp_gwas2_in_ld_leadsnp <- paste(unique((df_gwas2_snplist.chr %>% 
-                                               filter(leadSNP %in% snp_gwas2_tested[idx_in_ld]))$leadSNP), collapse = ";")
-        }
-
-        snp_gwas2_tested <- paste(snp_gwas2_tested, collapse = ";")
-        snp_gwas2_tested_pval <- paste(snp_gwas2_tested_pval, collapse = ";")
-        snp_gwas2_tested_r2 <- paste(snp_gwas2_tested_r2, collapse = ";")
-        
-
-        df_ld_per_chr <- rbind(df_ld_per_chr,
-                        data.frame(SNP_gwas1 = ref_snp,
-                            SNP_gwas2_tested = snp_gwas2_tested,
-                            SNP_gwas2_tested_pval = snp_gwas2_tested_pval,
-                            SNP_gwas2_tested_R2 = snp_gwas2_tested_r2,
-                            In_LD = is_in_LD,
-                            SNP_gwas2_in_LD = snp_gwas2_in_ld,
-                            SNP_gwas2_in_LD_pval = snp_gwas2_in_ld_pval,
-                            SNP_gwas2_in_LD_R2 = snp_gwas2_in_ld_r2,
-                            LeadSNP_gwas2_in_ld = snp_gwas2_in_ld_leadsnp)
-                      )
-      } else{
-        df_ld_per_chr <- rbind(df_ld_per_chr,
-                        data.frame(SNP_gwas1 = ref_snp,
-                            SNP_gwas2_tested = "NA",
-                            SNP_gwas2_tested_pval = "NA",
-                            SNP_gwas2_tested_R2 = "NA",
-                            In_LD = FALSE,
-                            SNP_gwas2_in_LD = "NA",
-                            SNP_gwas2_in_LD_pval = "NA",
-                            SNP_gwas2_in_LD_R2 = "NA",
-                            LeadSNP_gwas2_in_ld = "NA")
-                      )
-      }
+      df_gwas2_snplist.chr.filter <- df_gwas2_snplist.chr.filter %>% filter(P < p_threshold)
+      
+      df_ld_per_chr <- rbind(df_ld_per_chr,
+                      data.frame(SNP_gwas1 = ref_snp,
+                          N_SNP_in_region = n_snp_in_region,
+                          In_LD = FALSE,
+                          SNP_gwas2_in_LD = "NA",
+                          SNP_gwas2_in_LD_pval = "NA",
+                          SNP_gwas2_in_LD_R2 = "NA")
+                    )
     }
-
     df_ld_result.gwas1 <- rbind(df_ld_result.gwas1, df_ld_per_chr)
   }
 }

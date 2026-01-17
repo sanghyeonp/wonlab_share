@@ -76,6 +76,9 @@ plot_manhattan <- function(gwas,
     df <- df %>%
         select(all_of(c("SNP", "CHR", "POS", "PVAL")))
 
+    df <- df %>%
+        mutate(PVAL = as.numeric(PVAL))
+
     ### Check rows with NA
     df_na <- df[!complete.cases(df), ]
 

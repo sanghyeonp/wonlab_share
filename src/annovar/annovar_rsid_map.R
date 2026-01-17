@@ -3,6 +3,10 @@
 # - 2023.12.14
 # - First in-use project: 
 
+###### Updates
+# 2025.06.12:
+# - `merge_annovar_out.R` is updated to account for empty ANNOVAR output files.
+
 source("/data1/sanghyeon/wonlab_contribute/combined/src/annovar/make_annovar_input.R")
 source("/data1/sanghyeon/wonlab_contribute/combined/src/annovar/run_annovar.R")
 source("/data1/sanghyeon/wonlab_contribute/combined/src/annovar/merge_annovar_out.R")

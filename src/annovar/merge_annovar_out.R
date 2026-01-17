@@ -4,33 +4,39 @@ merge_annovar_out <- function(
     filename_annovin_flip_annot,
     nthread
 ){
-    # Result without flipping
-    df <- as.data.frame(fread(filename_annovin_annot, 
-                            header = FALSE,
-                            sep = "\t",
-                            nThread = nthread,
-                            showProgress = FALSE))
-
     # Get column values to query
     idx_col_list <- c(3, 4, 5)
+    # Result without flipping
+    df <- data.frame(); unflipped_index_value_list <- c(); flipped_index_value_list <- c()
+    if (file.size(filename_annovin_annot) > 0){
+        df <- as.data.frame(fread(filename_annovin_annot, 
+                                header = FALSE,
+                                sep = "\t",
+                                nThread = nthread,
+                                showProgress = FALSE))
 
-    df <- mutate(df, 
-                flipped = FALSE)  
-    df$temp_var <- apply(df[, idx_col_list], 1, function(x) paste(x, collapse = ":"))
+        df <- mutate(df, 
+                    flipped = FALSE)  
+        df$temp_var <- apply(df[, idx_col_list], 1, function(x) paste(x, collapse = ":"))
 
-    unflipped_index_value_list <- df$temp_var
+        unflipped_index_value_list <- df$temp_var
+    }
 
-    # Result with flipping
-    df_flip <- as.data.frame(fread(filename_annovin_flip_annot, 
-                                    header = FALSE,
-                                    sep = "\t",
-                                    nThread = nthread,
-                                    showProgress = FALSE))
-    df_flip <- mutate(df_flip, 
-                        flipped = TRUE)
-    df_flip$temp_var <- apply(df_flip[, idx_col_list], 1, function(x) paste(x, collapse = ":"))
+    df_flip <- data.frame()
+    if (file.size(filename_annovin_flip_annot) > 0){
+        # Result with flipping
+        df_flip <- as.data.frame(fread(filename_annovin_flip_annot, 
+                                        header = FALSE,
+                                        sep = "\t",
+                                        nThread = nthread,
+                                        showProgress = FALSE))
+        df_flip <- mutate(df_flip, 
+                            flipped = TRUE)
+        df_flip$temp_var <- apply(df_flip[, idx_col_list], 1, function(x) paste(x, collapse = ":"))
 
-    flipped_index_value_list <- df_flip$temp_var
+        flipped_index_value_list <- df_flip$temp_var
+    }
+
 
     ###
     cat(paste0("\nMERGE: Merging unflipped and flipped ANNOVAR output files...\n\t", 
@@ -41,7 +47,11 @@ merge_annovar_out <- function(
     # Query rows to keep from flipped result
     rows_to_keep <- !(flipped_index_value_list %in% unflipped_index_value_list)
 
-    df_flip_to_keep <- df_flip[rows_to_keep, ]
+    if (file.size(filename_annovin_flip_annot) > 0){
+        df_flip_to_keep <- df_flip[rows_to_keep, ]
+    } else {
+        df_flip_to_keep <- data.frame()
+    }
 
     # Merge
     df_merged <- rbind(df, df_flip_to_keep)

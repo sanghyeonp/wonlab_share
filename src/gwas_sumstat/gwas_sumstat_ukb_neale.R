@@ -14,7 +14,7 @@ suppressPackageStartupMessages({
 
 
 ### Common files
-variant_file <- "/data1/sanghyeon/wonlab_contribute/combined/data_common/variants.tsv.bgz"
+variant_file <- "/data1/sanghyeon/wonlab_contribute/combined/data_common/variants.tsv.gz"
 
 
 ### Define parser arguments

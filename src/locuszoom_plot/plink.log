@@ -1,0 +1,37 @@
+PLINK v1.90b6.26 64-bit (2 Apr 2022)
+Options in effect:
+  --bfile /data1/sanghyeon/wonlab_contribute/combined/data_common/reference_panel/1kGp3/EUR/CHR/reference.1kG.EUR.maf_0.005.geno_0.02.chr17
+  --ld rs3933469 rs61624965
+
+Hostname: r-server
+Working directory: /data1/sanghyeon/wonlab_contribute/combined/src/locuszoom_plot
+Start time: Sun Apr 21 04:32:15 2024
+
+Random number seed: 1713641535
+773407 MB RAM detected; reserving 386703 MB for main workspace.
+262457 variants loaded from .bim file.
+503 people (240 males, 263 females) loaded from .fam.
+Using 1 thread (no multithreaded calculations invoked).
+Before main variant filters, 503 founders and 0 nonfounders present.
+Calculating allele frequencies... done.
+Total genotyping rate is in [0.9999995, 1).
+262457 variants and 503 people pass filters and QC.
+Note: No phenotypes present.
+
+--ld rs3933469 rs61624965:
+
+   R-sq = 0.00345856     D' = 0.149559
+
+   Haplotype     Frequency    Expectation under LE
+   ---------     ---------    --------------------
+          AC      0.020280                0.014407
+          GC      0.033398                0.039271
+          AT      0.248110                0.253983
+          GT      0.698212                0.692339
+
+   In phase alleles are AC/GT
+
+
+End time: Sun Apr 21 04:32:17 2024
+
+4
