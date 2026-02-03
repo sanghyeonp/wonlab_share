@@ -104,9 +104,6 @@ LIFTOVER_CHAIN_DICT <- c("36:37" = paste(LIFTOVER_DIR, "chainfile", "hg18ToHg19.
                         )
 
 
-file_in.bed <- "gwas_catalog.accessed_20230131.b38.liftover_in.bed"
-
-
 cmd <- paste0(LIFTOVER_SOFTWARE,
             " ", file.bed,
             " ", LIFTOVER_CHAIN_DICT[paste0(build_from, ":", build_to)],

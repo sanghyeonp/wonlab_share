@@ -442,6 +442,12 @@ for (chr in 1:22){
     }
 
     df_ld_result.gwas1 <- rbind(df_ld_result.gwas1, df_ld_per_chr)
+
+    write.table(df_ld_result.gwas1,
+            file = paste0(dir_out, pref_out, ".compare_", trait1, ".to_", trait2, ".", exe_mapper[delim_out]),
+            sep = delim_mapper[delim_out],
+            row.names = F,
+            quote = F)
   }
 }
 

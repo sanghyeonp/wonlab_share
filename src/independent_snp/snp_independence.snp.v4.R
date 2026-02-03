@@ -261,7 +261,7 @@ df_gwas1 <- fread(file_gwas1,
                   showProgress = F)
 df_gwas1 <- df_gwas1 %>%
     # Drop any SNP without rsID
-    # filter(!grepl("^rs", !!as.name(snp_gwas1))) %>%
+    filter(grepl("^rs", !!as.name(snp_gwas1))) %>%
     dplyr::select(!!as.name(snp_gwas1), !!as.name(chr_gwas1), !!as.name(pos_gwas1), !!as.name(p_gwas1)) %>%
     rename(CHR = !!as.name(chr_gwas1),
            POS = !!as.name(pos_gwas1),
@@ -303,9 +303,10 @@ df_gwas2 <- fread(file_gwas2,
                   showProgress = F)
 df_gwas2 <- df_gwas2 %>%
     # Drop any SNP without rsID
-    # filter(!grepl("^rs", !!as.name(snp_gwas2))) %>%
+    filter(grepl("^rs", !!as.name(snp_gwas2))) %>%
     dplyr::select(!!as.name(snp_gwas2), !!as.name(chr_gwas2), !!as.name(pos_gwas2), !!as.name(p_gwas2)) %>%
-    rename(CHR = !!as.name(chr_gwas2),
+    rename(SNP = !!as.name(snp_gwas2),
+          CHR = !!as.name(chr_gwas2),
            POS = !!as.name(pos_gwas2),
            P = !!as.name(p_gwas2))
 
