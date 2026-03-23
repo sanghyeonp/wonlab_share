@@ -1,0 +1,12 @@
+
+## 통계량을 다 같이 liftover 하는 경우
+- SWAP 및 FLIP을 고려하여 통계량 또한 맞춰서 바꿔줌.
+- Liftover output을 그대로 활용하면 됨.
+- 만약 effect allele을 minor allele로 고려해서 분석하고자 한다면, 이 부분은 따로 minor allele 통일을 해주어야 함.
+
+## 통계량 없이 liftover 하는 경우
+- *.allele_swap.strand_flip.tsv 파일도 같이 활용해서, 
+    - SWAP == 1 인 경우, liftover 결과의 allele을 그대로 활용하되, beta=beta*-1, eaf=1-eaf 해주어야 함.
+    - FLIP만 1 인 경우는 따로 뭐 해줄 필요 없음.
+
+
