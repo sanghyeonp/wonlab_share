@@ -311,6 +311,9 @@ df_gwas2 <- df_gwas2 %>%
            P = !!as.name(p_gwas2))
 
 df_gwas2 <- df_gwas2 %>%
+    mutate(P = as.numeric(P))
+
+df_gwas2 <- df_gwas2 %>%
     filter(P < p_threshold)
 
 # df_gwas2_snplist <- merge(df_gwas2_snplist, df_gwas2, by.x = "secondarySNP", by.y = snp_gwas2, all.x = T)
